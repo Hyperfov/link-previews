@@ -7,6 +7,7 @@
   export let showContent;
   export let showImg;
   export let position;
+  export let id;
 
   console.log(position);
 
@@ -74,8 +75,12 @@
     transition:fade={{ duration: 300, easing: cubicIn }}
     class="preview"
     style="top:{top}px; left:{left}px; height:{height}px; width:{width}px;"
+    {id}
   >
-    <div class="link" bind:clientHeight={renderedHeight}>
+    <div
+      class="hyperfov-preview-element-wrapper"
+      bind:clientHeight={renderedHeight}
+    >
       <slot />
     </div>
   </div>
@@ -87,7 +92,7 @@
     position: absolute;
   }
 
-  .link {
+  .hyperfov-preview-element-wrapper {
     max-width: 100%;
     text-decoration: none;
     padding: 10px;

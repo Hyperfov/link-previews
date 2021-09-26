@@ -15,12 +15,12 @@ window.setPagePreviews = function (
 ) {
   const pageATags = [...linkGetter()];
 
-  let styleRules = "";
+  let styleRules = [];
 
   // copy the relevant styles over
   for (const rule of styles.rules) {
     if (rule.selectorText.indexOf(".hyperfov") !== -1) {
-      styleRules += rule.cssText + "\n";
+      styleRules.push(rule.cssText);
     }
   }
 
@@ -35,11 +35,14 @@ window.setPagePreviews = function (
       JSON.stringify(aPos)
     )}" href="${a.href}"></link-preview>`;
 
+    // add the id to any user-defined styles so they have precedence
+    const thisRuleset = [...styleRules].map((r) => `#${shadowId}-sub * ${r}`);
+
     const shadow = document.getElementById(shadowId).shadowRoot;
 
     // add the relevant styles to the shadow dom
     const shadowStyle = document.createElement("style");
-    shadowStyle.innerHTML = styleRules;
+    shadowStyle.innerHTML = thisRuleset.join("\n");
     shadow.appendChild(shadowStyle);
   }
 };

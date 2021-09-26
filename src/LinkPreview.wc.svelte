@@ -8,6 +8,7 @@
 
   export let position;
   export let href;
+  export let id;
 
   position = JSON.parse(atob(position));
 
@@ -19,6 +20,6 @@
   const showImg = imgSrc && imgSrc !== "null";
 </script>
 
-<Wrapper {href} {showContent} {showImg} {position}>
+<Wrapper {href} {showContent} {showImg} {position} id="{id}-sub">
   <Interior {showContent} {showImg} {content} {title} {href} />
 </Wrapper>

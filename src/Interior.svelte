@@ -8,13 +8,13 @@
 </script>
 
 {#if showContent || showImg}
-  <div class="link-content-wrapper">
+  <div class="hyperfov-link-content-wrapper">
     {#if showContent}
-      <div class="link-content">{@html content}</div>
+      <div class="hyperfov-link-content">{@html content}</div>
     {/if}
     {#if showImg}
       <img
-        class="link-image"
+        class="hyperfov-link-image"
         class:left={showContent}
         src={imgSrc}
         alt={title}
@@ -23,31 +23,22 @@
   </div>
 {/if}
 {#if title}
-  <div class="link-title">{title}</div>
+  <div class="hyperfov-link-title">{title}</div>
 {/if}
-<div class="hyperfov-link-url">{href}</div>
+<div class="link-url hyperfov-link-url">{href}</div>
 
 <style>
-  .link-content {
-    font-size: 16px;
-    line-height: 110%;
-    display: inline-block;
-    position: relative;
-    height: 120px;
-    overflow: hidden;
-  }
-
-  .link-title {
+  .hyperfov-link-title {
     font-weight: bold;
   }
 
-  .link-content-wrapper {
+  .hyperfov-link-content-wrapper {
     display: flex;
     border-bottom: 1px solid var(--color);
     margin-bottom: 5px;
   }
 
-  .link-image {
+  .hyperfov-link-image {
     height: 120px;
     object-fit: cover;
     object-position: center center;
@@ -55,15 +46,27 @@
     min-width: 150px;
   }
 
-  .link-image.left {
+  .hyperfov-link-image.left {
     padding-left: 10px;
   }
 
   .hyperfov-link-url {
     font-size: 12px;
+    color: black;
   }
 
-  .link-content::after {
+  .hyperfov-link-content {
+    font-size: 16px;
+    line-height: 110%;
+    display: inline-block;
+    position: relative;
+    height: 120px;
+    overflow: hidden;
+    background-color: white;
+    border: 1px solid black;
+  }
+
+  .hyperfov-link-content::after {
     content: "";
     position: absolute;
     bottom: 0;
