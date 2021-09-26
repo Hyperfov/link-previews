@@ -11,20 +11,19 @@ const name = pkg.name
 
 export default {
   input: "src/index.js",
-  // output: [
-  // 	{ file: pkg.module, format: 'es' },
-  // 	{ file: pkg.main, format: 'umd', name }
-  // ],
-  output: {
-    sourcemap: true,
-    format: "umd",
-    name: "app",
-    file: "dist/index.js",
-  },
+  output: [
+    { file: pkg.module, format: "es" },
+    { file: pkg.main, format: "umd", name },
+  ],
+  // output: {
+  //   sourcemap: true,
+  //   format: "umd",
+  //   name: "app",
+  //   file: "dist/index.js",
+  // },
   plugins: [
-    svelte({
-      customElement: true,
-    }),
+    svelte({ customElement: true, include: /\.wc\.svelte$/ }),
+    svelte({ customElement: false, exclude: /\.wc\.svelte$/ }),
     css({ output: "bundle.css" }),
     commonjs(),
     resolve(),
