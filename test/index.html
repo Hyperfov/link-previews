@@ -1,28 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link />
     <title>Document</title>
-</head>
 
-<body>
+    <style>
+      .large-block {
+        height: 300px;
+        width: 150px;
+        background-color: lightcoral;
+        padding: 20px;
+      }
 
+      a {
+        display: inline-block;
+      }
+
+      .hyperfov-link-url {
+        color: red;
+      }
+    </style>
+  </head>
+
+  <body>
     <h1>Hello, world</h1>
 
-    <p>This is some text about a variety of topics. <a href="https://twelvewebsites.com">Links</a> are scattered <a
-            href="https://classicinterfaces.com">throughout</a>.</p>
+    <p>
+      This is some text about a variety of topics.
+      <a href="https://twelvewebsites.com">Links to <i>pages</i></a> are
+      scattered <a href="https://classicinterfaces.com">throughout</a>.
+    </p>
+
+    <a href="https://classicinterfaces.com">
+      <div class="large-block">
+        <p>This is a large blockish link.</p>
+      </div>
+    </a>
 
     <script defer>
-        import('../dist/index.js').then(() => {
-            window.setPagePreviews()
-        });
-
+      import("../dist/index.js").then(() => {
+        window.setPagePreviews(document.styleSheets[0]);
+      });
     </script>
-
-</body>
-
+  </body>
 </html>

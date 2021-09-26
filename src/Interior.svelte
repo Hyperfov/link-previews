@@ -25,7 +25,7 @@
 {#if title}
   <div class="link-title">{title}</div>
 {/if}
-<div class="link-url">{href}</div>
+<div class="hyperfov-link-url">{href}</div>
 
 <style>
   .link-content {
@@ -59,7 +59,7 @@
     padding-left: 10px;
   }
 
-  .link-url {
+  .hyperfov-link-url {
     font-size: 12px;
   }
 

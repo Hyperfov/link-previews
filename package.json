@@ -24,7 +24,9 @@
     "dist"
   ],
   "dependencies": {
+    "@rollup/plugin-replace": "^3.0.0",
     "abab": "^2.0.5",
+    "nanoid": "^3.1.28",
     "rollup-plugin-css-only": "^3.1.0"
   }
 }

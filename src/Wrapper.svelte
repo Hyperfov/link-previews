@@ -6,10 +6,9 @@
 
   export let showContent;
   export let showImg;
-  export let linkcontent;
-  export let href;
+  export let position;
 
-  console.log(linkcontent);
+  console.log(position);
 
   let visible = false;
   let top;
@@ -61,28 +60,26 @@
   };
 </script>
 
-<span class="preview-wrapper">
-  <span
-    on:mouseover={toggleOn}
-    on:focus={toggleOn}
-    on:mouseout={toggleOff}
-    on:blur={toggleOff}
-    bind:this={element}
+<span
+  class="preview-wrapper"
+  style="top:{position.y}px; left:{position.x}px; height:{position.height}px; width:{position.width}px;"
+  on:mouseover={toggleOn}
+  on:focus={toggleOn}
+  on:mouseout={toggleOff}
+  on:blur={toggleOff}
+  bind:this={element}
+/>
+{#if visible}
+  <div
+    transition:fade={{ duration: 300, easing: cubicIn }}
+    class="preview"
+    style="top:{top}px; left:{left}px; height:{height}px; width:{width}px;"
   >
-    <a {href}>{linkcontent}</a>
-  </span>
-  {#if visible}
-    <div
-      transition:fade={{ duration: 150, easing: cubicIn }}
-      class="preview"
-      style="top:{top}px; left:{left}px; height:{height}px; width:{width}px;"
-    >
-      <div class="link" bind:clientHeight={renderedHeight}>
-        <slot name="preview-content" />
-      </div>
+    <div class="link" bind:clientHeight={renderedHeight}>
+      <slot />
     </div>
-  {/if}
-</span>
+  </div>
+{/if}
 
 <style>
   .preview {
@@ -97,5 +94,9 @@
     margin-top: 5px;
     font-weight: normal;
     font-style: normal;
+  }
+
+  .preview-wrapper {
+    position: absolute;
   }
 </style>

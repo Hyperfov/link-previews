@@ -6,11 +6,10 @@
 
   import { atob } from "abab";
 
-  export let linkcontent;
+  export let position;
   export let href;
-  export let styles;
 
-  styles = JSON.parse(atob(styles));
+  position = JSON.parse(atob(position));
 
   let content;
   let title;
@@ -20,13 +19,6 @@
   const showImg = imgSrc && imgSrc !== "null";
 </script>
 
-<Wrapper {href} {showContent} {showImg} {linkcontent}>
-  <Interior
-    slot="preview-content"
-    {showContent}
-    {showImg}
-    {content}
-    {title}
-    {href}
-  />
+<Wrapper {href} {showContent} {showImg} {position}>
+  <Interior {showContent} {showImg} {content} {title} {href} />
 </Wrapper>
