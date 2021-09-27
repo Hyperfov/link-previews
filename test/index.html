@@ -20,7 +20,7 @@
       }
 
       .hyperfov-link-url {
-        color: red;
+        color: black;
       }
     </style>
   </head>
@@ -30,8 +30,8 @@
 
     <p>
       This is some text about a variety of topics.
-      <a href="https://twelvewebsites.com">Links to <i>pages</i></a> are
-      scattered <a href="https://classicinterfaces.com">throughout</a>.
+      <a href="https://futureland.tv">Links to <i>pages</i></a> are scattered
+      <a href="https://classicinterfaces.com">throughout</a>.
     </p>
 
     <a href="https://classicinterfaces.com">
@@ -42,7 +42,10 @@
 
     <script defer>
       import("../dist/index.js").then(() => {
-        window.setPagePreviews(document.styleSheets[0]);
+        setPagePreviews({
+          workerUrl: "http://localhost:8787",
+          styles: document.styleSheets[0],
+        });
       });
     </script>
   </body>

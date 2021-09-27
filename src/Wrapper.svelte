@@ -93,12 +93,15 @@
   }
 
   .hyperfov-preview-element-wrapper {
+    font-family: sans-serif;
+    color: black;
     max-width: 100%;
     text-decoration: none;
     padding: 10px;
     margin-top: 5px;
     font-weight: normal;
     font-style: normal;
+    border: 1px solid black;
   }
 
   .preview-wrapper {

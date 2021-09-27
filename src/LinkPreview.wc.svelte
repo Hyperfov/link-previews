@@ -4,22 +4,47 @@
   import Wrapper from "./Wrapper.svelte";
   import Interior from "./Interior.svelte";
 
+  import { onMount } from "svelte";
+
   import { atob } from "abab";
 
   export let position;
   export let href;
   export let id;
+  export let worker;
 
   position = JSON.parse(atob(position));
 
   let content;
   let title;
   let imgSrc;
+  let showImg = false;
+  let showContent = false;
 
-  const showContent = content && content !== "null";
-  const showImg = imgSrc && imgSrc !== "null";
+  onMount(async () => {
+    worker = atob(worker);
+
+    const workerUrl = new URL(worker);
+    workerUrl.searchParams.append("page", href);
+    const res = await fetch(workerUrl);
+
+    if (res.ok) {
+      const json = await res.json();
+
+      content = json.description;
+      title = json.title;
+      imgSrc = json.image;
+    }
+  });
+
+  $: {
+    showContent = content && content !== "null";
+    showImg = imgSrc && imgSrc !== "null";
+  }
+
+  console.log(worker);
 </script>
 
 <Wrapper {href} {showContent} {showImg} {position} id="{id}-sub">
-  <Interior {showContent} {showImg} {content} {title} {href} />
+  <Interior {showContent} {showImg} {content} {title} {href} {imgSrc} />
 </Wrapper>

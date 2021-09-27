@@ -10,7 +10,7 @@
 {#if showContent || showImg}
   <div class="hyperfov-link-content-wrapper">
     {#if showContent}
-      <div class="hyperfov-link-content">{@html content}</div>
+      <div class="hyperfov-link-content">{content}</div>
     {/if}
     {#if showImg}
       <img
@@ -34,7 +34,7 @@
 
   .hyperfov-link-content-wrapper {
     display: flex;
-    border-bottom: 1px solid var(--color);
+    border-bottom: 1px solid black;
     margin-bottom: 5px;
   }
 
@@ -56,14 +56,12 @@
   }
 
   .hyperfov-link-content {
-    font-size: 16px;
-    line-height: 110%;
+    font-size: 12px;
     display: inline-block;
     position: relative;
     height: 120px;
     overflow: hidden;
     background-color: white;
-    border: 1px solid black;
   }
 
   .hyperfov-link-content::after {

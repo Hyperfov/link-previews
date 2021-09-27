@@ -37,7 +37,7 @@ The default installation will add page previews to all `a` tags on the page.
 
 `setPagePreviews` accepts an object of options:
 
-```json
+```
 {
     workerUrl: String, // the url of your deployed worker
     styles: CSSStyleSheet, // a stylesheet containing custom popover styles, see below
@@ -47,7 +47,7 @@ The default installation will add page previews to all `a` tags on the page.
 
 #### Styles
 
-By passing in `styles` in the options, you're able to override the default popover styles. Any of the classes in [`src/Interior.svelte`](src/Interior.svelte) and [`src/Wrapper.svelte`](src/Wrapper.svelte) can be overridden. For example, you might change the color of the urls displayed in the popovers:
+By passing in `styles` in the options, you're able to override the default popover styles. Any of the classes in [`src/Interior.svelte`](src/Interior.svelte) and [`src/Wrapper.svelte`](src/Wrapper.svelte) that start with `.hyperfov-` can be overridden. For example, you might change the color of the urls displayed in the popovers:
 
 ```html
 <style>

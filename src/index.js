@@ -9,16 +9,19 @@ const defaultLinkGetter = () => {
   return document.getElementsByTagName("a");
 };
 
-window.setPagePreviews = function (
-  styles = null,
-  linkGetter = defaultLinkGetter
-) {
-  const pageATags = [...linkGetter()];
+window.setPagePreviews = function (options = {}) {
+  options = {
+    workerUrl: "",
+    styles: null,
+    getLinks: defaultLinkGetter,
+    ...options,
+  };
 
-  let styleRules = [];
+  const pageATags = [...options.getLinks()];
+  const styleRules = [];
 
   // copy the relevant styles over
-  for (const rule of styles.rules) {
+  for (const rule of options.styles?.rules) {
     if (rule.selectorText.indexOf(".hyperfov") !== -1) {
       styleRules.push(rule.cssText);
     }
@@ -33,7 +36,7 @@ window.setPagePreviews = function (
     // add preview component to the element
     a.innerHTML += `<link-preview id="${shadowId}" position="${btoa(
       JSON.stringify(aPos)
-    )}" href="${a.href}"></link-preview>`;
+    )}" worker=${btoa(options.workerUrl)} href="${a.href}"></link-preview>`;
 
     // add the id to any user-defined styles so they have precedence
     const thisRuleset = [...styleRules].map((r) => `#${shadowId}-sub * ${r}`);

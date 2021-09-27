@@ -9,6 +9,14 @@ addEventListener("fetch", (event) => {
 });
 
 async function handleRequest(request) {
+  // cors config
+  const responseHeaders = new Headers();
+  responseHeaders.set(
+    "Access-Control-Allow-Origin",
+    "*" // allow anything
+  );
+  responseHeaders.set("Content-Type", "application/json");
+
   // expect the request to contain ?page={{url to get}}
   const url = new URL(request.url);
   const page = url.searchParams.get("page");
@@ -45,14 +53,14 @@ async function handleRequest(request) {
     }
 
     const response = new Response(JSON.stringify(responseContent), {
-      headers: { "Content-Type": "application/json" },
+      headers: responseHeaders,
     });
 
     return response;
   } else {
     return new Response(JSON.stringify({}), {
       status: res.status,
-      headers: { "Content-Type": "application/json" },
+      headers: responseHeaders,
     });
   }
 }
