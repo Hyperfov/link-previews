@@ -38,6 +38,32 @@ The server should now be available at `http://localhost:8787`.
 
 ## Deployment
 
+Once you've run the above commands to set up the worker, you're ready to deploy it.
+
+### CORS and caching config
+
+There are a couple of environment variables you might want to add to the `wrangler.toml` file:
+
+```
+[vars]
+CORS = "*"
+CACHE_DURATION = 60000
+```
+
+`CORS` is the list of hosts you wish to allow. For example, if installing link previews on my sites `classicinterfaces.com` and `hyperfov.com`, I'd add:
+
+```
+[vars]
+CORS = "https://classicinterfaces.com, https://hyperfov.com"
+CACHE_DURATION = 60000
+```
+
+All other cross-origin requests would be denied. To allow all origins, use `"*"`.
+
+`CACHE_DURATION` is how long in seconds each request should be cached by Cloudflare. If multiple clients make the same requests (e.g. multiple people visiting the same page), the worker would serve from the cache rather than re-requesting the linked pages every time. Note that the cache is only used when you deploy the worker to [a custom domain](https://developers.cloudflare.com/workers/platform/routes), rather than the default `.workers.dev` domain.
+
+### Deploy worker
+
 Run:
 
 ```

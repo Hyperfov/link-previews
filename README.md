@@ -17,11 +17,11 @@ Since the task of fetching a page and parsing out the meta information is so sim
 
 ### Deploy the worker
 
-Follow the instructions in [the worker's readme](worker/README.md). Once complete, you should have a url like `https://worker.[something].workers.dev`.
+Follow the instructions in [the worker's readme](worker/README.md). Once complete, you should have a url like `https://worker.[something].workers.dev`, or a custom domain if you've opted to set one up.
 
 ### Add the script to your website
 
-Import the script from [`/dist/index.js`](dist/index.js) at the end of your site's `body`:
+Import the script from [`/dist/index.js`](dist/index.js) at the end of your site's `body`, then call `setPagePreviews` to instantiate:
 
 ```html
 <script defer>
