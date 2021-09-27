@@ -1,15 +1,8 @@
 <script>
-  import { fade } from "svelte/transition";
-  import { cubicIn } from "svelte/easing";
-
-  // export let external = false;
-
   export let showContent;
   export let showImg;
   export let position;
   export let id;
-
-  console.log(position);
 
   let visible = false;
   let top;
@@ -70,26 +63,32 @@
   on:blur={toggleOff}
   bind:this={element}
 />
-{#if visible}
+<div
+  class="preview"
+  class:visible
+  style="top:{top}px; left:{left}px; height:{height}px; width:{width}px;"
+  {id}
+>
   <div
-    transition:fade={{ duration: 300, easing: cubicIn }}
-    class="preview"
-    style="top:{top}px; left:{left}px; height:{height}px; width:{width}px;"
-    {id}
+    class="hyperfov-preview-element-wrapper"
+    bind:clientHeight={renderedHeight}
   >
-    <div
-      class="hyperfov-preview-element-wrapper"
-      bind:clientHeight={renderedHeight}
-    >
-      <slot />
-    </div>
+    <slot />
   </div>
-{/if}
+</div>
 
 <style>
   .preview {
     z-index: 1000;
     position: absolute;
+    transition: opacity 0.5s;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .preview.visible {
+    opacity: 1;
+    visibility: visible;
   }
 
   .hyperfov-preview-element-wrapper {

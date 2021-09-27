@@ -20,6 +20,7 @@
   let imgSrc;
   let showImg = false;
   let showContent = false;
+  let fetching = true;
 
   onMount(async () => {
     worker = atob(worker);
@@ -35,16 +36,24 @@
       title = json.title;
       imgSrc = json.image;
     }
+
+    fetching = false;
   });
 
   $: {
     showContent = content && content !== "null";
     showImg = imgSrc && imgSrc !== "null";
   }
-
-  console.log(worker);
 </script>
 
 <Wrapper {href} {showContent} {showImg} {position} id="{id}-sub">
-  <Interior {showContent} {showImg} {content} {title} {href} {imgSrc} />
+  <Interior
+    {showContent}
+    {showImg}
+    {content}
+    {title}
+    {href}
+    {imgSrc}
+    {fetching}
+  />
 </Wrapper>

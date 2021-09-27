@@ -39,35 +39,94 @@ The default installation will add page previews to all `a` tags on the page.
 
 ```
 {
-    workerUrl: String, // the url of your deployed worker
-    styles: CSSStyleSheet, // a stylesheet containing custom popover styles, see below
+    workerUrl: String,
+    styles: CSSStyleSheet,   // optional
+    getLinks: Function,      // optional
+    assignStyles: Function,  // optional
 }
 
 ```
 
-#### Styles
+Each option is explained in more depth below:
+
+#### `workerUrl`
+
+**Required**. The url of your deployed worker. See [deploy the worker](#deploy-the-worker) for how to deploy.
+
+#### `styles`
+
+**Optional**. A stylesheet containing rules for styling the popover.
 
 By passing in `styles` in the options, you're able to override the default popover styles. Any of the classes in [`src/Interior.svelte`](src/Interior.svelte) and [`src/Wrapper.svelte`](src/Wrapper.svelte) that start with `.hyperfov-` can be overridden. For example, you might change the color of the urls displayed in the popovers:
 
 ```html
-<style>
+<style id="popover-styles">
   .hyperfov-link-url {
     color: coral;
   }
 </style>
 ```
 
-The passed styles must be a [`CSSStyleSheet`](https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet), which can be selected with `document.styleSheets`, for example:
+The passed styles must be a [`CSSStyleSheet`](https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet). For example:
 
-```html
-<script defer>
-  import("../dist/index.js").then(() => {
-    setPagePreviews({
-      workerUrl: "https://worker.[something].workers.dev",
-      styles: document.styleSheets[0],
-    });
-  });
-</script>
+```js
+setPagePreviews({
+  workerUrl: "https://...",
+  styles: document.getElementById("popover-styles").sheet,
+});
 ```
 
-For a concrete example, see [`test/index.html`](test/index.html).
+To apply different styles depending on the link type, see [`assignStyles`](#assignstyles)
+
+#### `getLinks`
+
+**Optional**. A function that returns a list of HTMLElements to apply popovers to, where each element must contain an `href` attribute.
+
+When this function is not included, the default behavior is to apply previews to all `a` tags on the page.
+
+You might use this function to only add previews to a subset of the `a` tags on the page, for example those whose `href` is _external_ to the page:
+
+```js
+setPagePreviews({
+  workerUrl: "https://...",
+  getLinks: () => {
+    const tags = [...document.getElementsByTagName("a")];
+    return tags.filter((t) => {
+      // remove any links to pages on this site
+      return new URL(t.href).host !== window.location.host;
+    });
+  },
+});
+```
+
+#### `assignStyles`
+
+**Optional**. A function that returns the stylesheet to use for a given element.
+
+For example, you might use this function to style popovers differently depending on if the links are external to the page or not. You can create two different style elements:
+
+```html
+<style id="external-links-styles">
+  .hyperfov-link-url {
+    color: lightcoral;
+  }
+</style>
+<style id="internal-links-styles">
+  .hyperfov-link-url {
+    color: indianred;
+  }
+</style>
+```
+
+Then apply those styles depending on the link's `href`:
+
+```js
+setPagePreviews({
+  workerUrl: "https://...",
+  assignStyles: (tag) => {
+    if (new URL(tag.href).host === window.location.host)
+      return document.getElementById("internal-links-styles").sheet;
+    else return document.getElementById("external-links-styles").sheet;
+  },
+});
+```

@@ -14,18 +14,11 @@ window.setPagePreviews = function (options = {}) {
     workerUrl: "",
     styles: null,
     getLinks: defaultLinkGetter,
+    assignStyles: (elt) => null,
     ...options,
   };
 
   const pageATags = [...options.getLinks()];
-  const styleRules = [];
-
-  // copy the relevant styles over
-  for (const rule of options.styles?.rules) {
-    if (rule.selectorText.indexOf(".hyperfov") !== -1) {
-      styleRules.push(rule.cssText);
-    }
-  }
 
   // get the positions of all the links
   for (const a of pageATags) {
@@ -37,6 +30,17 @@ window.setPagePreviews = function (options = {}) {
     a.innerHTML += `<link-preview id="${shadowId}" position="${btoa(
       JSON.stringify(aPos)
     )}" worker=${btoa(options.workerUrl)} href="${a.href}"></link-preview>`;
+
+    // get the styles either from the result of assigning styles or default
+    const styles = options.assignStyles(a) || options.styles;
+    const styleRules = [];
+
+    // copy the relevant styles over
+    for (const rule of styles?.rules) {
+      if (rule.selectorText.indexOf(".hyperfov") !== -1) {
+        styleRules.push(rule.cssText);
+      }
+    }
 
     // add the id to any user-defined styles so they have precedence
     const thisRuleset = [...styleRules].map((r) => `#${shadowId}-sub * ${r}`);

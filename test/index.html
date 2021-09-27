@@ -18,9 +18,15 @@
       a {
         display: inline-block;
       }
-
+    </style>
+    <style id="standard-tlds">
       .hyperfov-link-url {
         color: black;
+      }
+    </style>
+    <style id="special-tlds">
+      .hyperfov-link-url {
+        color: coral;
       }
     </style>
   </head>
@@ -44,7 +50,11 @@
       import("../dist/index.js").then(() => {
         setPagePreviews({
           workerUrl: "http://localhost:8787",
-          styles: document.styleSheets[0],
+          assignStyles: (aElt) => {
+            if (aElt.href.indexOf(".com") !== -1)
+              return document.getElementById("standard-tlds").sheet;
+            return document.getElementById("special-tlds").sheet;
+          },
         });
       });
     </script>

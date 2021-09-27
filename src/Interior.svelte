@@ -1,14 +1,21 @@
 <script>
+  import { slide } from "svelte/transition";
+  import { cubicIn } from "svelte/easing";
+
   export let showContent;
   export let showImg;
   export let content;
   export let imgSrc;
   export let title;
   export let href;
+  export let fetching;
 </script>
 
 {#if showContent || showImg}
-  <div class="hyperfov-link-content-wrapper">
+  <div
+    transition:slide={{ duration: 300, easing: cubicIn }}
+    class="hyperfov-link-content-wrapper"
+  >
     {#if showContent}
       <div class="hyperfov-link-content">{content}</div>
     {/if}
@@ -23,9 +30,22 @@
   </div>
 {/if}
 {#if title}
-  <div class="hyperfov-link-title">{title}</div>
+  <div
+    class="hyperfov-link-title"
+    transition:slide={{ duration: 300, easing: cubicIn }}
+  >
+    {title}
+  </div>
 {/if}
-<div class="link-url hyperfov-link-url">{href}</div>
+<div class="hyperfov-link-url">
+  {#if fetching}
+    <span
+      transition:slide={{ duration: 300, easing: cubicIn }}
+      class="hyperfov-loading"
+    />
+  {/if}
+  {href}
+</div>
 
 <style>
   .hyperfov-link-title {
@@ -72,5 +92,24 @@
     width: 275px;
     height: 50px;
     background-image: linear-gradient(transparent, white);
+  }
+
+  .hyperfov-loading {
+    width: 5px;
+    height: 5px;
+    background-color: black;
+    border-radius: 50%;
+    animation: fade 1s ease infinite;
+    margin-bottom: 2px;
+    display: inline-block;
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.1;
+    }
   }
 </style>
