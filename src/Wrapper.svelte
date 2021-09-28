@@ -31,7 +31,6 @@
       left = cursorPos.x + addedMargin / 2;
     } else if (element) {
       const linkPos = element.getBoundingClientRect();
-
       const fullWidth = width + addedMargin;
       const fullHeight = actualHeight + addedMargin;
 
@@ -39,15 +38,15 @@
       const windowHeight = window.innerHeight;
 
       if (windowWidth - linkPos.x < fullWidth) {
-        left = windowWidth - fullWidth;
+        left = windowWidth - fullWidth + window.scrollX;
       } else {
-        left = linkPos.x;
+        left = linkPos.x + window.scrollX;
       }
 
       if (windowHeight - (linkPos.y + linkPos.height) < fullHeight) {
-        top = linkPos.y - actualHeight - linkPos.height + 5;
+        top = linkPos.y - actualHeight - linkPos.height + 5 + window.scrollY;
       } else {
-        top = linkPos.y + linkPos.height;
+        top = linkPos.y + linkPos.height + window.scrollY;
       }
     }
   };
@@ -58,7 +57,10 @@
   }
 
   const onMove = (e) => {
-    cursorPos = { x: e.clientX, y: e.clientY };
+    cursorPos = {
+      x: e.clientX + window.scrollX,
+      y: e.clientY + window.scrollY,
+    };
     positionPreview(renderedHeight);
   };
 

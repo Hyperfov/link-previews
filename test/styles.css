@@ -1,0 +1,60 @@
+p {
+  max-width: 600px;
+  font-size: 18px;
+  margin: 1rem auto;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-size: 200%;
+  font-family: sans-serif;
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
+h1 {
+  margin-top: 8rem;
+}
+
+#top {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-family: sans-serif;
+}
+
+#top > span {
+  display: inline-block;
+  width: 80px;
+  bottom: 12px;
+  position: absolute;
+  padding-left: 5px;
+}
+
+#icon {
+  width: 85px;
+  display: inline-block;
+  position: relative;
+}
+img {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: block;
+}
+
+h1 {
+  font-size: 4rem;
+}
+.large-block {
+  height: 300px;
+  width: 150px;
+  background-color: lightcoral;
+  padding: 20px;
+}
+
+a {
+  display: inline-block;
+}

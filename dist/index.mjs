@@ -898,21 +898,25 @@ function instance$2($$self, $$props, $$invalidate) {
 			const windowHeight = window.innerHeight;
 
 			if (windowWidth - linkPos.x < fullWidth) {
-				$$invalidate(6, left = windowWidth - fullWidth);
+				$$invalidate(6, left = windowWidth - fullWidth + window.scrollX);
 			} else {
-				$$invalidate(6, left = linkPos.x);
+				$$invalidate(6, left = linkPos.x + window.scrollX);
 			}
 
 			if (windowHeight - (linkPos.y + linkPos.height) < fullHeight) {
-				$$invalidate(5, top = linkPos.y - actualHeight - linkPos.height + 5);
+				$$invalidate(5, top = linkPos.y - actualHeight - linkPos.height + 5 + window.scrollY);
 			} else {
-				$$invalidate(5, top = linkPos.y + linkPos.height);
+				$$invalidate(5, top = linkPos.y + linkPos.height + window.scrollY);
 			}
 		}
 	};
 
 	const onMove = e => {
-		cursorPos = { x: e.clientX, y: e.clientY };
+		cursorPos = {
+			x: e.clientX + window.scrollX,
+			y: e.clientY + window.scrollY
+		};
+
 		positionPreview(renderedHeight);
 	};
 
@@ -1937,6 +1941,9 @@ window.setPagePreviews = function (options = {}) {
   // get the positions of all the links
   for (const a of pageATags) {
     const aPos = a.getBoundingClientRect();
+    // adjust if the page starts scrolled
+    aPos.x += window.scrollX;
+    aPos.y += window.scrollY;
 
     const shadowId = nanoid();
     const position = options.assignPositions(a) || "below";
@@ -1960,7 +1967,9 @@ window.setPagePreviews = function (options = {}) {
     }
 
     // add the id to any user-defined styles so they have precedence
-    const thisRuleset = [...styleRules].map((r) => `#${shadowId}-sub * ${r}`);
+    const thisRuleset = [...styleRules].map(
+      (r) => `#${shadowId}-sub * ${r}\n#${shadowId}-sub > ${r}`
+    );
 
     const shadow = document.getElementById(shadowId);
 

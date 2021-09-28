@@ -24,6 +24,9 @@ window.setPagePreviews = function (options = {}) {
   // get the positions of all the links
   for (const a of pageATags) {
     const aPos = a.getBoundingClientRect();
+    // adjust if the page starts scrolled
+    aPos.x += window.scrollX;
+    aPos.y += window.scrollY;
 
     const shadowId = nanoid();
     const position = options.assignPositions(a) || "below";
@@ -47,7 +50,9 @@ window.setPagePreviews = function (options = {}) {
     }
 
     // add the id to any user-defined styles so they have precedence
-    const thisRuleset = [...styleRules].map((r) => `#${shadowId}-sub * ${r}`);
+    const thisRuleset = [...styleRules].map(
+      (r) => `#${shadowId}-sub * ${r}\n#${shadowId}-sub > ${r}`
+    );
 
     const shadow = document.getElementById(shadowId);
 
