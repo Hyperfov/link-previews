@@ -40,7 +40,7 @@
       <a href="https://classicinterfaces.com">throughout</a>.
     </p>
 
-    <a href="https://classicinterfaces.com">
+    <a class="blocky" href="https://classicinterfaces.com">
       <div class="large-block">
         <p>This is a large blockish link.</p>
       </div>
@@ -54,6 +54,10 @@
             if (aElt.href.indexOf(".com") !== -1)
               return document.getElementById("standard-tlds").sheet;
             return document.getElementById("special-tlds").sheet;
+          },
+          assignPositions: (aElt) => {
+            if (aElt.classList.contains("blocky")) return "cursor";
+            else return "below";
           },
         });
       });

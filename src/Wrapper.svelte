@@ -1,25 +1,37 @@
 <script>
   export let showContent;
   export let showImg;
-  export let position;
+  export let eltPos;
   export let id;
+  export let position;
+
+  let cursorPos;
 
   let visible = false;
   let top;
   let left;
 
-  const height = showContent ? 172 : 60;
-  const width = showContent && showImg ? 400 : 272;
-  let renderedHeight = height;
+  let height = showContent ? 172 : 60;
+  let width = showContent && showImg ? 400 : 272;
 
+  $: {
+    height = showContent ? 172 : 60;
+    width = showContent && showImg ? 400 : 272;
+  }
+
+  let renderedHeight = height;
   let element;
 
   const positionPreview = (actualHeight) => {
-    if (element) {
+    // keep the previews a bit away from the sides
+    const addedMargin = 40;
+
+    if (cursorPos) {
+      top = cursorPos.y + addedMargin / 2;
+      left = cursorPos.x + addedMargin / 2;
+    } else if (element) {
       const linkPos = element.getBoundingClientRect();
 
-      // keep the previews a bit away from the sides
-      const addedMargin = 40;
       const fullWidth = width + addedMargin;
       const fullHeight = actualHeight + addedMargin;
 
@@ -45,6 +57,11 @@
     positionPreview(renderedHeight);
   }
 
+  const onMove = (e) => {
+    cursorPos = { x: e.clientX, y: e.clientY };
+    positionPreview(renderedHeight);
+  };
+
   const toggleOn = () => {
     positionPreview(renderedHeight);
     visible = true;
@@ -56,8 +73,9 @@
 
 <span
   class="preview-wrapper"
-  style="top:{position.y}px; left:{position.x}px; height:{position.height}px; width:{position.width}px;"
+  style="top:{eltPos.y}px; left:{eltPos.x}px; height:{eltPos.height}px; width:{eltPos.width}px;"
   on:mouseover={toggleOn}
+  on:mousemove={position === "cursor" ? onMove : null}
   on:focus={toggleOn}
   on:mouseout={toggleOff}
   on:blur={toggleOff}
@@ -101,6 +119,7 @@
     font-weight: normal;
     font-style: normal;
     border: 1px solid black;
+    background-color: white;
   }
 
   .preview-wrapper {

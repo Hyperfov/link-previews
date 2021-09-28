@@ -8,12 +8,13 @@
 
   import { atob } from "abab";
 
-  export let position;
+  export let eltpos;
   export let href;
   export let id;
   export let worker;
+  export let position;
 
-  position = JSON.parse(atob(position));
+  let eltPos = JSON.parse(atob(eltpos));
 
   let content;
   let title;
@@ -46,7 +47,7 @@
   }
 </script>
 
-<Wrapper {href} {showContent} {showImg} {position} id="{id}-sub">
+<Wrapper {href} {showContent} {showImg} {eltPos} {position} id="{id}-sub">
   <Interior
     {showContent}
     {showImg}

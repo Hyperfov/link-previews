@@ -40,20 +40,25 @@ The default installation will add page previews to all `a` tags on the page.
 ```
 {
     workerUrl: String,
-    styles: CSSStyleSheet,   // optional
-    getLinks: Function,      // optional
-    assignStyles: Function,  // optional
+    styles: CSSStyleSheet,      // optional
+    getLinks: Function,         // optional
+    assignStyles: Function,     // optional
+    assignPositions: Function,  // optional
 }
 
 ```
 
 Each option is explained in more depth below:
 
-#### `workerUrl`
+### `workerUrl`
+
+---
 
 **Required**. The url of your deployed worker. See [deploy the worker](#deploy-the-worker) for how to deploy.
 
-#### `styles`
+### `styles`
+
+---
 
 **Optional**. A stylesheet containing rules for styling the popover.
 
@@ -78,7 +83,9 @@ setPagePreviews({
 
 To apply different styles depending on the link type, see [`assignStyles`](#assignstyles)
 
-#### `getLinks`
+### `getLinks`
+
+---
 
 **Optional**. A function that returns a list of HTMLElements to apply popovers to, where each element must contain an `href` attribute.
 
@@ -99,11 +106,13 @@ setPagePreviews({
 });
 ```
 
-#### `assignStyles`
+### `assignStyles`
+
+---
 
 **Optional**. A function that returns the stylesheet to use for a given element.
 
-For example, you might use this function to style popovers differently depending on if the links are external to the page or not. You can create two different style elements:
+You might use this function to style popovers differently depending on if the links are external to the page or not. You can create two different style elements:
 
 ```html
 <style id="external-links-styles">
@@ -127,6 +136,26 @@ setPagePreviews({
     if (new URL(tag.href).host === window.location.host)
       return document.getElementById("internal-links-styles").sheet;
     else return document.getElementById("external-links-styles").sheet;
+  },
+});
+```
+
+### `assignPositions`
+
+---
+
+**Optional**. A function that returns the popover positioning method for a given element.
+
+Valid return types are `"below"` or `"cursor"`.
+
+You might use this function to position popovers differently depending on the links' classes:
+
+```js
+setPagePreviews({
+  workerUrl: "...",
+  assignPositions: (tag) => {
+    if (tag.classList.contains("my-link")) return "cursor";
+    else return "below";
   },
 });
 ```

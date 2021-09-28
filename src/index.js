@@ -14,7 +14,8 @@ window.setPagePreviews = function (options = {}) {
     workerUrl: "",
     styles: null,
     getLinks: defaultLinkGetter,
-    assignStyles: (elt) => null,
+    assignStyles: () => null,
+    assignPositions: () => "below",
     ...options,
   };
 
@@ -25,11 +26,14 @@ window.setPagePreviews = function (options = {}) {
     const aPos = a.getBoundingClientRect();
 
     const shadowId = nanoid();
+    const position = options.assignPositions(a) || "below";
 
     // add preview component to the element
-    a.innerHTML += `<link-preview id="${shadowId}" position="${btoa(
+    a.innerHTML += `<link-preview id="${shadowId}" eltpos="${btoa(
       JSON.stringify(aPos)
-    )}" worker=${btoa(options.workerUrl)} href="${a.href}"></link-preview>`;
+    )}" position="${position}" worker=${btoa(options.workerUrl)} href="${
+      a.href
+    }"></link-preview>`;
 
     // get the styles either from the result of assigning styles or default
     const styles = options.assignStyles(a) || options.styles;
@@ -45,12 +49,12 @@ window.setPagePreviews = function (options = {}) {
     // add the id to any user-defined styles so they have precedence
     const thisRuleset = [...styleRules].map((r) => `#${shadowId}-sub * ${r}`);
 
-    const shadow = document.getElementById(shadowId).shadowRoot;
+    const shadow = document.getElementById(shadowId);
 
     // add the relevant styles to the shadow dom
     const shadowStyle = document.createElement("style");
     shadowStyle.innerHTML = thisRuleset.join("\n");
-    shadow.appendChild(shadowStyle);
+    shadow.shadowRoot.appendChild(shadowStyle);
   }
 };
 

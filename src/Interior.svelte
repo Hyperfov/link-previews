@@ -76,7 +76,7 @@
   }
 
   .hyperfov-link-content {
-    font-size: 12px;
+    font-size: 14px;
     display: inline-block;
     position: relative;
     height: 120px;
@@ -91,7 +91,7 @@
     left: 0;
     width: 275px;
     height: 50px;
-    background-image: linear-gradient(transparent, white);
+    background-image: linear-gradient(#ffffff00, #ffffff);
   }
 
   .hyperfov-loading {
