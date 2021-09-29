@@ -13,11 +13,31 @@
         box-shadow: 8px 12px 0px #000000a8;
       }
     </style>
+    <style id="futureland-popover">
+      .hyperfov-preview-element-wrapper {
+        box-shadow: 4px 4px 12px #525252a8;
+        border-radius: 10px;
+        border: 1px solid grey;
+        background-color: black;
+        color: white;
+      }
+      .hyperfov-link-content {
+        background-color: black;
+      }
+
+      .hyperfov-link-content::after {
+        background-image: linear-gradient(#ffffff00, #000000);
+      }
+
+      .hyperfov-loading {
+        background-color: white;
+      }
+    </style>
     <meta
       name="description"
       content="Global linked page previews for the web. Hyperfov page previews can be added to any page and create rich previews of linked pages."
     />
-    <meta property="og:image" content="icon.png" />
+    <meta property="og:image" content="preview.png" />
   </head>
 
   <body>
@@ -27,7 +47,9 @@
           ><b>Hyperfov:</b> <span>Page Previews</span></span
         >
       </p>
-      <h1>Page previews are great!</h1>
+      <h1>Page previews everywhere</h1>
+      <img id="header-img" src="many.png" alt="Lots of page previews." />
+
       <p>
         <a href="https://www.mediawiki.org/wiki/Page_Previews">Page previews</a>
         are fantastic little piece of interactivity; they give insight into
@@ -72,13 +94,14 @@
       />
 
       <p>
-        This structure brings us closer to the goal of global page previews; any
-        arbitrary link on a page can be turned into a rich preview when hovered.
+        This structure brings us closer to the goal of global page previews; now
+        any arbitrary link on a page can be turned into a rich preview when
+        hovered thanks to a helpful worker off-client.
       </p>
 
       <h2>This package</h2>
 
-      <p>Hyperfov page previews is composed of two components:</p>
+      <p>Hyperfov page previews are composed of two components:</p>
       <ul>
         <li>
           A script that inserts page previews on a webpage, written as a
@@ -101,24 +124,52 @@
         >.
       </p>
 
+      <h3>Style</h3>
+
       <p>
-        This is some text about a variety of topics.
-        <a href="https://futureland.tv">Links to <i>pages</i></a> are scattered
-        <a href="https://classicinterfaces.com">throughout</a>.
+        Of course, these page previews should feel integrated on any page. Every
+        element in the preview popup can be styled with custom rules:
       </p>
 
-      <a class="blocky" href="https://classicinterfaces.com">
-        <div class="large-block">
-          <p>This is a large blockish link.</p>
-        </div>
-      </a>
+      <div class="blocks">
+        <a class="blocky" href="https://classicinterfaces.com">
+          <p>Hover for default style.</p>
+        </a>
+        <a class="blocky" href="https://futureland.tv">
+          <p>Hover for a link with custom style.</p>
+        </a>
+      </div>
+
+      <p>
+        Find more information about styling in the
+        <a href="https://github.com/cbroms/hyperfov-page-previews#configuration"
+          >project's documentation</a
+        >
+      </p>
+
+      <h3>About</h3>
+
+      <p>
+        <a href="https://christianbroms.com">I</a> built this project as part of
+        my <a href="https://twelvewebsites.com">Twelve Websites</a> project. I'm
+        currently integrating it into my other sites and will be making
+        adjustments as needed. Find a list of the improvements I'm planning on
+        making
+        <a href="https://onedimension.net/thought/hyperfov-page-previews-todo"
+          >here</a
+        >.
+      </p>
     </article>
 
     <script defer>
       import("./js/hyperfov-link-previews.min.js").then(() => {
         setPagePreviews({
           workerUrl: "https://preview-worker.hyperfov.com",
-          styles: document.getElementById("all-popovers").sheet,
+          assignStyles: (aElt) => {
+            if (aElt.href.indexOf("futureland.tv") !== -1)
+              return document.getElementById("futureland-popover").sheet;
+            else return document.getElementById("all-popovers").sheet;
+          },
           assignPositions: (aElt) => {
             if (aElt.classList.contains("blocky")) return "cursor";
             else return "below";

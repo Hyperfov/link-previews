@@ -19,10 +19,6 @@ h4 {
   max-width: 600px;
 }
 
-h1 {
-  margin-top: 8rem;
-}
-
 #top {
   position: fixed;
   top: 10px;
@@ -42,24 +38,48 @@ h1 {
   width: 85px;
   display: inline-block;
   position: relative;
+  margin: 0;
 }
 img {
   width: 100%;
   max-width: 1000px;
-  margin: 0 auto;
+  margin: 3rem auto;
   display: block;
 }
 
 h1 {
-  font-size: 4rem;
+  font-size: 3.75rem;
+  margin-top: 8rem;
 }
-.large-block {
-  height: 300px;
-  width: 150px;
-  background-color: lightcoral;
+
+.blocky {
+  display: block;
+  height: 150px;
+  width: 250px;
+  background-color: #ffffff;
+  border: 1px solid grey;
   padding: 20px;
+  transition: all 0.3s;
+}
+
+.blocky:hover {
+  background-color: #ebf5ff;
+  border: 1px solid black;
+}
+
+.blocks {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 600px;
+  justify-content: space-between;
+  margin: 0 auto;
+  margin-bottom: 3rem;
 }
 
 a {
   display: inline-block;
+}
+
+article {
+  margin-bottom: 8rem;
 }
