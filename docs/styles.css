@@ -1,4 +1,9 @@
-p {
+body {
+  background-color: #f0eee9;
+}
+
+p,
+ul {
   max-width: 600px;
   font-size: 18px;
   margin: 1rem auto;

@@ -13,6 +13,7 @@ window.setPagePreviews = function (options = {}) {
   options = {
     workerUrl: "",
     styles: null,
+    fetchOn: "hover",
     getLinks: defaultLinkGetter,
     assignStyles: () => null,
     assignPositions: () => "below",
@@ -36,7 +37,7 @@ window.setPagePreviews = function (options = {}) {
       JSON.stringify(aPos)
     )}" position="${position}" worker=${btoa(options.workerUrl)} href="${
       a.href
-    }"></link-preview>`;
+    }" fetchon="${options.fetchOn}"></link-preview>`;
 
     // get the styles either from the result of assigning styles or default
     const styles = options.assignStyles(a) || options.styles;

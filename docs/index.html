@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hyperfov: Page Previews</title>
+
+    <link rel="stylesheet" href="styles.css" />
+
+    <style id="all-popovers">
+      .hyperfov-preview-element-wrapper {
+        box-shadow: 8px 12px 0px #000000a8;
+      }
+    </style>
+    <meta
+      name="description"
+      content="Global linked page previews for the web. Hyperfov page previews can be added to any page and create rich previews of linked pages."
+    />
+    <meta property="og:image" content="icon.png" />
+  </head>
+
+  <body>
+    <article>
+      <p id="top">
+        <img id="icon" src="icon.png" /><span
+          ><b>Hyperfov:</b> <span>Page Previews</span></span
+        >
+      </p>
+      <h1>Page previews are great!</h1>
+      <p>
+        <a href="https://www.mediawiki.org/wiki/Page_Previews">Page previews</a>
+        are fantastic little piece of interactivity; they give insight into
+        where a link leads before you click it. From poorly formed
+        <a href="https://www.nngroup.com/articles/writing-links/">link text</a>
+        to sketchy URLs, there's plenty of reasons a bit more information might
+        help before clicking into a new link. Outside of a few sites like
+        <a
+          href="https://diff.wikimedia.org/2018/04/18/how-we-designed-page-previews-for-wikipedia/"
+          >Wikipedia</a
+        >, <a href="https://github.blog/2018-03-22-user-hovercards/">Github</a>,
+        and
+        <a
+          href="https://blog.twitter.com/en_us/a/2010/flying-around-with-hovercards"
+          >Twitter</a
+        >
+        that have implemented previews for internal links, they're relatively
+        rare.
+      </p>
+
+      <h2>Towards global previews</h2>
+
+      <p>
+        One key challenge—and why you likely don't often see previews for
+        arbitrary links on webpages—is that fetching dynamic content from a
+        different domain is
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
+          >impossible from the browser</a
+        >.
+      </p>
+
+      <p>
+        To get around this problem, Hyperfov page previews use a small
+        serverless function that does the work of requesting each link on behalf
+        of the client. A script embedded in the page extracts links, sends them
+        to the worker, then adds the preview popups when hovered.
+      </p>
+
+      <img
+        src="diagram.png"
+        alt="The webpage requests that the worker fetch the linked page, which the worker does and sends back to the webpage so it can display a page preview."
+      />
+
+      <p>
+        This structure brings us closer to the goal of global page previews; any
+        arbitrary link on a page can be turned into a rich preview when hovered.
+      </p>
+
+      <h2>This package</h2>
+
+      <p>Hyperfov page previews is composed of two components:</p>
+      <ul>
+        <li>
+          A script that inserts page previews on a webpage, written as a
+          <a href="https://svelte.dev">Svelte</a>
+          <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components"
+            >web component</a
+          >.
+        </li>
+        <li>
+          A serverless worker function that fetches and serves the links' meta
+          information, deployable on
+          <a href="https://workers.cloudflare.com/">Cloudflare Workers</a>.
+        </li>
+      </ul>
+
+      <p>
+        More details are available on the
+        <a href="https://github.com/cbroms/hyperfov-page-previews"
+          >project's repository</a
+        >.
+      </p>
+
+      <p>
+        This is some text about a variety of topics.
+        <a href="https://futureland.tv">Links to <i>pages</i></a> are scattered
+        <a href="https://classicinterfaces.com">throughout</a>.
+      </p>
+
+      <a class="blocky" href="https://classicinterfaces.com">
+        <div class="large-block">
+          <p>This is a large blockish link.</p>
+        </div>
+      </a>
+    </article>
+
+    <script defer>
+      import("../dist/index.js").then(() => {
+        setPagePreviews({
+          workerUrl: "https://preview-worker.hyperfov.com",
+          styles: document.getElementById("all-popovers").sheet,
+          assignPositions: (aElt) => {
+            if (aElt.classList.contains("blocky")) return "cursor";
+            else return "below";
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -4,6 +4,7 @@
   export let eltPos;
   export let id;
   export let position;
+  export let fetchData;
 
   let cursorPos;
 
@@ -65,6 +66,7 @@
   };
 
   const toggleOn = () => {
+    if (fetchData) fetchData();
     positionPreview(renderedHeight);
     visible = true;
   };
@@ -120,6 +122,7 @@
     margin-top: 5px;
     font-weight: normal;
     font-style: normal;
+    font-size: 14px;
     border: 1px solid black;
     background-color: white;
   }

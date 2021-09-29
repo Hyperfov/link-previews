@@ -13,6 +13,7 @@
   export let id;
   export let worker;
   export let position;
+  export let fetchon;
 
   let eltPos = JSON.parse(atob(eltpos));
 
@@ -21,24 +22,30 @@
   let imgSrc;
   let showImg = false;
   let showContent = false;
-  let fetching = true;
+  let fetching = null;
 
-  onMount(async () => {
-    worker = atob(worker);
+  const fetchData = async () => {
+    if (fetching !== false) {
+      worker = atob(worker);
 
-    const workerUrl = new URL(worker);
-    workerUrl.searchParams.append("page", href);
-    const res = await fetch(workerUrl);
+      const workerUrl = new URL(worker);
+      workerUrl.searchParams.append("page", href);
+      const res = await fetch(workerUrl);
 
-    if (res.ok) {
-      const json = await res.json();
+      if (res.ok) {
+        const json = await res.json();
 
-      content = json.description;
-      title = json.title;
-      imgSrc = json.image;
+        content = json.description;
+        title = json.title;
+        imgSrc = json.image;
+      }
+
+      fetching = false;
     }
+  };
 
-    fetching = false;
+  onMount(() => {
+    if (fetchon === "load") fetchData();
   });
 
   $: {
@@ -47,7 +54,15 @@
   }
 </script>
 
-<Wrapper {href} {showContent} {showImg} {eltPos} {position} id="{id}-sub">
+<Wrapper
+  {href}
+  {showContent}
+  {showImg}
+  {eltPos}
+  {position}
+  fetchData={fetchon === "hover" ? fetchData : null}
+  id="{id}-sub"
+>
   <Interior
     {showContent}
     {showImg}

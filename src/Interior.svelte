@@ -17,7 +17,12 @@
     class="hyperfov-link-content-wrapper"
   >
     {#if showContent}
-      <div class="hyperfov-link-content">{content}</div>
+      <div class="hyperfov-link-content">
+        {#if title}
+          <div class="hyperfov-link-title">{title}</div>
+        {/if}
+        {content}
+      </div>
     {/if}
     {#if showImg}
       <img
@@ -29,16 +34,12 @@
     {/if}
   </div>
 {/if}
-{#if title}
-  <div
-    class="hyperfov-link-title"
-    transition:slide={{ duration: 300, easing: cubicIn }}
-  >
-    {title}
-  </div>
+
+{#if !showContent && title}
+  <div class="hyperfov-link-title">{title}</div>
 {/if}
 <div class="hyperfov-link-url">
-  {#if fetching}
+  {#if fetching || fetching === null}
     <span
       transition:slide={{ duration: 300, easing: cubicIn }}
       class="hyperfov-loading"
@@ -54,8 +55,7 @@
 
   .hyperfov-link-content-wrapper {
     display: flex;
-    border-bottom: 1px solid black;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
   }
 
   .hyperfov-link-image {
@@ -72,11 +72,13 @@
 
   .hyperfov-link-url {
     font-size: 12px;
-    color: black;
+    color: grey;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .hyperfov-link-content {
-    font-size: 14px;
     display: inline-block;
     position: relative;
     height: 120px;

@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hyperfov: Page Previews</title>
 
-    <link rel="stylesheet" href="styles.css" />
-
     <style id="all-popovers">
       .hyperfov-preview-element-wrapper {
         box-shadow: 8px 12px 0px #000000a8;
@@ -16,61 +14,17 @@
   </head>
 
   <body>
-    <article>
-      <p id="top">
-        <img id="icon" src="icon.png" /><span
-          ><b>Hyperfov:</b> <span>Page Previews</span></span
-        >
-      </p>
-      <h1>Page previews are great!</h1>
-      <p>
-        <a href="https://www.mediawiki.org/wiki/Page_Previews">Page previews</a>
-        are fantastic little piece of interactivity; they give insight into
-        where a link leads before you click it. From poorly formed
-        <a href="https://www.nngroup.com/articles/writing-links/">link text</a>
-        to sketchy URLs, there's plenty of reasons a bit more information might
-        help before clicking into a new link. Outside of a few sites like
-        <a
-          href="https://diff.wikimedia.org/2018/04/18/how-we-designed-page-previews-for-wikipedia/"
-          >Wikipedia</a
-        >, Github, and Twitter that have implemented previews for internal
-        links, they're relatively rare.
-      </p>
+    <p>
+      This is some text about a variety of topics.
+      <a href="https://futureland.tv">Links to <i>pages</i></a> are scattered
+      <a href="https://classicinterfaces.com">throughout</a>.
+    </p>
 
-      <h2>Towards global previews</h2>
-
-      <p>
-        One key challenge—and why you likely don't often see previews for
-        arbitrary links on webpages—is that fetching dynamic content from a
-        different domain is
-        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
-          >impossible from the browser</a
-        >.
-      </p>
-      <p>
-        This approach is to deploy a small serverless function that does the
-        work of requesting each link and sends the metadata back to the client.
-        A script embedded in the page extracts links, sends them to the worker,
-        then adds the preview popups when hovered.
-      </p>
-
-      <img
-        src="diagram.png"
-        alt="The webpage requests that the worker fetch the linked page, which the worker does and sends back to the webpage so it can display a page preview."
-      />
-
-      <p>
-        This is some text about a variety of topics.
-        <a href="https://futureland.tv">Links to <i>pages</i></a> are scattered
-        <a href="https://classicinterfaces.com">throughout</a>.
-      </p>
-
-      <a class="blocky" href="https://classicinterfaces.com">
-        <div class="large-block">
-          <p>This is a large blockish link.</p>
-        </div>
-      </a>
-    </article>
+    <a class="blocky" href="https://classicinterfaces.com">
+      <div class="large-block">
+        <p>This is a large blockish link.</p>
+      </div>
+    </a>
 
     <script defer>
       import("../dist/index.js").then(() => {
