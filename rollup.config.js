@@ -4,6 +4,7 @@ import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
 import css from "rollup-plugin-css-only";
 import pkg from "./package.json";
+import { terser } from "rollup-plugin-terser";
 
 const name = pkg.name
   .replace(/^(@\S+\/)?(svelte-)?(\S+)/, "$3")
@@ -15,13 +16,13 @@ export default {
   output: [
     { file: pkg.module, format: "es" },
     { file: pkg.main, format: "umd", name },
+    {
+      file: "docs/hyperfov-link-previews.min.js",
+      format: "umd",
+      name,
+      plugins: [terser()],
+    },
   ],
-  // output: {
-  //   sourcemap: true,
-  //   format: "umd",
-  //   name: "app",
-  //   file: "dist/index.js",
-  // },
   plugins: [
     svelte({ customElement: true, include: /\.wc\.svelte$/ }),
     svelte({ customElement: false, exclude: /\.wc\.svelte$/ }),
@@ -29,6 +30,7 @@ export default {
     commonjs(),
     resolve({ browser: true }),
     replace({
+      preventAssignment: true,
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
     }),
   ],
