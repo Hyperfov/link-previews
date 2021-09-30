@@ -3,7 +3,12 @@ import Interior from "./Interior.svelte";
 import Wrapper from "./Wrapper.svelte";
 
 import { btoa } from "abab";
-import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
+
+const nanoid = customAlphabet(
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWXYZ",
+  10
+);
 
 const defaultLinkGetter = () => {
   return document.getElementsByTagName("a");
@@ -37,7 +42,7 @@ window.setPagePreviews = function (options = {}) {
       JSON.stringify(aPos)
     )}" position="${position}" worker=${btoa(options.workerUrl)} href="${
       a.href
-    }" fetchon="${options.fetchOn}"></link-preview>`;
+    }" fetchon="${options.fetchOn}" ></link-preview>`;
 
     // get the styles either from the result of assigning styles or default
     const styles = options.assignStyles(a) || options.styles;

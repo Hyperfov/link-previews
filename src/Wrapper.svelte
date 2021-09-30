@@ -45,7 +45,7 @@
       }
 
       if (windowHeight - (linkPos.y + linkPos.height) < fullHeight) {
-        top = linkPos.y - actualHeight - linkPos.height + 5 + window.scrollY;
+        top = linkPos.y - actualHeight - addedMargin / 2 + window.scrollY;
       } else {
         top = linkPos.y + linkPos.height + window.scrollY;
       }
