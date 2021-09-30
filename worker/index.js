@@ -44,14 +44,9 @@ async function handleRequest(event) {
 
       const meta = parsed.querySelectorAll("meta");
       const title = parsed.querySelector("title");
-      const description = parsed.querySelector("description");
 
       if (title) {
         responseContent["title"] = title.text;
-      }
-
-      if (description) {
-        responseContent["description"] = description.text;
       }
 
       // get the content of any meta tags we're looking for
@@ -69,6 +64,9 @@ async function handleRequest(event) {
       response = new Response(JSON.stringify(responseContent), {
         headers: responseHeaders,
       });
+
+      // save the response in the cache if the response was sucessful
+      event.waitUntil(cache.put(cacheKey, response.clone()));
     } else {
       // respond with empty data
       response = new Response(JSON.stringify({}), {
@@ -76,9 +74,6 @@ async function handleRequest(event) {
         headers: responseHeaders,
       });
     }
-
-    // save the response in the cache
-    event.waitUntil(cache.put(cacheKey, response.clone()));
   }
 
   return response;

@@ -4,13 +4,14 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hyperfov: Page Previews</title>
+    <title>Page Previews Everywhere</title>
 
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles/styles.css" />
 
     <style id="all-popovers">
       .hyperfov-preview-element-wrapper {
-        box-shadow: 8px 12px 0px #000000a8;
+        box-shadow: 6px 10px 0px #140c0c9d, 6px 10px 10px #140c0c6c;
+        line-height: 110%;
       }
     </style>
     <style id="futureland-popover">
@@ -26,7 +27,7 @@
       }
 
       .hyperfov-link-content::after {
-        background-image: linear-gradient(#ffffff00, #000000);
+        background-image: linear-gradient(#00000000, #000000);
       }
 
       .hyperfov-loading {
@@ -35,23 +36,25 @@
     </style>
     <meta
       name="description"
-      content="Global linked page previews for the web. Hyperfov page previews can be added to any page and create rich previews of linked pages."
+      content="Global linked page previews for the web. Hyperfov page previews can be added to any page to create rich previews of links on hover."
     />
-    <meta property="og:image" content="preview.png" />
+    <meta property="og:image" content="images/preview.png" />
   </head>
 
   <body>
     <article>
       <p id="top">
-        <img id="icon" src="icon.png" /><span
+        <img id="icon" src="images/icon.png" /><span
           ><b>Hyperfov:</b> <span>Page Previews</span></span
         >
       </p>
       <h1>Page previews everywhere</h1>
-      <img id="header-img" src="many.png" alt="Lots of page previews." />
+      <img id="header-img" src="images/many.png" alt="Lots of page previews." />
 
+      <h2>Page previews are great!</h2>
       <p>
-        <a href="https://www.mediawiki.org/wiki/Page_Previews">Page previews</a>
+        I find
+        <a href="https://www.mediawiki.org/wiki/Page_Previews">page previews</a>
         are fantastic little piece of interactivity; they give insight into
         where a link leads before you click it. From poorly formed
         <a href="https://www.nngroup.com/articles/writing-links/">link text</a>
@@ -59,18 +62,19 @@
         help before clicking into a new link. Outside of a few sites like
         <a
           href="https://diff.wikimedia.org/2018/04/18/how-we-designed-page-previews-for-wikipedia/"
-          >Wikipedia</a
-        >, <a href="https://github.blog/2018-03-22-user-hovercards/">Github</a>,
+          >Wikipedia,</a
+        >
+        <a href="https://github.blog/2018-03-22-user-hovercards/">Github,</a>
         and
         <a
           href="https://blog.twitter.com/en_us/a/2010/flying-around-with-hovercards"
           >Twitter</a
         >
-        that have implemented previews for internal links, they're relatively
-        rare.
+        that have implemented previews for some internal links, they're
+        relatively rare to see around the web.
       </p>
 
-      <h2>Towards global previews</h2>
+      <h3>Making global previews can be tricky</h3>
 
       <p>
         One key challenge—and why you likely don't often see previews for
@@ -82,26 +86,29 @@
       </p>
 
       <p>
-        To get around this problem, Hyperfov page previews use a small
-        serverless function that does the work of requesting each link on behalf
-        of the client. A script embedded in the page extracts links, sends them
-        to the worker, then adds the preview popups when hovered.
+        Page previews are also often displayed as little popups that appear when
+        a link is hovered, making them not particularly mobile-friendly. It's
+        often considered a best practice to avoid hover events that aren't
+        purely decorative, and unfortunately page previews fall into the
+        category of non-decorative hover interactions.
+      </p>
+      <p>
+        That said, when considering them a form of
+        <a href="https://en.wikipedia.org/wiki/Progressive_enhancement"
+          >progressive enhancement</a
+        >, they're certainly a very useful addition to pages when viewed on a
+        desktop. I also don't think it's impossible to have page previews on
+        mobile sites, but that's a design exploration for another day.
       </p>
 
-      <img
-        src="diagram.png"
-        alt="The webpage requests that the worker fetch the linked page, which the worker does and sends back to the webpage so it can display a page preview."
-      />
+      <h2>How these page previews work</h2>
 
       <p>
-        This structure brings us closer to the goal of global page previews; now
-        any arbitrary link on a page can be turned into a rich preview when
-        hovered thanks to a helpful worker off-client.
+        <a href="https://github.com/cbroms/hyperfov-page-previews"
+          >This package</a
+        >
+        is composed of two components:
       </p>
-
-      <h2>This package</h2>
-
-      <p>Hyperfov page previews are composed of two components:</p>
       <ul>
         <li>
           A script that inserts page previews on a webpage, written as a
@@ -118,17 +125,44 @@
       </ul>
 
       <p>
+        TThe serverless function is my solution to the aforementioned CORS
+        problem; it does the work of requesting each link on behalf of the
+        client. A script embedded in the page extracts links, sends them to the
+        worker, then adds the preview popups when hovered.
+      </p>
+
+      <img
+        src="images/diagram.png"
+        alt="The webpage requests that the worker fetch the linked page, which the worker does and sends back to the webpage so it can display a page preview."
+      />
+
+      <p>
+        This structure brings us closer to the goal of global page previews; now
+        any arbitrary link on a page can be turned into a rich preview when
+        hovered thanks to a helpful worker off-client.
+      </p>
+
+      <p>
         More details are available on the
         <a href="https://github.com/cbroms/hyperfov-page-previews"
           >project's repository</a
         >.
       </p>
 
-      <h3>Style</h3>
+      <h3>Using it</h3>
 
       <p>
-        Of course, these page previews should feel integrated on any page. Every
-        element in the preview popup can be styled with custom rules:
+        This project is very much a work in progress, there'll still be lots of
+        weirdness in use. There's a ton to consider to make these previews
+        bulletproof for use on any website, so I'm starting small and mainly
+        focusing on getting the package working for sites with static content,
+        like this one.
+      </p>
+
+      <p>
+        Style is another area of focus: page previews should feel integrated on
+        any page. Every element in the preview popup can be styled with custom
+        rules:
       </p>
 
       <div class="blocks">
@@ -141,17 +175,15 @@
       </div>
 
       <p>
-        Find more information about styling in the
+        Find more information about how styling is handled in the
         <a href="https://github.com/cbroms/hyperfov-page-previews#configuration"
           >project's documentation</a
         >
       </p>
 
-      <h3>About</h3>
-
       <p>
-        <a href="https://christianbroms.com">I</a> built this project as part of
-        my <a href="https://twelvewebsites.com">Twelve Websites</a> project. I'm
+        I built this project as part of my
+        <a href="https://twelvewebsites.com">Twelve Websites</a> project. I'm
         currently integrating it into my other sites and will be making
         adjustments as needed. Find a list of the improvements I'm planning on
         making
@@ -163,17 +195,19 @@
 
     <script defer>
       import("./js/hyperfov-link-previews.min.js").then(() => {
-        setPagePreviews({
-          workerUrl: "https://preview-worker.hyperfov.com",
-          assignStyles: (aElt) => {
-            if (aElt.href.indexOf("futureland.tv") !== -1)
-              return document.getElementById("futureland-popover").sheet;
-            else return document.getElementById("all-popovers").sheet;
-          },
-          assignPositions: (aElt) => {
-            if (aElt.classList.contains("blocky")) return "cursor";
-            else return "below";
-          },
+        document.fonts.ready.then(() => {
+          setPagePreviews({
+            workerUrl: "https://preview-worker.hyperfov.com",
+            assignStyles: (aElt) => {
+              if (aElt.href.indexOf("futureland.tv") !== -1)
+                return document.getElementById("futureland-popover").sheet;
+              else return document.getElementById("all-popovers").sheet;
+            },
+            assignPositions: (aElt) => {
+              if (aElt.classList.contains("blocky")) return "cursor";
+              else return "below";
+            },
+          });
         });
       });
     </script>

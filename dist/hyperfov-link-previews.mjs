@@ -1755,20 +1755,24 @@ function instance($$self, $$props, $$invalidate) {
 	let fetching = null;
 
 	const fetchData = async () => {
-		if (fetching !== false) {
-			$$invalidate(12, worker = abab.atob(worker));
-			const workerUrl = new URL(worker);
-			workerUrl.searchParams.append("page", href);
-			const res = await fetch(workerUrl);
+		if (fetching === null) {
+			try {
+				$$invalidate(9, fetching = true);
+				const workerUrl = new URL(abab.atob(worker));
+				workerUrl.searchParams.append("page", href);
+				const res = await fetch(workerUrl);
 
-			if (res.ok) {
-				const json = await res.json();
-				$$invalidate(4, content = json.description);
-				$$invalidate(6, title = json.title);
-				$$invalidate(5, imgSrc = json.image);
-			}
+				if (res.ok) {
+					const json = await res.json();
+					$$invalidate(4, content = json.description);
+					$$invalidate(6, title = json.title);
+					$$invalidate(5, imgSrc = json.image);
+				}
 
-			$$invalidate(9, fetching = false);
+				$$invalidate(9, fetching = false);
+			} catch(e) {
+				
+			} // ignore failures
 		}
 	};
 
@@ -1777,10 +1781,10 @@ function instance($$self, $$props, $$invalidate) {
 	});
 
 	$$self.$$set = $$props => {
-		if ('eltpos' in $$props) $$invalidate(13, eltpos = $$props.eltpos);
+		if ('eltpos' in $$props) $$invalidate(12, eltpos = $$props.eltpos);
 		if ('href' in $$props) $$invalidate(0, href = $$props.href);
 		if ('id' in $$props) $$invalidate(1, id = $$props.id);
-		if ('worker' in $$props) $$invalidate(12, worker = $$props.worker);
+		if ('worker' in $$props) $$invalidate(13, worker = $$props.worker);
 		if ('position' in $$props) $$invalidate(2, position = $$props.position);
 		if ('fetchon' in $$props) $$invalidate(3, fetchon = $$props.fetchon);
 	};
@@ -1807,8 +1811,8 @@ function instance($$self, $$props, $$invalidate) {
 		fetching,
 		eltPos,
 		fetchData,
-		worker,
-		eltpos
+		eltpos,
+		worker
 	];
 }
 
@@ -1827,10 +1831,10 @@ class LinkPreview_wc extends SvelteElement {
 			create_fragment,
 			safe_not_equal,
 			{
-				eltpos: 13,
+				eltpos: 12,
 				href: 0,
 				id: 1,
-				worker: 12,
+				worker: 13,
 				position: 2,
 				fetchon: 3
 			},
@@ -1854,7 +1858,7 @@ class LinkPreview_wc extends SvelteElement {
 	}
 
 	get eltpos() {
-		return this.$$.ctx[13];
+		return this.$$.ctx[12];
 	}
 
 	set eltpos(eltpos) {
@@ -1881,7 +1885,7 @@ class LinkPreview_wc extends SvelteElement {
 	}
 
 	get worker() {
-		return this.$$.ctx[12];
+		return this.$$.ctx[13];
 	}
 
 	set worker(worker) {

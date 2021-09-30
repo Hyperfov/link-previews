@@ -17,7 +17,7 @@ export default {
     { file: pkg.module, format: "es" },
     { file: pkg.main, format: "umd", name },
     {
-      file: "docs/hyperfov-link-previews.min.js",
+      file: "docs/js/hyperfov-link-previews.min.js",
       format: "umd",
       name,
       plugins: [terser()],

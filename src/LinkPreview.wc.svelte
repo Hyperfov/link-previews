@@ -25,22 +25,25 @@
   let fetching = null;
 
   const fetchData = async () => {
-    if (fetching !== false) {
-      worker = atob(worker);
+    if (fetching === null) {
+      try {
+        fetching = true;
+        const workerUrl = new URL(atob(worker));
+        workerUrl.searchParams.append("page", href);
+        const res = await fetch(workerUrl);
 
-      const workerUrl = new URL(worker);
-      workerUrl.searchParams.append("page", href);
-      const res = await fetch(workerUrl);
+        if (res.ok) {
+          const json = await res.json();
 
-      if (res.ok) {
-        const json = await res.json();
+          content = json.description;
+          title = json.title;
+          imgSrc = json.image;
+        }
 
-        content = json.description;
-        title = json.title;
-        imgSrc = json.image;
+        fetching = false;
+      } catch (e) {
+        // ignore failures
       }
-
-      fetching = false;
     }
   };
 

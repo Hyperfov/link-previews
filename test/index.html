@@ -8,7 +8,7 @@
 
     <style id="all-popovers">
       .hyperfov-preview-element-wrapper {
-        box-shadow: 8px 12px 0px #000000a8;
+        box-shadow: 6px 10px 0px #221515de;
       }
     </style>
   </head>
@@ -27,7 +27,7 @@
     </a>
 
     <script defer>
-      import("../dist/index.js").then(() => {
+      import("../dist/hyperfov-link-previews.js").then(() => {
         setPagePreviews({
           workerUrl: "http://localhost:8787",
           styles: document.getElementById("all-popovers").sheet,

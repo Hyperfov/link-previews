@@ -2,7 +2,7 @@
   "name": "hyperfov-link-previews",
   "svelte": "src/index.js",
   "module": "dist/hyperfov-link-previews.mjs",
-  "main": "dist/js/hyperfov-link-previews.js",
+  "main": "dist/hyperfov-link-previews.js",
   "scripts": {
     "serve": "serve",
     "build": "rollup -c",
