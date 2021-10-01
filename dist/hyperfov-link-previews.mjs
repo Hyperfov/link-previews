@@ -798,7 +798,7 @@ function instance$2($$self, $$props, $$invalidate) {
 	$$self.$$.update = () => {
 		if ($$self.$$.dirty & /*showContent, showImg*/ 192) {
 			{
-				$$invalidate(4, height = showContent ? 172 : 60);
+				$$invalidate(4, height = showContent || showImg ? 172 : 60);
 				$$invalidate(5, width = showContent && showImg ? 400 : 272);
 				positionPreview();
 			}

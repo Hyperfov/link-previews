@@ -12,7 +12,7 @@
   let width;
 
   $: {
-    height = showContent ? 172 : 60;
+    height = showContent || showImg ? 172 : 60;
     width = showContent && showImg ? 400 : 272;
     positionPreview();
   }
