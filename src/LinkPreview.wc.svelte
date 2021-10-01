@@ -3,69 +3,54 @@
 <script>
   import Wrapper from "./Wrapper.svelte";
   import Interior from "./Interior.svelte";
+  import { b64ToUtf8 } from "./utils/encodeDecode";
 
-  import { onMount } from "svelte";
-
-  import { atob } from "abab";
-
-  export let eltpos;
   export let href;
   export let id;
-  export let worker;
+  export let data;
   export let position;
-  export let fetchon;
+  export let fetching;
 
-  let eltPos = JSON.parse(atob(eltpos));
-
-  let content;
-  let title;
-  let imgSrc;
-  let showImg = false;
-  let showContent = false;
-  let fetching = null;
-
-  const fetchData = async () => {
-    if (fetching === null) {
-      try {
-        fetching = true;
-        const workerUrl = new URL(atob(worker));
-        workerUrl.searchParams.append("page", href);
-        const res = await fetch(workerUrl);
-
-        if (res.ok) {
-          const json = await res.json();
-
-          content = json.description;
-          title = json.title;
-          imgSrc = json.image;
-        }
-
-        fetching = false;
-      } catch (e) {
-        // ignore failures
-      }
-    }
-  };
-
-  onMount(() => {
-    if (fetchon === "load") fetchData();
-  });
+  let eltPos;
+  let content = null;
+  let title = null;
+  let imgSrc = null;
 
   $: {
-    showContent = content && content !== "null";
-    showImg = imgSrc && imgSrc !== "null";
+    if (position) {
+      try {
+        eltPos = JSON.parse(b64ToUtf8(position));
+      } catch {
+        eltPos = null;
+      }
+    }
+  }
+
+  $: {
+    if (data) {
+      try {
+        const json = JSON.parse(b64ToUtf8(data));
+        content = json.description;
+        title = json.title;
+        imgSrc = json.image;
+      } catch {
+        content = null;
+        title = null;
+        imgSrc = null;
+      }
+    }
+  }
+
+  let showImg = false;
+  let showContent = false;
+
+  $: {
+    showContent = content !== null;
+    showImg = imgSrc && imgSrc !== null;
   }
 </script>
 
-<Wrapper
-  {href}
-  {showContent}
-  {showImg}
-  {eltPos}
-  {position}
-  fetchData={fetchon === "hover" ? fetchData : null}
-  id="{id}-sub"
->
+<Wrapper {href} {showContent} {showImg} {eltPos} id="{id}-sub">
   <Interior
     {showContent}
     {showImg}
@@ -73,6 +58,6 @@
     {title}
     {href}
     {imgSrc}
-    {fetching}
+    fetching={fetching === "true"}
   />
 </Wrapper>

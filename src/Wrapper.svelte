@@ -3,98 +3,62 @@
   export let showImg;
   export let eltPos;
   export let id;
-  export let position;
-  export let fetchData;
-
-  let cursorPos;
 
   let visible = false;
   let top;
   let left;
-
-  let height = showContent ? 172 : 60;
-  let width = showContent && showImg ? 400 : 272;
+  let height;
+  let width;
 
   $: {
     height = showContent ? 172 : 60;
     width = showContent && showImg ? 400 : 272;
+    positionPreview();
   }
 
-  let renderedHeight = height;
-  let element;
-
-  const positionPreview = (actualHeight) => {
+  const positionPreview = () => {
     // keep the previews a bit away from the sides
     const addedMargin = 40;
 
-    if (cursorPos) {
-      top = cursorPos.y + addedMargin / 2;
-      left = cursorPos.x + addedMargin / 2;
-    } else if (element) {
-      const linkPos = element.getBoundingClientRect();
+    if (eltPos) {
       const fullWidth = width + addedMargin;
-      const fullHeight = actualHeight + addedMargin;
+      const fullHeight = height + addedMargin;
 
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
 
-      if (windowWidth - linkPos.x < fullWidth) {
+      if (windowWidth - eltPos.x < fullWidth) {
         left = windowWidth - fullWidth + window.scrollX;
       } else {
-        left = linkPos.x + window.scrollX;
+        left = eltPos.x + window.scrollX;
       }
 
-      if (windowHeight - (linkPos.y + linkPos.height) < fullHeight) {
-        top = linkPos.y - actualHeight - addedMargin / 2 + window.scrollY;
+      if (windowHeight - eltPos.y < fullHeight) {
+        top = eltPos.y - height - addedMargin / 2 + window.scrollY;
       } else {
-        top = linkPos.y + linkPos.height + window.scrollY;
+        top = eltPos.y + addedMargin / 2 + window.scrollY;
       }
     }
   };
 
   $: {
-    // reposition when height changes
-    positionPreview(renderedHeight);
+    //  reposition when position changes
+    if (eltPos) {
+      visible = true;
+      positionPreview();
+    } else {
+      visible = false;
+    }
   }
-
-  const onMove = (e) => {
-    cursorPos = {
-      x: e.clientX + window.scrollX,
-      y: e.clientY + window.scrollY,
-    };
-    positionPreview(renderedHeight);
-  };
-
-  const toggleOn = () => {
-    if (fetchData) fetchData();
-    positionPreview(renderedHeight);
-    visible = true;
-  };
-  const toggleOff = () => {
-    visible = false;
-  };
 </script>
 
-<span
-  class="preview-wrapper"
-  style="top:{eltPos.y}px; left:{eltPos.x}px; height:{eltPos.height}px; width:{eltPos.width}px;"
-  on:mouseover={toggleOn}
-  on:mousemove={position === "cursor" ? onMove : null}
-  on:focus={toggleOn}
-  on:mouseout={toggleOff}
-  on:blur={toggleOff}
-  bind:this={element}
-/>
 <div
   class="preview"
   class:visible
   style="top:{top}px; left:{left}px; height:{height}px; width:{width}px;"
   {id}
 >
-  <div
-    class="hyperfov-preview-element-wrapper"
-    bind:clientHeight={renderedHeight}
-  >
+  <div class="hyperfov-preview-element-wrapper">
     <slot />
   </div>
 </div>
@@ -125,9 +89,5 @@
     font-size: 14px;
     border: 1px solid black;
     background-color: white;
-  }
-
-  .preview-wrapper {
-    position: absolute;
   }
 </style>
