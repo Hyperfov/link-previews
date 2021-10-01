@@ -2028,26 +2028,29 @@ window.setPagePreviews = function (options = {}) {
 
     // get the styles either from the result of assigning styles or default
     const styles = options.assignStyles(a) || options.styles;
-    const styleRules = [];
 
-    // copy the relevant styles over
-    for (const rule of styles?.rules) {
-      if (rule.selectorText.indexOf(".hyperfov") !== -1) {
-        styleRules.push(rule.cssText);
+    if (styles) {
+      const styleRules = [];
+
+      // copy the relevant styles over
+      for (const rule of styles?.rules) {
+        if (rule.selectorText.indexOf(".hyperfov") !== -1) {
+          styleRules.push(rule.cssText);
+        }
       }
+
+      // add the id to any user-defined styles so they have precedence
+      const thisRuleset = [...styleRules].map(
+        (r) => `#${shadowId}-sub * ${r}\n#${shadowId}-sub > ${r}`
+      );
+
+      const shadow = document.getElementById(shadowId);
+
+      // add the relevant styles to the shadow dom
+      const shadowStyle = document.createElement("style");
+      shadowStyle.innerHTML = thisRuleset.join("\n");
+      shadow.shadowRoot.appendChild(shadowStyle);
     }
-
-    // add the id to any user-defined styles so they have precedence
-    const thisRuleset = [...styleRules].map(
-      (r) => `#${shadowId}-sub * ${r}\n#${shadowId}-sub > ${r}`
-    );
-
-    const shadow = document.getElementById(shadowId);
-
-    // add the relevant styles to the shadow dom
-    const shadowStyle = document.createElement("style");
-    shadowStyle.innerHTML = thisRuleset.join("\n");
-    shadow.shadowRoot.appendChild(shadowStyle);
   }
 };
 
