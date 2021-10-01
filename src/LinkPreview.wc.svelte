@@ -9,6 +9,7 @@
   export let id;
   export let data;
   export let position;
+  export let followcursor;
   export let fetching;
 
   let eltPos;
@@ -45,12 +46,19 @@
   let showContent = false;
 
   $: {
-    showContent = content !== null;
-    showImg = imgSrc && imgSrc !== null;
+    showContent = content !== null && content !== undefined;
+    showImg = imgSrc !== null && imgSrc !== undefined;
   }
 </script>
 
-<Wrapper {href} {showContent} {showImg} {eltPos} id="{id}-sub">
+<Wrapper
+  {href}
+  {showContent}
+  {showImg}
+  {eltPos}
+  followCursor={followcursor === "true"}
+  id="{id}-sub"
+>
   <Interior
     {showContent}
     {showImg}

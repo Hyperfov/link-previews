@@ -41,6 +41,7 @@ window.setPagePreviews = async (options = {}) => {
     const linkElt = document.createElement("link-preview");
     linkElt.setAttribute("id", shadowId);
     linkElt.setAttribute("href", a.href);
+    linkElt.setAttribute("followCursor", position === "cursor");
     document.body.appendChild(linkElt);
 
     const shadow = document.getElementById(shadowId);

@@ -3,6 +3,7 @@
   export let showImg;
   export let eltPos;
   export let id;
+  export let followCursor;
 
   let visible = false;
   let top;
@@ -33,10 +34,14 @@
         left = eltPos.x + window.scrollX;
       }
 
-      if (windowHeight - eltPos.y < fullHeight) {
+      const y = followCursor ? eltPos.y + addedMargin / 2 : eltPos.bottom;
+
+      if (windowHeight - y < fullHeight) {
+        // above
         top = eltPos.y - height - addedMargin / 2 + window.scrollY;
       } else {
-        top = eltPos.y + addedMargin / 2 + window.scrollY;
+        // below
+        top = y + window.scrollY;
       }
     }
   };

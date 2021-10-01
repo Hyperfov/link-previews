@@ -666,8 +666,8 @@
     	let div1;
     	let div0;
     	let current;
-    	const default_slot_template = /*#slots*/ ctx[10].default;
-    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[9], null);
+    	const default_slot_template = /*#slots*/ ctx[11].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[10], null);
 
     	return {
     		c() {
@@ -695,15 +695,15 @@
     		},
     		p(ctx, [dirty]) {
     			if (default_slot) {
-    				if (default_slot.p && (!current || dirty & /*$$scope*/ 512)) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 1024)) {
     					update_slot_base(
     						default_slot,
     						default_slot_template,
     						ctx,
-    						/*$$scope*/ ctx[9],
+    						/*$$scope*/ ctx[10],
     						!current
-    						? get_all_dirty_from_scope(/*$$scope*/ ctx[9])
-    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[9], dirty, null),
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[10])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[10], dirty, null),
     						null
     					);
     				}
@@ -755,6 +755,7 @@
     	let { showImg } = $$props;
     	let { eltPos } = $$props;
     	let { id } = $$props;
+    	let { followCursor } = $$props;
     	let visible = false;
     	let top;
     	let left;
@@ -777,10 +778,16 @@
     				$$invalidate(3, left = eltPos.x + window.scrollX);
     			}
 
-    			if (windowHeight - eltPos.y < fullHeight) {
+    			const y = followCursor
+    			? eltPos.y + addedMargin / 2
+    			: eltPos.bottom;
+
+    			if (windowHeight - y < fullHeight) {
+    				// above
     				$$invalidate(2, top = eltPos.y - height - addedMargin / 2 + window.scrollY);
     			} else {
-    				$$invalidate(2, top = eltPos.y + addedMargin / 2 + window.scrollY);
+    				// below
+    				$$invalidate(2, top = y + window.scrollY);
     			}
     		}
     	};
@@ -790,7 +797,8 @@
     		if ('showImg' in $$props) $$invalidate(7, showImg = $$props.showImg);
     		if ('eltPos' in $$props) $$invalidate(8, eltPos = $$props.eltPos);
     		if ('id' in $$props) $$invalidate(0, id = $$props.id);
-    		if ('$$scope' in $$props) $$invalidate(9, $$scope = $$props.$$scope);
+    		if ('followCursor' in $$props) $$invalidate(9, followCursor = $$props.followCursor);
+    		if ('$$scope' in $$props) $$invalidate(10, $$scope = $$props.$$scope);
     	};
 
     	$$self.$$.update = () => {
@@ -825,6 +833,7 @@
     		showContent,
     		showImg,
     		eltPos,
+    		followCursor,
     		$$scope,
     		slots
     	];
@@ -844,7 +853,8 @@
     				showContent: 6,
     				showImg: 7,
     				eltPos: 8,
-    				id: 0
+    				id: 0,
+    				followCursor: 9
     			},
     			add_css$1
     		);
@@ -1503,13 +1513,13 @@
 
     	interior = new Interior({
     			props: {
-    				showContent: /*showContent*/ ctx[8],
-    				showImg: /*showImg*/ ctx[7],
-    				content: /*content*/ ctx[3],
-    				title: /*title*/ ctx[6],
+    				showContent: /*showContent*/ ctx[9],
+    				showImg: /*showImg*/ ctx[8],
+    				content: /*content*/ ctx[4],
+    				title: /*title*/ ctx[7],
     				href: /*href*/ ctx[0],
-    				imgSrc: /*imgSrc*/ ctx[4],
-    				fetching: /*fetching*/ ctx[2] === "true"
+    				imgSrc: /*imgSrc*/ ctx[5],
+    				fetching: /*fetching*/ ctx[3] === "true"
     			}
     		});
 
@@ -1523,13 +1533,13 @@
     		},
     		p(ctx, dirty) {
     			const interior_changes = {};
-    			if (dirty & /*showContent*/ 256) interior_changes.showContent = /*showContent*/ ctx[8];
-    			if (dirty & /*showImg*/ 128) interior_changes.showImg = /*showImg*/ ctx[7];
-    			if (dirty & /*content*/ 8) interior_changes.content = /*content*/ ctx[3];
-    			if (dirty & /*title*/ 64) interior_changes.title = /*title*/ ctx[6];
+    			if (dirty & /*showContent*/ 512) interior_changes.showContent = /*showContent*/ ctx[9];
+    			if (dirty & /*showImg*/ 256) interior_changes.showImg = /*showImg*/ ctx[8];
+    			if (dirty & /*content*/ 16) interior_changes.content = /*content*/ ctx[4];
+    			if (dirty & /*title*/ 128) interior_changes.title = /*title*/ ctx[7];
     			if (dirty & /*href*/ 1) interior_changes.href = /*href*/ ctx[0];
-    			if (dirty & /*imgSrc*/ 16) interior_changes.imgSrc = /*imgSrc*/ ctx[4];
-    			if (dirty & /*fetching*/ 4) interior_changes.fetching = /*fetching*/ ctx[2] === "true";
+    			if (dirty & /*imgSrc*/ 32) interior_changes.imgSrc = /*imgSrc*/ ctx[5];
+    			if (dirty & /*fetching*/ 8) interior_changes.fetching = /*fetching*/ ctx[3] === "true";
     			interior.$set(interior_changes);
     		},
     		i(local) {
@@ -1554,9 +1564,10 @@
     	wrapper = new Wrapper({
     			props: {
     				href: /*href*/ ctx[0],
-    				showContent: /*showContent*/ ctx[8],
-    				showImg: /*showImg*/ ctx[7],
-    				eltPos: /*eltPos*/ ctx[5],
+    				showContent: /*showContent*/ ctx[9],
+    				showImg: /*showImg*/ ctx[8],
+    				eltPos: /*eltPos*/ ctx[6],
+    				followCursor: /*followcursor*/ ctx[2] === "true",
     				id: "" + (/*id*/ ctx[1] + "-sub"),
     				$$slots: { default: [create_default_slot] },
     				$$scope: { ctx }
@@ -1575,12 +1586,13 @@
     		p(ctx, [dirty]) {
     			const wrapper_changes = {};
     			if (dirty & /*href*/ 1) wrapper_changes.href = /*href*/ ctx[0];
-    			if (dirty & /*showContent*/ 256) wrapper_changes.showContent = /*showContent*/ ctx[8];
-    			if (dirty & /*showImg*/ 128) wrapper_changes.showImg = /*showImg*/ ctx[7];
-    			if (dirty & /*eltPos*/ 32) wrapper_changes.eltPos = /*eltPos*/ ctx[5];
+    			if (dirty & /*showContent*/ 512) wrapper_changes.showContent = /*showContent*/ ctx[9];
+    			if (dirty & /*showImg*/ 256) wrapper_changes.showImg = /*showImg*/ ctx[8];
+    			if (dirty & /*eltPos*/ 64) wrapper_changes.eltPos = /*eltPos*/ ctx[6];
+    			if (dirty & /*followcursor*/ 4) wrapper_changes.followCursor = /*followcursor*/ ctx[2] === "true";
     			if (dirty & /*id*/ 2) wrapper_changes.id = "" + (/*id*/ ctx[1] + "-sub");
 
-    			if (dirty & /*$$scope, showContent, showImg, content, title, href, imgSrc, fetching*/ 2525) {
+    			if (dirty & /*$$scope, showContent, showImg, content, title, href, imgSrc, fetching*/ 5049) {
     				wrapper_changes.$$scope = { dirty, ctx };
     			}
 
@@ -1606,6 +1618,7 @@
     	let { id } = $$props;
     	let { data } = $$props;
     	let { position } = $$props;
+    	let { followcursor } = $$props;
     	let { fetching } = $$props;
     	let eltPos;
     	let content = null;
@@ -1617,45 +1630,46 @@
     	$$self.$$set = $$props => {
     		if ('href' in $$props) $$invalidate(0, href = $$props.href);
     		if ('id' in $$props) $$invalidate(1, id = $$props.id);
-    		if ('data' in $$props) $$invalidate(9, data = $$props.data);
-    		if ('position' in $$props) $$invalidate(10, position = $$props.position);
-    		if ('fetching' in $$props) $$invalidate(2, fetching = $$props.fetching);
+    		if ('data' in $$props) $$invalidate(10, data = $$props.data);
+    		if ('position' in $$props) $$invalidate(11, position = $$props.position);
+    		if ('followcursor' in $$props) $$invalidate(2, followcursor = $$props.followcursor);
+    		if ('fetching' in $$props) $$invalidate(3, fetching = $$props.fetching);
     	};
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*position*/ 1024) {
+    		if ($$self.$$.dirty & /*position*/ 2048) {
     			{
     				if (position) {
     					try {
-    						$$invalidate(5, eltPos = JSON.parse(b64ToUtf8(position)));
+    						$$invalidate(6, eltPos = JSON.parse(b64ToUtf8(position)));
     					} catch {
-    						$$invalidate(5, eltPos = null);
+    						$$invalidate(6, eltPos = null);
     					}
     				}
     			}
     		}
 
-    		if ($$self.$$.dirty & /*data*/ 512) {
+    		if ($$self.$$.dirty & /*data*/ 1024) {
     			{
     				if (data) {
     					try {
     						const json = JSON.parse(b64ToUtf8(data));
-    						$$invalidate(3, content = json.description);
-    						$$invalidate(6, title = json.title);
-    						$$invalidate(4, imgSrc = json.image);
+    						$$invalidate(4, content = json.description);
+    						$$invalidate(7, title = json.title);
+    						$$invalidate(5, imgSrc = json.image);
     					} catch {
-    						$$invalidate(3, content = null);
-    						$$invalidate(6, title = null);
-    						$$invalidate(4, imgSrc = null);
+    						$$invalidate(4, content = null);
+    						$$invalidate(7, title = null);
+    						$$invalidate(5, imgSrc = null);
     					}
     				}
     			}
     		}
 
-    		if ($$self.$$.dirty & /*content, imgSrc*/ 24) {
+    		if ($$self.$$.dirty & /*content, imgSrc*/ 48) {
     			{
-    				$$invalidate(8, showContent = content !== null);
-    				$$invalidate(7, showImg = imgSrc && imgSrc !== null);
+    				$$invalidate(9, showContent = content !== null && content !== undefined);
+    				$$invalidate(8, showImg = imgSrc !== null && imgSrc !== undefined);
     			}
     		}
     	};
@@ -1663,6 +1677,7 @@
     	return [
     		href,
     		id,
+    		followcursor,
     		fetching,
     		content,
     		imgSrc,
@@ -1692,9 +1707,10 @@
     			{
     				href: 0,
     				id: 1,
-    				data: 9,
-    				position: 10,
-    				fetching: 2
+    				data: 10,
+    				position: 11,
+    				followcursor: 2,
+    				fetching: 3
     			},
     			null
     		);
@@ -1712,7 +1728,7 @@
     	}
 
     	static get observedAttributes() {
-    		return ["href", "id", "data", "position", "fetching"];
+    		return ["href", "id", "data", "position", "followcursor", "fetching"];
     	}
 
     	get href() {
@@ -1734,7 +1750,7 @@
     	}
 
     	get data() {
-    		return this.$$.ctx[9];
+    		return this.$$.ctx[10];
     	}
 
     	set data(data) {
@@ -1743,7 +1759,7 @@
     	}
 
     	get position() {
-    		return this.$$.ctx[10];
+    		return this.$$.ctx[11];
     	}
 
     	set position(position) {
@@ -1751,8 +1767,17 @@
     		flush();
     	}
 
-    	get fetching() {
+    	get followcursor() {
     		return this.$$.ctx[2];
+    	}
+
+    	set followcursor(followcursor) {
+    		this.$$set({ followcursor });
+    		flush();
+    	}
+
+    	get fetching() {
+    		return this.$$.ctx[3];
     	}
 
     	set fetching(fetching) {
@@ -1872,6 +1897,7 @@
         const linkElt = document.createElement("link-preview");
         linkElt.setAttribute("id", shadowId);
         linkElt.setAttribute("href", a.href);
+        linkElt.setAttribute("followCursor", position === "cursor");
         document.body.appendChild(linkElt);
 
         const shadow = document.getElementById(shadowId);
