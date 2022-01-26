@@ -4,7 +4,9 @@ Link previews everywhere.
 
 When added to a webpage, hovering links displays a wikipedia-style dynamic page preview.
 
-## Usage
+**This project is currently being rewritten, find [the previous version here](https://github.com/cbroms/link-previews/tree/v0.1.0)**.
+
+<!-- ## Usage
 
 There are two parts to this project:
 
@@ -158,4 +160,4 @@ setPagePreviews({
     else return "below";
   },
 });
-```
+``` -->
