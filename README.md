@@ -6,7 +6,7 @@ When added to a webpage, hovering links displays a wikipedia-style dynamic page 
 
 **This project is currently being rewritten, find [the previous version here](https://github.com/cbroms/link-previews/tree/v0.1.0)**.
 
-<!-- ## Usage
+## Usage
 
 There are two parts to this project:
 
@@ -21,143 +21,88 @@ Since the task of fetching a page and parsing out the meta information is so sim
 
 Follow the instructions in [the worker's readme](worker/README.md). Once complete, you should have a url like `https://worker.[something].workers.dev`, or a custom domain if you've opted to set one up.
 
-### Add the script to your website
+### Add the script and instantiate
 
-Import the script from [`/dist/index.js`](dist/index.js) at the end of your site's `body`, then call `setPagePreviews` to instantiate:
-
-```html
-<script defer>
-  import("../dist/index.js").then(() => {
-    setPagePreviews({ workerUrl: "https://worker.[something].workers.dev" });
-  });
-</script>
-```
-
-The default installation will add page previews to all `a` tags on the page.
-
-### Configuration
-
-`setPagePreviews` accepts an object of options:
-
-```
-{
-    workerUrl: String,
-    styles: CSSStyleSheet,      // optional
-    getLinks: Function,         // optional
-    assignStyles: Function,     // optional
-    assignPositions: Function,  // optional
-}
-
-```
-
-Each option is explained in more depth below:
-
-### `workerUrl`
-
----
-
-**Required**. The url of your deployed worker. See [deploy the worker](#deploy-the-worker) for how to deploy.
-
-### `styles`
-
----
-
-**Optional**. A stylesheet containing rules for styling the popover.
-
-By passing in `styles` in the options, you're able to override the default popover styles. Any of the classes in [`src/Interior.svelte`](src/Interior.svelte) and [`src/Wrapper.svelte`](src/Wrapper.svelte) that start with `.hyperfov-` can be overridden. For example, you might change the color of the urls displayed in the popovers:
+Add the script to the end of your site's `body`:
 
 ```html
-<style id="popover-styles">
-  .hyperfov-link-url {
-    color: coral;
-  }
-</style>
+<script src="hyperfov-link-previews.js"></script>
 ```
 
-The passed styles must be a [`CSSStyleSheet`](https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet). For example:
-
-```js
-setPagePreviews({
-  workerUrl: "https://...",
-  styles: document.getElementById("popover-styles").sheet,
-});
-```
-
-To apply different styles depending on the link type, see [`assignStyles`](#assignstyles)
-
-### `getLinks`
-
----
-
-**Optional**. A function that returns a list of HTMLElements to apply popovers to, where each element must contain an `href` attribute.
-
-When this function is not included, the default behavior is to apply previews to all `a` tags on the page.
-
-You might use this function to only add previews to a subset of the `a` tags on the page, for example those whose `href` is _external_ to the page:
-
-```js
-setPagePreviews({
-  workerUrl: "https://...",
-  getLinks: () => {
-    const tags = [...document.getElementsByTagName("a")];
-    return tags.filter((t) => {
-      // remove any links to pages on this site
-      return new URL(t.href).host !== window.location.host;
-    });
-  },
-});
-```
-
-### `assignStyles`
-
----
-
-**Optional**. A function that returns the stylesheet to use for a given element.
-
-You might use this function to style popovers differently depending on if the links are external to the page or not. You can create two different style elements:
+Then, call `linkPreview` for each link you'd like to add a preview to:
 
 ```html
-<style id="external-links-styles">
-  .hyperfov-link-url {
-    color: lightcoral;
-  }
-</style>
-<style id="internal-links-styles">
-  .hyperfov-link-url {
-    color: indianred;
-  }
-</style>
+<html>
+  <head>
+    <title>Link Previews</title>
+  </head>
+  <body>
+    <a id="myLink" href="https://hyperfov.com">A cool link</a>
+
+    <script src="hyperfov-link-previews.js"></script>
+    <script>
+      // having loaded the script, add a link preview to the <a> tag of interest
+      linkPreview("#myLink", {
+        backend: "https://link-to-worker.workers.dev",
+      });
+    </script>
+  </body>
+</html>
 ```
 
-Then apply those styles depending on the link's `href`:
+### Options
+
+You can customize the preview element through the `options` in the constructor:
 
 ```js
-setPagePreviews({
-  workerUrl: "https://...",
-  assignStyles: (tag) => {
-    if (new URL(tag.href).host === window.location.host)
-      return document.getElementById("internal-links-styles").sheet;
-    else return document.getElementById("external-links-styles").sheet;
-  },
+linkPreview("#myLink", {
+  backend: "https://link-to-worker.workers.dev",
+  position: "below", // below, above, or follow
+  title: "An interesting link",
+  description: "I think is worth clicking",
 });
 ```
 
-### `assignPositions`
+Here's the full list of options:
 
----
+| Option        | Value                                                                                                                          | Default   | Required? |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------- | --------- |
+| `backend`     | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                    | `null`    | `true`    |
+| `template`    | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-styles-and-markup).) | `null`    | `false`   |
+| `fetchUrl`    | Fetch the url's content from the worker?                                                                                       | `true`    | `false`   |
+| `position`    | Where the preview will be placed relative to the link. `"below"`, `"above"` or `"follow"` to follow the cursor                 | `"below"` | `false`   |
+| `title`       | The preview title. Overrides the title produced by the worker if it finds one.                                                 | `null`    | `false`   |
+| `description` | The preview description. Overrides the description produced by the worker if it finds one.                                     | `null`    | `false`   |
+| `url`         | The url of the link. Overrides the provided element's `href`.                                                                  | `null`    | `false`   |
+| `img`         | The preview image `src`. Overrides the image `src` produced by the worker if it finds one.                                     | `null`    | `false`   |
 
-**Optional**. A function that returns the popover positioning method for a given element.
+### Custom styles and markup
 
-Valid return types are `"below"` or `"cursor"`.
+The link preview is totally customizable through an [html template](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template) with [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot). Add a template to your page (the `template` element is invisible, so this can be anywhere in the document):
 
-You might use this function to position popovers differently depending on the links' classes:
+```html
+<template id="template">
+  <style>
+    .wrapper {
+      padding: 20px;
+      background-color: lightsalmon;
+    }
+  </style>
+  <div class="wrapper">
+    <b><slot name="title">my title</slot></b>
+    <div><slot name="description">my template</slot></div>
+    <slot name="url">my url</slot>
+  </div>
+</template>
+```
+
+The styling and markup is totally up to you, though you must ensure styles are either inline or included in a `style` tag in the template. The link preview component will look for a slots `title`, `description`, `url`, and `img` to insert content. Data that doesn't have corresponding slot in the template won't be displayed.
+
+Once you've created a template, pass it in as an option when instantiating your link previews:
 
 ```js
-setPagePreviews({
-  workerUrl: "...",
-  assignPositions: (tag) => {
-    if (tag.classList.contains("my-link")) return "cursor";
-    else return "below";
-  },
+linkPreview("#myLink", {
+  backend: "https://link-to-worker.workers.dev",
+  template: "#template",
 });
-``` -->
+```

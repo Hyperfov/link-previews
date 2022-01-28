@@ -8,11 +8,109 @@
   </head>
   <body>
     <h1>This is a test</h1>
-    Hello world, <a id="link" href="https://google.com">this is a link</a>.
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam malesuada
+      justo ut dui efficitur posuere. Nam pretium diam ut venenatis bibendum.
+      Nulla rhoncus et ipsum sit amet semper. Integer vitae venenatis neque, in
+      sodales nibh. Praesent maximus lobortis erat, vitae varius nulla ornare
+      non. Nunc rhoncus nulla ex, et euismod velit efficitur id. Etiam sodales
+      posuere commodo. Integer commodo turpis ut velit laoreet ultrices. Nam at
+      eleifend nunc. Mauris eu est nisl. Nulla euismod urna ac libero viverra,
+      eget gravida magna molestie.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam malesuada
+      justo ut dui efficitur posuere. Nam pretium diam ut venenatis bibendum.
+      Nulla rhoncus et ipsum sit amet semper. Integer vitae venenatis neque, in
+      sodales nibh. Praesent maximus lobortis erat, vitae varius nulla ornare
+      non. Nunc rhoncus nulla ex, et euismod velit efficitur id. Etiam sodales
+      posuere commodo. Integer commodo turpis ut velit laoreet ultrices. Nam at
+      eleifend nunc. Mauris eu est nisl. Nulla euismod urna ac libero viverra,
+      eget gravida magna molestie.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam malesuada
+      justo ut dui efficitur posuere. Nam pretium diam ut venenatis bibendum.
+      Nulla rhoncus et ipsum sit amet semper. Integer vitae venenatis neque, in
+      sodales nibh. Praesent maximus lobortis erat, vitae varius nulla ornare
+      non. Nunc rhoncus nulla ex, et euismod velit efficitur id. Etiam sodales
+      posuere commodo. Integer commodo turpis ut velit laoreet ultrices. Nam at
+      eleifend nunc. Mauris eu est nisl. Nulla euismod urna ac libero viverra,
+      eget gravida magna molestie.
+    </p>
+
+    <p>
+      Hello world, <a id="link" href="https://google.com">this is a link</a>.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam malesuada
+      justo ut dui efficitur posuere. Nam pretium diam ut venenatis bibendum.
+      Nulla rhoncus et ipsum sit amet semper. Integer vitae venenatis neque, in
+      sodales nibh. Praesent maximus lobortis erat, vitae varius nulla ornare
+      non. Nunc rhoncus nulla ex, et euismod velit efficitur id. Etiam sodales
+      posuere commodo. Integer commodo turpis ut velit laoreet ultrices. Nam at
+      eleifend nunc. Mauris eu est nisl. Nulla euismod urna ac libero viverra,
+      eget gravida magna molestie.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam malesuada
+      justo ut dui efficitur posuere. Nam pretium diam ut venenatis bibendum.
+      Nulla rhoncus et ipsum sit amet semper. Integer vitae venenatis neque, in
+      sodales nibh. Praesent maximus lobortis erat, vitae varius nulla ornare
+      non. Nunc rhoncus nulla ex, et euismod velit efficitur id. Etiam sodales
+      posuere commodo. Integer commodo turpis ut velit laoreet ultrices. Nam at
+      eleifend nunc. Mauris eu est nisl. Nulla euismod urna ac libero viverra,
+      eget gravida magna molestie.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam malesuada
+      justo ut dui efficitur posuere. Nam pretium diam ut venenatis bibendum.
+      Nulla rhoncus et ipsum sit amet semper. Integer vitae venenatis neque, in
+      sodales nibh. Praesent maximus lobortis erat, vitae varius nulla ornare
+      non. Nunc rhoncus nulla ex, et euismod velit efficitur id. Etiam sodales
+      posuere commodo. Integer commodo turpis ut velit laoreet ultrices. Nam at
+      eleifend nunc. Mauris eu est nisl. Nulla euismod urna ac libero viverra,
+      eget gravida magna molestie.
+    </p>
+
+    <p>
+      <a
+        id="link-2"
+        href="https://hyperfov.com"
+        style="
+          padding: 50px;
+          display: inline-block;
+          background-color: lightpink;
+        "
+      >
+        This is antoher link
+      </a>
+    </p>
+
+    <template id="template">
+      <style>
+        .link-popup-wrapper {
+          padding: 20px;
+          background-color: lightsalmon;
+        }
+      </style>
+      <div class="link-popup-wrapper">
+        <b><slot name="title">my title</slot></b>
+        <div><slot name="description">my template</slot></div>
+        <slot name="url">my url</slot>
+      </div>
+    </template>
 
     <script src="hyperfov-link-previews.js"></script>
     <script>
-      linkPreview("#link");
+      linkPreview("#link", {
+        template: "#template",
+        position: "below",
+        title: "the big G",
+        description: "this is my description",
+        url: "https://google.com",
+      });
+      linkPreview("#link-2", { template: "#template", position: "follow" });
     </script>
   </body>
 </html>
