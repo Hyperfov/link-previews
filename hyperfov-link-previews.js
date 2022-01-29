@@ -29,7 +29,8 @@ class LinkPreview extends HTMLElement {
       "title",
       "description",
       "img",
-      "fetchLink",
+      "fetch",
+      "backend",
     ];
   }
 
@@ -49,17 +50,15 @@ class LinkPreview extends HTMLElement {
     this.t = this.getAttrOrDefault("title", null);
     this.description = this.getAttrOrDefault("description", null);
     this.img = this.getAttrOrDefault("img", null);
-    this.fetchLink = this.getAttrOrDefault(
-      "fetchLink",
-      true,
-      (v) => v === "true"
-    );
+    this.fetch = this.getAttrOrDefault("fetch", true, (v) => v === "true");
+    this.open = this.getAttrOrDefault("open", false, (v) => v === "true");
+
     this.parentPos = this.getAttrOrDefault("parent", null, (v) =>
       JSON.parse(v)
     );
-    this.open = this.getAttrOrDefault("open", false, (v) => v === "true");
+    this.backend = this.getAttrOrDefault("backend", null);
     this.template = this.getAttrOrDefault("template", null);
-    this.position = this.getAttrOrDefault("position");
+    this.position = this.getAttrOrDefault("position", null);
 
     this.retrievedPage = false;
     this.templateElt = null;
@@ -77,6 +76,8 @@ class LinkPreview extends HTMLElement {
       this.parentPos = this.getAttrOrDefault(name, null, (v) => JSON.parse(v));
     } else if (name === "open") {
       this.open = this.getAttrOrDefault(name, false, (v) => v === "true");
+    } else if (name === "fetch") {
+      this.fetch = this.getAttrOrDefault(name, true, (v) => v === "true");
     } else if (name === "title") {
       // treating this one specially since its attribute doesn't match
       this.t = this.getAttrOrDefault(name, null);
@@ -91,8 +92,8 @@ class LinkPreview extends HTMLElement {
   render() {
     // only open if we've received a position
     if (this.parentPos && this.open) {
-      if (!this.retrievedPage && this.fetchLink) {
-        // we haven't fetched the link yet and are allowed to
+      if (!this.retrievedPage && this.fetch && this.backend) {
+        // we haven't fetched the link yet and should
         this.retrievePage();
       }
 
@@ -131,7 +132,8 @@ class LinkPreview extends HTMLElement {
       } else if (this.position === "follow") {
         // follow the cursor around
         this.style.left = `${this.parentPos.x}px`;
-        this.style.top = `${this.parentPos.y + window.scrollY}px`;
+        // offset by the height of the cursor (approximate)
+        this.style.top = `${this.parentPos.y + window.scrollY + 15}px`;
       }
 
       this.style.opacity = 1;
@@ -143,6 +145,11 @@ class LinkPreview extends HTMLElement {
         this.descriptionElt.setAttribute("slot", "description");
         this.descriptionElt.textContent = this.description;
         this.appendChild(this.descriptionElt);
+      } else if (
+        this.descriptionElt &&
+        this.description !== this.descriptionElt.textContent
+      ) {
+        this.descriptionElt.textContent = this.description;
       }
 
       if (this.t && !this.titleElt) {
@@ -152,6 +159,8 @@ class LinkPreview extends HTMLElement {
         this.titleElt.setAttribute("slot", "title");
         this.titleElt.textContent = this.t;
         this.appendChild(this.titleElt);
+      } else if (this.titleElt && this.t !== this.titleElt.textContent) {
+        this.titleElt.textContent = this.t;
       }
 
       if (this.url && !this.urlElt) {
@@ -161,6 +170,19 @@ class LinkPreview extends HTMLElement {
         this.urlElt.setAttribute("slot", "url");
         this.urlElt.textContent = this.url;
         this.appendChild(this.urlElt);
+      } else if (this.urlElt && this.url !== this.urlElt.textContent) {
+        this.urlElt.textContent = this.url;
+      }
+
+      if (this.img && !this.imgElt) {
+        // add the image
+        this.imgElt = document.createElement("img");
+        this.imgElt.id = "img";
+        this.imgElt.setAttribute("slot", "image");
+        this.imgElt.src = this.img;
+        this.appendChild(this.imgElt);
+      } else if (this.imgElt && this.img !== this.imgElt.src) {
+        this.imgElt.src = this.img;
       }
     } else if (this.parentPos && !this.open) {
       // hide the preview
@@ -169,8 +191,19 @@ class LinkPreview extends HTMLElement {
   }
 
   retrievePage() {
-    console.log("fetching");
-    // TODO fetch page
+    this.retrievedPage = true;
+
+    fetch(`${this.backend}/?page=${this.url}`).then((res) => {
+      if (res.ok)
+        res.json().then((data) => {
+          // populate the data only if it doesn't already exist
+          if (data.title && !this.t) this.t = data.title;
+          if (data.description && !this.description)
+            this.description = data.description;
+          if (data.image && !this.img) this.img = data.image;
+          this.render();
+        });
+    });
   }
 
   /**
@@ -235,11 +268,17 @@ function linkPreview(elt, opts = {}) {
     description: null,
     img: null,
     url: null,
+    backend: null,
     fetchLink: true,
     position: "below",
     template: "#hyperfov-link-preview-template",
     ...opts,
   };
+
+  if (!options.backend && options.fetchLink) {
+    console.error("HYPERFOV LINK PREVIEWS >> missing backend url");
+  }
+
   let element = getElement(elt);
 
   if (!opts.template) {
@@ -269,6 +308,7 @@ function linkPreview(elt, opts = {}) {
     preview.setAttribute("description", options.description);
   if (options.img) preview.setAttribute("img", options.img);
   if (options.title) preview.setAttribute("title", options.title);
+  if (options.backend) preview.setAttribute("backend", options.backend);
 
   document.body.appendChild(preview);
 

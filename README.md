@@ -67,7 +67,7 @@ Here's the full list of options:
 
 | Option        | Value                                                                                                                          | Default   | Required? |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------- | --------- |
-| `backend`     | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                    | `null`    | `true`    |
+| `backend`     | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                    | `null`    | `false`   |
 | `template`    | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-styles-and-markup).) | `null`    | `false`   |
 | `fetchUrl`    | Fetch the url's content from the worker?                                                                                       | `true`    | `false`   |
 | `position`    | Where the preview will be placed relative to the link. `"below"`, `"above"` or `"follow"` to follow the cursor                 | `"below"` | `false`   |
