@@ -18,6 +18,7 @@
       eleifend nunc. Mauris eu est nisl. Nulla euismod urna ac libero viverra,
       eget gravida magna molestie.
     </p>
+    <p><a href="https://futureland.tv">this is a link to futureland</a>.</p>
     <p>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam malesuada
       justo ut dui efficitur posuere. Nam pretium diam ut venenatis bibendum.
@@ -27,6 +28,28 @@
       posuere commodo. Integer commodo turpis ut velit laoreet ultrices. Nam at
       eleifend nunc. Mauris eu est nisl. Nulla euismod urna ac libero viverra,
       eget gravida magna molestie.
+    </p>
+    <p>
+      Hello world,
+      <a href="https://mozilla.com">this is a link to mozilla</a>.
+    </p>
+    <p>
+      Hello world,
+      <a href="https://google.com">this is a link to google</a>.
+    </p>
+    <p>
+      Hello world,
+      <a href="https://www.usgs.gov/">this is a link to USGS</a>.
+    </p>
+    <p>
+      Hello world,
+      <a href="https://discord.com/">this is a link to discord</a>.
+    </p>
+    <p>
+      Hello world,
+      <a href="https://en.wikipedia.org/wiki/Coho_salmon"
+        >this is a link about salmon</a
+      >.
     </p>
     <p>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam malesuada
@@ -39,8 +62,12 @@
       eget gravida magna molestie.
     </p>
 
+    <p>Hello world, <a href="https://hyperfov.com">this is a link</a>.</p>
     <p>
-      Hello world, <a id="link" href="https://hyperfov.com">this is a link</a>.
+      Hello world,
+      <a href="https://github.com/cbroms/hyperfov-page-previews"
+        >this is a link to this project's repo</a
+      >.
     </p>
     <p>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam malesuada
@@ -90,37 +117,70 @@
     <template id="template">
       <style>
         .link-popup-wrapper {
-          padding: 20px;
+          padding: 10px;
           background-color: white;
-          box-shadow: 0px 0px 20px rgb(122, 122, 122);
+          box-shadow: 0px 0px 20px rgba(122, 122, 122, 0.63);
           border-radius: 6px;
-          max-width: 300px;
-          display: flex;
+          max-width: 275px;
         }
 
-        img {
+        .link-interior-content div:not(:first-child) {
+          margin-top: 5px;
+        }
+
+        .has-image .link-url,
+        .has-title .link-url,
+        .has-description .link-url,
+        .has-title .link-url {
+          margin-top: 10px;
+        }
+
+        .link-url {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+
+        .link-image {
+          flex-shrink: 0;
+        }
+
+        .link-title {
+          font-weight: bold;
+        }
+
+        ::slotted(img) {
           max-width: 100%;
-          height: 120px;
+          border-radius: 3px;
+          width: 100%;
+          height: auto;
           object-fit: cover;
           object-position: center center;
         }
       </style>
       <div class="link-popup-wrapper">
-        <b><slot name="title">my title</slot></b>
-        <div><slot name="description">my template</slot></div>
-        <div><slot name="image"></slot></div>
-        <slot name="url">my url</slot>
+        <div class="link-interior-content">
+          <div class="link-image"><slot name="image"></slot></div>
+          <div class="link-title"><slot name="title"></slot></div>
+          <div class="link-description">
+            <slot name="description"></slot>
+          </div>
+        </div>
+        <div class="link-url"><slot name="url"></slot></div>
       </div>
     </template>
 
     <script src="hyperfov-link-previews.js"></script>
     <script>
-      linkPreview("#link", {
-        template: "#template",
-        backend: "http://localhost:8787",
-        position: "below",
-        title: "the big G",
+      document.querySelectorAll("a").forEach((elt) => {
+        linkPreview(elt, {
+          template: "#template",
+          backend: "http://localhost:8787",
+          position: "below",
+          // title: "the big G",
+        });
       });
+
       linkPreview("#link-2", { template: "#template", position: "follow" });
     </script>
   </body>

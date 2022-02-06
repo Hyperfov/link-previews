@@ -136,6 +136,8 @@ class LinkPreview extends HTMLElement {
         this.style.top = `${this.parentPos.y + window.scrollY + 15}px`;
       }
 
+      // small animation
+      this.style.transition = "0.2s opacity ease-in";
       this.style.opacity = 1;
 
       if (this.description && !this.descriptionElt) {
@@ -145,6 +147,9 @@ class LinkPreview extends HTMLElement {
         this.descriptionElt.setAttribute("slot", "description");
         this.descriptionElt.textContent = this.description;
         this.appendChild(this.descriptionElt);
+
+        // indicate that there's a description
+        this._shadow.querySelector("div").classList.add("has-description");
       } else if (
         this.descriptionElt &&
         this.description !== this.descriptionElt.textContent
@@ -159,6 +164,9 @@ class LinkPreview extends HTMLElement {
         this.titleElt.setAttribute("slot", "title");
         this.titleElt.textContent = this.t;
         this.appendChild(this.titleElt);
+
+        // indicate that there's a title
+        this._shadow.querySelector("div").classList.add("has-title");
       } else if (this.titleElt && this.t !== this.titleElt.textContent) {
         this.titleElt.textContent = this.t;
       }
@@ -170,6 +178,8 @@ class LinkPreview extends HTMLElement {
         this.urlElt.setAttribute("slot", "url");
         this.urlElt.textContent = this.url;
         this.appendChild(this.urlElt);
+        // indicate that there's a url
+        this._shadow.querySelector("div").classList.add("has-url");
       } else if (this.urlElt && this.url !== this.urlElt.textContent) {
         this.urlElt.textContent = this.url;
       }
@@ -181,6 +191,8 @@ class LinkPreview extends HTMLElement {
         this.imgElt.setAttribute("slot", "image");
         this.imgElt.src = this.img;
         this.appendChild(this.imgElt);
+        // indicate that there's an image
+        this._shadow.querySelector("div").classList.add("has-image");
       } else if (this.imgElt && this.img !== this.imgElt.src) {
         this.imgElt.src = this.img;
       }
