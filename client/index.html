@@ -170,8 +170,8 @@
       </div>
     </template>
 
-    <script src="hyperfov-link-previews.js"></script>
-    <script>
+    <script type="module">
+      import linkPreview from "./src/index.js";
       document.querySelectorAll("a").forEach((elt) => {
         linkPreview(elt, {
           template: "#template",
@@ -181,7 +181,7 @@
         });
       });
 
-      linkPreview("#link-2", { template: "#template", position: "follow" });
+      // linkPreview("#link-2", { template: "#template", position: "follow" });
     </script>
   </body>
 </html>
