@@ -1,4 +1,5 @@
 import getElement from "../utils/getElement";
+import { logError } from "../utils/logMessage";
 
 /**
  * Custom component for link previews
@@ -220,9 +221,7 @@ class LinkPreview extends HTMLElement {
         const val = this.getAttribute(attr);
         return transform(val);
       } catch {
-        console.error(
-          `HYPERFOV LINK PREVIEWS >> could not parse attribute "${attr}" with value ${val}`
-        );
+        logError(`could not parse attribute "${attr}" with value ${val}`);
       }
     }
     return def;

@@ -43,6 +43,7 @@ Then, call `linkPreview` for each link you'd like to add a preview to:
     <script>
       // having loaded the script, add a link preview to the <a> tag of interest
       linkPreview("#myLink", {
+        template: "basic",
         backend: "https://link-to-worker.workers.dev",
       });
     </script>
@@ -57,6 +58,7 @@ You can customize the preview element through the `options` in the constructor:
 ```js
 linkPreview("#myLink", {
   backend: "https://link-to-worker.workers.dev",
+  template: "basic",
   position: "below", // below, above, or follow
   title: "An interesting link",
   description: "I think is worth clicking",
@@ -65,16 +67,16 @@ linkPreview("#myLink", {
 
 Here's the full list of options:
 
-| Option        | Value                                                                                                                          | Default   | Required? |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------- | --------- |
-| `backend`     | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                    | `null`    | `false`   |
-| `template`    | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-styles-and-markup).) | `null`    | `false`   |
-| `fetchUrl`    | Fetch the url's content from the worker?                                                                                       | `true`    | `false`   |
-| `position`    | Where the preview will be placed relative to the link. `"below"`, `"above"` or `"follow"` to follow the cursor                 | `"below"` | `false`   |
-| `title`       | The preview title. Overrides the title produced by the worker if it finds one.                                                 | `null`    | `false`   |
-| `description` | The preview description. Overrides the description produced by the worker if it finds one.                                     | `null`    | `false`   |
-| `url`         | The url of the link. Overrides the provided element's `href`.                                                                  | `null`    | `false`   |
-| `img`         | The preview image `src`. Overrides the image `src` produced by the worker if it finds one.                                     | `null`    | `false`   |
+| Option        | Value                                                                                                                                                                                          | Default   | Required? |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | --------- |
+| `backend`     | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                                                    | `null`    | `false`   |
+| `template`    | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-styles-and-markup).) You can also use the built-in template by passing in `"basic"`. | `basic`   | `false`   |
+| `fetchUrl`    | Fetch the url's content from the worker?                                                                                                                                                       | `true`    | `false`   |
+| `position`    | Where the preview will be placed relative to the link. `"below"`, `"above"` or `"follow"` to follow the cursor                                                                                 | `"below"` | `false`   |
+| `title`       | The preview title. Overrides the title produced by the worker if it finds one.                                                                                                                 | `null`    | `false`   |
+| `description` | The preview description. Overrides the description produced by the worker if it finds one.                                                                                                     | `null`    | `false`   |
+| `url`         | The url of the link. Overrides the provided element's `href`.                                                                                                                                  | `null`    | `false`   |
+| `img`         | The preview image `src`. Overrides the image `src` produced by the worker if it finds one.                                                                                                     | `null`    | `false`   |
 
 ### Custom styles and markup
 

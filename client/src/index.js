@@ -1,19 +1,8 @@
-/**
- * HYPERFOV PAGE PREVIEWS
- *
- * This is a small script that can be configured to show a preview of a link
- * It's meant to be a minimal, framework-agnostic implementation that can
- * be added to any page.
- */
-
-const defaultPreviewTemplate = `
-<template id="hyperfov-link-preview-template">
-<p>my template</p>
-</template>
-`;
-
 import LinkPreview from "./components/LinkPreview";
 import getElement from "./utils/getElement";
+import { logMessage, logError } from "./utils/logMessage";
+
+import basicTemplate from "./templates/basic";
 
 customElements.define("link-preview", LinkPreview);
 
@@ -33,25 +22,20 @@ function linkPreview(elt, opts = {}) {
     backend: null,
     fetchLink: true,
     position: "below",
-    template: "#hyperfov-link-preview-template",
+    template: "basic",
     ...opts,
   };
 
   if (!options.backend && options.fetchLink) {
-    console.error("HYPERFOV LINK PREVIEWS >> missing backend url");
+    logError("missing backend url");
   }
 
   let element = getElement(elt);
 
-  if (!opts.template) {
-    // if the user hasn't provided a template, verify that the default template exists
-    const templateElt = document.querySelector(options.template);
-    if (!(templateElt instanceof HTMLElement)) {
-      // no default template exists; add the default template to the DOM
-      const templateWrapper = document.createElement("div");
-      templateWrapper.innerHTML = defaultPreviewTemplate;
-      document.body.appendChild(templateWrapper);
-    }
+  if (!opts.template || options.template === "basic") {
+    // if the user hasn't provided a template, add the default one
+    document.body.insertAdjacentHTML("afterbegin", basicTemplate());
+    options.template = "#hyperfov-link-preview-template";
   }
 
   // TODO verify the element has a valid href
@@ -94,8 +78,10 @@ function linkPreview(elt, opts = {}) {
   }
 }
 
-console.log("HYPEFOV LINK PREVIEWS >> running");
+logMessage("running");
+
+const linkPreviewTemplates = { basicTemplate };
+
+export { linkPreview, LinkPreview, linkPreviewTemplates };
 
 window.linkPreview = linkPreview;
-
-export { linkPreview, LinkPreview };
