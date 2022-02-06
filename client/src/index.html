@@ -114,8 +114,8 @@
       </a>
     </p>
 
-    <script type="module">
-      import linkPreview from "./src/index.js";
+    <script src="link-previews.js"></script>
+    <script>
       document.querySelectorAll("a").forEach((elt) => {
         linkPreview(elt, {
           template: "basic",
@@ -123,8 +123,6 @@
           position: "below",
         });
       });
-
-      // linkPreview("#link-2", { template: "#template", position: "follow" });
     </script>
   </body>
 </html>
