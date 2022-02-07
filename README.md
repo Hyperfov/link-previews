@@ -81,7 +81,7 @@ Here's the full list of options:
 
 ### Custom previews
 
-The link preview is totally customizable through an [html template](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template) with [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot). The template that's used by default can be found at [`client/templates/basic.js`](/client/templates/basic.js).
+The link preview is totally customizable through an [html template](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template) with [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot). The template that's used by default can be found at [`client/src/templates/basic.js`](/client/src/templates/basic.js).
 
 Add a custom template to your page (the `template` element is invisible, so this can be anywhere in the document):
 
@@ -108,7 +108,7 @@ Once you've created a template, pass it in as an option when instantiating your 
 ```js
 linkPreview("#myLink", {
   backend: "https://link-to-worker.workers.dev",
-  template: "#link-previewtemplate",
+  template: "#link-preview-template",
 });
 ```
 
