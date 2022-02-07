@@ -10,18 +10,20 @@ When added to a webpage, hovering links displays a wikipedia-style dynamic page 
 
 There are two parts to this project:
 
-- A script that inserts page previews on your webpage, written as a Svelte web component.
+- A script that inserts page previews on your webpage, written as a web component.
 - A serverless worker function that fetches and serves the links' meta information.
 
 The worker is required because CORs prevents cross-origin client requests. For example, trying to directly `fetch` a url like `https://matrix.org` from your webpage will fail since most servers are configured to reject cross-origin requests. As a result, it's necessary to make the request outside the browser.
 
-Since the task of fetching a page and parsing out the meta information is so simple, it can be accomplished with a single serverless function that's very quick to deploy. I'm using [Cloudflare Workers](https://workers.cloudflare.com/) but you could probably rewrite it for some other service like AWS Lambda.
+Since the task of fetching a page and parsing out the meta information is so simple, it can be accomplished with a single serverless function. I'm using [Cloudflare Workers](https://workers.cloudflare.com/) but you could probably rewrite it for some other service like AWS Lambda.
 
 ### Deploy the worker
 
-Follow the instructions in [the worker's readme](worker/README.md). Once complete, you should have a url like `https://worker.[something].workers.dev`, or a custom domain if you've opted to set one up.
+Follow the instructions in [the worker's readme](worker/README.md) to deploy the worker. Once complete, you should have a url like `https://worker.[something].workers.dev`, or a custom domain if you've opted to set one up.
 
 ### Add the script and instantiate
+
+The latest build can be found in [`client/dist`](/client/dist/).
 
 Add the script to the end of your site's `body`:
 
@@ -43,7 +45,6 @@ Then, call `linkPreview` for each link you'd like to add a preview to:
     <script>
       // having loaded the script, add a link preview to the <a> tag of interest
       linkPreview("#myLink", {
-        template: "basic",
         backend: "https://link-to-worker.workers.dev",
       });
     </script>
@@ -58,32 +59,34 @@ You can customize the preview element through the `options` in the constructor:
 ```js
 linkPreview("#myLink", {
   backend: "https://link-to-worker.workers.dev",
-  template: "basic",
-  position: "below", // below, above, or follow
-  title: "An interesting link",
+  template: "#my-cool-template", // a custom template for rendering the preview
+  position: "below", // "below" or "above" the link, or "follow" the cursor
+  title: "An interesting link", // setting the title or desc overrides the link's data
   description: "I think is worth clicking",
 });
 ```
 
 Here's the full list of options:
 
-| Option        | Value                                                                                                                                                                                          | Default   | Required? |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | --------- |
-| `backend`     | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                                                    | `null`    | `false`   |
-| `template`    | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-styles-and-markup).) You can also use the built-in template by passing in `"basic"`. | `basic`   | `false`   |
-| `fetchUrl`    | Fetch the url's content from the worker?                                                                                                                                                       | `true`    | `false`   |
-| `position`    | Where the preview will be placed relative to the link. `"below"`, `"above"` or `"follow"` to follow the cursor                                                                                 | `"below"` | `false`   |
-| `title`       | The preview title. Overrides the title produced by the worker if it finds one.                                                                                                                 | `null`    | `false`   |
-| `description` | The preview description. Overrides the description produced by the worker if it finds one.                                                                                                     | `null`    | `false`   |
-| `url`         | The url of the link. Overrides the provided element's `href`.                                                                                                                                  | `null`    | `false`   |
-| `img`         | The preview image `src`. Overrides the image `src` produced by the worker if it finds one.                                                                                                     | `null`    | `false`   |
+| Option        | Value                                                                                                                                                                          | Default   | Required? |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- | --------- |
+| `backend`     | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                                    | `null`    | `false`   |
+| `template`    | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-styles-and-markup).) The default `"basic"` uses a provided template. | `"basic"` | `false`   |
+| `fetchUrl`    | Fetch the url's content from the worker?                                                                                                                                       | `true`    | `false`   |
+| `position`    | Where the preview will be placed relative to the link. `"below"`, `"above"` or `"follow"` to follow the cursor                                                                 | `"below"` | `false`   |
+| `title`       | The preview title. Overrides the title produced by the worker if it finds one.                                                                                                 | `null`    | `false`   |
+| `description` | The preview description. Overrides the description produced by the worker if it finds one.                                                                                     | `null`    | `false`   |
+| `url`         | The url of the link. Overrides the provided element's `href`.                                                                                                                  | `null`    | `false`   |
+| `img`         | The preview image `src`. Overrides the image `src` produced by the worker if it finds one.                                                                                     | `null`    | `false`   |
 
-### Custom styles and markup
+### Custom previews
 
-The link preview is totally customizable through an [html template](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template) with [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot). Add a template to your page (the `template` element is invisible, so this can be anywhere in the document):
+The link preview is totally customizable through an [html template](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template) with [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot). The template that's used by default can be found at [`client/templates/basic.js`](/client/templates/basic.js).
+
+Add a custom template to your page (the `template` element is invisible, so this can be anywhere in the document):
 
 ```html
-<template id="template">
+<template id="link-preview-template">
   <style>
     .wrapper {
       padding: 20px;
@@ -91,9 +94,9 @@ The link preview is totally customizable through an [html template](https://deve
     }
   </style>
   <div class="wrapper">
-    <b><slot name="title">my title</slot></b>
-    <div><slot name="description">my template</slot></div>
-    <slot name="url">my url</slot>
+    <slot name="title">my title</slot>
+    <div><slot name="description">my description</slot></div>
+    <div><slot name="url">my url</slot></div>
   </div>
 </template>
 ```
@@ -105,6 +108,34 @@ Once you've created a template, pass it in as an option when instantiating your 
 ```js
 linkPreview("#myLink", {
   backend: "https://link-to-worker.workers.dev",
-  template: "#template",
+  template: "#link-previewtemplate",
 });
+```
+
+## Development
+
+### Worker
+
+Follow the directions to start the worker in [the worker's readme](worker/README.md).
+
+### Client
+
+To run the client, enter the `client` directory and install the dependencies:
+
+```
+npm install
+```
+
+Then run the development server:
+
+```
+npm run dev
+```
+
+You should now be able to navigate to `localhost:9000` in the browser to try out the examples.
+
+To build the client:
+
+```
+npm run build
 ```

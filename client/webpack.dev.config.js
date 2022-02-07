@@ -9,7 +9,7 @@ module.exports = {
     }),
   ],
   output: {
-    filename: "link-previews.js",
+    filename: "hyperfov-link-previews.js",
     libraryTarget: "umd",
     path: path.resolve(__dirname, "dist"),
   },
