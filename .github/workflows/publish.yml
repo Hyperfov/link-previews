@@ -26,12 +26,12 @@ jobs:
       # - run: git config --global user.email "github-cd-bot@example.com"
       # upgrade npm version in package.json to the tag used in the release.
       # - run: npm version ${{ github.event.release.tag_name }}
-      - run: npm run build
+      - run: cd client && npm run build
       # - run: npm publish --tag ${{ github.event.release.tag_name }}
       #   env:
       #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       # push the version changes to GitHub
-      - run: npm run deploy
+      - run: cd client && npm run deploy
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_KV_NAMESPACE: ${{ secrets.CF_KV_NAMESPACE }}
