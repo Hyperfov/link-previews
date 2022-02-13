@@ -1,0 +1,54 @@
+name: Publish Tagged Version to NPM and CDN
+
+on:
+  release:
+    # when a release is published
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          # "github.event.release.target_commitish" is a global variable and specifies the branch the release targeted
+          ref: ${{ github.event.release.target_commitish }}
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - name: Install dependencies
+        run: cd client && npm install
+      - name: Configure git bot 
+        run: git config --global user.name "GitHub Deploy Bot"
+        run: git config --global user.email "github-cd-bot@hyperfov.com"
+      - name: Upgrade npm version to match release 
+        run: cd client && npm version ${{ github.event.release.tag_name }}
+      - name: Build client  
+        run: cd client && npm run build
+      # - run: npm publish --tag ${{ github.event.release.tag_name }}
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # push the version changes to GitHub
+      - name: Deploy to CDN as "${{ github.event.release.tag_name }}"
+        run: cd client && npm run deploy
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_KV_NAMESPACE: ${{ secrets.CF_KV_NAMESPACE }}
+          CF_EMAIL: ${{ secrets.CF_EMAIL }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+      - name: Deploy to CDN as "latest"
+        run: cd client && npm run deploy
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_KV_NAMESPACE: ${{ secrets.CF_KV_NAMESPACE }}
+          CF_EMAIL: ${{ secrets.CF_EMAIL }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          TAG: "latest"
+      - name: Push tagged changes 
+        run: git push
+        env:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

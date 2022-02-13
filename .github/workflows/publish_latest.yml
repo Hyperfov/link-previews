@@ -1,0 +1,30 @@
+name: Publish Latest Version to CDN
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - name: Install dependencies
+        run: cd client && npm install
+      - name: Build client
+        run: cd client && npm run build
+      - name: Deploy to CDN as "dev_latest"
+        run: cd client && npm run deploy
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_KV_NAMESPACE: ${{ secrets.CF_KV_NAMESPACE }}
+          CF_EMAIL: ${{ secrets.CF_EMAIL }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          TAG: "dev_latest"
