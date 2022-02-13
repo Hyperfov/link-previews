@@ -3,13 +3,14 @@ const fs = require("fs");
 const path = require("path");
 
 // publish the package to the hyperfov CDN
+// this is run from the github action
 const publish = async () => {
   const file = fs
     .readFileSync(path.join(__dirname, "../dist/hyperfov-link-previews.js"))
     .toString();
 
   const loc = encodeURIComponent(
-    `link-previews/${"v0.0.0"}/hyperfov-link-previews.js`
+    `/link-previews/${process.env.TAG}/hyperfov-link-previews.js`
   );
 
   const params = new URLSearchParams();
