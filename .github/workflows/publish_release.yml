@@ -21,12 +21,11 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
         run: cd client && npm install
-      - name: Configure git bot 
-        run: git config --global user.name "GitHub Actions Bot"
-        run: git config --global user.email "github-actions-bot@hyperfov.com"
-      - name: Upgrade npm version to match release 
+      - name: Configure git bot
+        run: git config --global user.name "GitHub Actions Bot" && git config --global user.email "github-actions-bot@hyperfov.com"
+      - name: Upgrade npm version to match release
         run: cd client && npm version ${{ github.event.release.tag_name }}
-      - name: Build client  
+      - name: Build client
         run: cd client && npm run build
       # - run: npm publish --tag ${{ github.event.release.tag_name }}
       #   env:
@@ -48,7 +47,7 @@ jobs:
           CF_EMAIL: ${{ secrets.CF_EMAIL }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           TAG: "latest"
-      - name: Push tagged changes 
+      - name: Push tagged changes
         run: git push
         env:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -59,4 +58,3 @@ jobs:
             Deployed to the Hyperfov CDN at:
             - [https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.js](https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.js)
             - [https://cdn.hyperfov.com/link-previews/${{ github.event.release.tag_name }}/hyperfov-link-previews.js](https://cdn.hyperfov.com/link-previews/${{ github.event.release.tag_name }}/hyperfov-link-previews.js)
-
