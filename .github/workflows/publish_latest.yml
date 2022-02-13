@@ -28,3 +28,9 @@ jobs:
           CF_EMAIL: ${{ secrets.CF_EMAIL }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           TAG: "dev_latest"
+      - name: Comment with deployed URL
+        uses: peter-evans/commit-comment@v1
+        with:
+          body: |
+            Deployed to the Hyperfov CDN at:
+            - [https://cdn.hyperfov.com/link-previews/dev_latest/hyperfov-link-previews.js](https://cdn.hyperfov.com/link-previews/dev_latest/hyperfov-link-previews.js)
