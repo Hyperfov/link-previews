@@ -178,8 +178,16 @@ class LinkPreview extends HTMLElement {
         this.imgElt = document.createElement("img");
         this.imgElt.id = "img";
         this.imgElt.setAttribute("slot", "image");
-        this.imgElt.src = this.img;
-        this.appendChild(this.imgElt);
+
+        const image = new Image();
+        image.src = this.img;
+        image.onload = (e) => {
+          this.imgElt.src = image.src;
+          this.appendChild(this.imgElt);
+          // re-render to adjust position with new height if necessary
+          this.render();
+        };
+
         // indicate that there's an image
         this._shadow.querySelector("div")?.classList.add("has-image");
       } else if (this.imgElt && this.img !== this.imgElt.src) {
