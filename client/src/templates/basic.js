@@ -42,6 +42,7 @@ const basicTemplate = () => {
       height: auto;
       object-fit: cover;
       object-position: center center;
+      max-height: 250px;
     }
   </style>
   <div class="link-popup-wrapper">
