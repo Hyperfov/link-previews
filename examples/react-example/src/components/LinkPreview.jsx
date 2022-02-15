@@ -1,15 +1,17 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { linkPreview } from "link-previews";
 
 function LinkPreview(props) {
   const linkRef = useRef(null);
+  const [preview, setPreview] = useState(null);
 
   // add a link preview to the element
   useEffect(() => {
-    if (linkRef) {
-      linkPreview(linkRef.current, {
+    if (linkRef && !preview) {
+      const preview = linkPreview(linkRef.current, {
         backend: "http://localhost:8787",
       });
+      setPreview(preview);
     }
   });
 

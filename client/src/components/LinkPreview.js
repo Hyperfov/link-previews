@@ -33,14 +33,10 @@ class LinkPreview extends HTMLElement {
     this.render = this.render.bind(this);
     this.retrievePage = this.retrievePage.bind(this);
     this.getAttrOrDefault = this.getAttrOrDefault.bind(this);
+    this.setContent = this.setContent.bind(this);
 
     // instantiate element with any passed attributes
-    this.url = this.getAttrOrDefault("url", null);
-    this.t = this.getAttrOrDefault("title", null);
-    this.description = this.getAttrOrDefault("description", null);
-    this.img = this.getAttrOrDefault("img", null);
-    this.fetch = this.getAttrOrDefault("fetch", true, (v) => v === "true");
-    this.open = this.getAttrOrDefault("open", false, (v) => v === "true");
+    this.setContent();
 
     this.parentPos = this.getAttrOrDefault("parent", null, (v) =>
       JSON.parse(v)
@@ -49,7 +45,6 @@ class LinkPreview extends HTMLElement {
     this.template = this.getAttrOrDefault("template", null);
     this.position = this.getAttrOrDefault("position", null);
 
-    this.retrievedPage = false;
     this.templateElt = null;
 
     this.render();
@@ -70,6 +65,9 @@ class LinkPreview extends HTMLElement {
     } else if (name === "title") {
       // treating this one specially since its attribute doesn't match
       this.t = this.getAttrOrDefault(name, null);
+    } else if (name === "url") {
+      // the url changed; remove the content and refetch the data
+      this.setContent();
     } else {
       // set any of the other attributes
       this[name] = this.getAttrOrDefault(name, null);
@@ -78,6 +76,33 @@ class LinkPreview extends HTMLElement {
     this.render();
   }
 
+  /**
+   * Set or reset the preview's data from its attributes
+   */
+  setContent() {
+    this.url = this.getAttrOrDefault("url", null);
+    this.t = this.getAttrOrDefault("title", null);
+    this.description = this.getAttrOrDefault("description", null);
+    this.img = this.getAttrOrDefault("img", null);
+    this.fetch = this.getAttrOrDefault("fetch", true, (v) => v === "true");
+    this.open = this.getAttrOrDefault("open", false, (v) => v === "true");
+
+    if (this.imgElt) this.removeChild(this.imgElt);
+    if (this.descriptionElt) this.removeChild(this.descriptionElt);
+    if (this.titleElt) this.removeChild(this.titleElt);
+    if (this.urlElt) this.removeChild(this.urlElt);
+
+    this.imgElt = null;
+    this.descriptionElt = null;
+    this.titleElt = null;
+    this.urlElt = null;
+
+    this.retrievedPage = false;
+  }
+
+  /**
+   * Add the element to the DOM with any data we've received from the worker
+   */
   render() {
     // only open if we've received a position
     if (this.parentPos && this.open) {
@@ -199,6 +224,9 @@ class LinkPreview extends HTMLElement {
     }
   }
 
+  /**
+   * Fetch a page's data from the worker
+   */
   retrievePage() {
     this.retrievedPage = true;
 

@@ -46,8 +46,11 @@ function linkPreview(elt, opts = {}) {
 
   preview.setAttribute("position", options.position);
 
-  if (options.url) preview.setAttribute("url", options.url);
-  else preview.setAttribute("url", element.href);
+  const setUrl = () => {
+    if (options.url) preview.setAttribute("url", options.url);
+    else preview.setAttribute("url", element.href);
+  };
+  setUrl();
 
   if (options.template) preview.setAttribute("template", options.template);
   if (options.description)
@@ -76,12 +79,24 @@ function linkPreview(elt, opts = {}) {
       preview.setAttribute("parent", JSON.stringify(pos));
     });
   }
+
+  // watch the element for changes
+  const observer = new MutationObserver((mutations, observer) => {
+    for (const mutation of mutations) {
+      if (mutation.attributeName === "href") {
+        setUrl();
+      }
+    }
+    // TODO: when the element is removed from the DOM, delete the preview and observer
+  });
+  observer.observe(element, { attributes: true });
+
+  // TODO: emit useful events that can be listened for
+  return { ...options };
 }
 
 logMessage("running");
 
-const linkPreviewTemplates = { basicTemplate };
-
-export { linkPreview, LinkPreview, linkPreviewTemplates };
+export { linkPreview, LinkPreview };
 
 window.linkPreview = linkPreview;
