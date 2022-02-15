@@ -41,11 +41,11 @@ function App() {
             </b>
           </summary>
           <p>
-            The react component that wraps the <code>linkPreview</code>{" "}
-            interface is quite simple; just pass the element's <code>ref</code>{" "}
-            to the constructor. Any changes to the element's attributes are
-            updated internally, no need to manually remove the preview element
-            when the props change.
+            The react component in this example that wraps the{" "}
+            <code>linkPreview</code> interface is quite simple; just pass the
+            element's <code>ref</code> to the constructor. Any changes to the
+            element's attributes are updated internally, no need to manually
+            remove the preview element when the component's props change.
           </p>
           <pre>
             {`
