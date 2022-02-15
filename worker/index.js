@@ -60,6 +60,13 @@ async function handleRequest(event) {
         }
       }
 
+      // clean up the description
+      if (responseContent["description"] && MAX_DESCRIPTION_LENGTH) {
+        responseContent["description"] =
+          responseContent["description"].substring(0, MAX_DESCRIPTION_LENGTH) +
+          "...";
+      }
+
       // respond with new data
       response = new Response(JSON.stringify(responseContent), {
         headers: responseHeaders,
