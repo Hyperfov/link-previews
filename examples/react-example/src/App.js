@@ -1,33 +1,30 @@
 import "./App.css";
-import { useRef, useEffect } from "react";
-import { linkPreview } from "link-previews";
+import { useState } from "react";
+import LinkPreview from "./components/LinkPreview";
 
 function App() {
-  const linkRef = useRef(null);
-  useEffect(() => {
-    if (linkRef) {
-      linkPreview(linkRef.current, {
-        backend: "http://localhost:8787",
-      });
+  const [url, setUrl] = useState("https://matrix.org");
+  const [idx, setIdx] = useState(1);
+
+  const updateUrl = () => {
+    const urls = [
+      "https://matrix.org",
+      "https://ipfs.org",
+      "https://en.wikipedia.org",
+    ];
+    setUrl(urls[idx]);
+
+    if (idx + 1 < urls.length) {
+      setIdx(idx + 1);
+    } else {
+      setIdx(0);
     }
-  });
+  };
 
   return (
     <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          ref={linkRef}
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <LinkPreview href={url}>this is a link to {url}</LinkPreview>
+      <button onClick={updateUrl}>Update url</button>
     </div>
   );
 }
