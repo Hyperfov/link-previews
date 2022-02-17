@@ -2,9 +2,9 @@ import { parse } from "node-html-parser";
 
 addEventListener("fetch", (event) => {
   event.respondWith(
-    handleRequest(event).catch(
-      (err) => new Response(err.stack, { status: 500 })
-    )
+    handleRequest(event).catch((err) => {
+      return new Response(err.stack, { status: 500 });
+    })
   );
 });
 
@@ -33,7 +33,16 @@ async function handleRequest(event) {
   let response = await cache.match(cacheKey);
 
   if (!response) {
-    const targetProperties = ["og:title", "og:description", "og:image"];
+    const targetProperties = [
+      "og:title",
+      "og:description",
+      "og:image",
+      "twitter:title",
+      "twitter:description",
+      "twitter:image",
+      "description",
+      "title",
+    ];
 
     const res = await fetch(page);
 
@@ -54,14 +63,17 @@ async function handleRequest(event) {
         const property =
           tag.getAttribute("property") || tag.getAttribute("name");
         if (targetProperties.includes(property)) {
-          responseContent[property.replace("og:", "")] = tag.getAttribute(
-            "content"
-          );
+          responseContent[
+            property.replace("og:", "").replace("twitter:", "")
+          ] = tag.getAttribute("content");
         }
       }
 
       // clean up the description
-      if (responseContent["description"] && MAX_DESCRIPTION_LENGTH) {
+      if (
+        responseContent["description"] &&
+        responseContent["description"].length > MAX_DESCRIPTION_LENGTH
+      ) {
         responseContent["description"] =
           responseContent["description"].substring(0, MAX_DESCRIPTION_LENGTH) +
           "...";
