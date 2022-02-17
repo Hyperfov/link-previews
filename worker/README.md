@@ -1,6 +1,6 @@
 # Link Preview Worker
 
-This is a function that pulls the metadata from any given page, deployable as a Cloudflare Worker.
+This is a tiny API that pulls the metadata from any given page, deployable as a Cloudflare Worker.
 
 It takes requests with a `page` param:
 
@@ -28,29 +28,18 @@ Create your config file by running:
 wrangler init
 ```
 
-then:
-
-```
-wrangler dev
-```
-
-The server should now be available at `http://localhost:8787`.
-
-## Deployment
-
-Once you've run the above commands to set up the worker, you're ready to deploy it.
-
 ### CORS and caching config
 
-There are a couple of environment variables you might want to add to the `wrangler.toml` file:
+There are a couple of environment variables to add to your `wrangler.toml` file:
 
 ```
 [vars]
 CORS = "*"
 CACHE_DURATION = 60000
+MAX_DESCRIPTION_LENGTH = 140
 ```
 
-`CORS` is the list of hosts you wish to allow. For example, if installing link previews on my sites `classicinterfaces.com` and `hyperfov.com`, I'd add:
+`CORS` is a comma separated list of hosts you wish to allow. For example, if installing link previews on my sites `classicinterfaces.com` and `hyperfov.com`, I'd add:
 
 ```
 [vars]
@@ -60,9 +49,19 @@ CACHE_DURATION = 60000
 
 All other cross-origin requests would be denied. To allow all origins, use `"*"`.
 
-`CACHE_DURATION` is how long in seconds each request should be cached by Cloudflare. If multiple clients make the same requests (e.g. multiple people visiting the same page), the worker would serve from the cache rather than re-requesting the linked pages every time. Note that the cache is only used when you deploy the worker to [a custom domain](https://developers.cloudflare.com/workers/platform/routes), rather than the default `.workers.dev` domain.
+`CACHE_DURATION` is how long in seconds each request should be cached by Cloudflare. If multiple clients make the same requests (e.g. multiple people hovering the same links), the worker would serve from the cache rather than re-requesting the linked pages every time. Note that the cache is only used when you deploy the worker to [a custom domain](https://developers.cloudflare.com/workers/platform/routes), rather than the default `.workers.dev` domain.
 
-### Deploy worker
+`MAX_DESCRIPTION_LENGTH` is set to cut descriptions off at a certain length. The worker will add ellipses after any descriptions that get cut off.
+
+Now you can run the development server:
+
+```
+wrangler dev
+```
+
+## Deployment
+
+Once you've run the above commands to set up the worker, you're ready to deploy it.
 
 Run:
 
