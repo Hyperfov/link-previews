@@ -23,7 +23,13 @@ Follow the instructions in [the worker's readme](worker/README.md) to deploy the
 
 ### Add the script and instantiate
 
-The latest build can be found in [`client/dist`](/client/dist/).
+#### CDN
+
+```html
+<script src="https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.js"></script>
+```
+
+The latest build can also be found in [`client/dist`](/client/dist/).
 
 Add the script to the end of your site's `body`:
 
@@ -43,13 +49,22 @@ Then, call `linkPreview` for each link you'd like to add a preview to:
 
     <script src="hyperfov-link-previews.js"></script>
     <script>
-      // having loaded the script, add a link preview to the <a> tag of interest
       linkPreview("#myLink", {
         backend: "https://link-to-worker.workers.dev",
       });
     </script>
   </body>
 </html>
+```
+
+To add previews to all links on the page:
+
+```js
+document.querySelectorAll("a").forEach((elt) => {
+  linkPreview(elt, {
+    backend: "http://localhost:8787",
+  });
+});
 ```
 
 ### Options
@@ -61,23 +76,67 @@ linkPreview("#myLink", {
   backend: "https://link-to-worker.workers.dev",
   template: "#my-cool-template", // a custom template for rendering the preview
   position: "below", // "below" or "above" the link, or "follow" the cursor
-  title: "An interesting link", // setting the title or desc overrides the link's data
-  description: "I think is worth clicking",
 });
 ```
 
 Here's the full list of options:
 
-| Option        | Value                                                                                                                                                                          | Default   | Required? |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- | --------- |
-| `backend`     | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                                    | `null`    | `false`   |
-| `template`    | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-styles-and-markup).) The default `"basic"` uses a provided template. | `"basic"` | `false`   |
-| `fetchUrl`    | Fetch the url's content from the worker?                                                                                                                                       | `true`    | `false`   |
-| `position`    | Where the preview will be placed relative to the link. `"below"`, `"above"` or `"follow"` to follow the cursor                                                                 | `"below"` | `false`   |
-| `title`       | The preview title. Overrides the title produced by the worker if it finds one.                                                                                                 | `null`    | `false`   |
-| `description` | The preview description. Overrides the description produced by the worker if it finds one.                                                                                     | `null`    | `false`   |
-| `url`         | The url of the link. Overrides the provided element's `href`.                                                                                                                  | `null`    | `false`   |
-| `img`         | The preview image `src`. Overrides the image `src` produced by the worker if it finds one.                                                                                     | `null`    | `false`   |
+| Option     | Value                                                                                                                                                                 | Default   | Required? |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | --------- |
+| `backend`  | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                           | `null`    | `false`   |
+| `template` | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-previews).) The default `"basic"` uses a provided template. | `"basic"` | `false`   |
+| `fetch`    | Fetch the url's content from the worker? (See [prefetch data](#prefetch-data) below)                                                                                  | `true`    | `false`   |
+| `position` | Where the preview will be placed relative to the link. `"below"`, `"above"` or `"follow"` to follow the cursor                                                        | `"below"` | `false`   |
+| `content`  | The content of the preview (see [content options](#content-options) below)                                                                                            | `{}`      | `false`   |
+
+#### Content options
+
+The `content` parameter can include keys such as `title`, `description`, `href`, and `image`. Note that any of the keys in `content` can also specified on the element itself though the same keys prefixed with `lp-`. For example:
+
+```html
+<a
+  href="https://example.com/"
+  lp-description="loading..."
+  lp-title="Example link"
+  >example</a
+>
+```
+
+is the equivalent of initializing with
+
+```js
+linkPreview(elt, {
+  content: {
+    href: "https://example.com/",
+    description: "loading...",
+    title: "Example link",
+  },
+});
+```
+
+#### Prefetch data
+
+If you wanted to prefetch all of the link previews rather than fetching them dynamically, you could manually fetch at generation time then add descriptions, titles, and images to all your page's `a` tags:
+
+```html
+<a
+  href="https://example.com/"
+  lp-description="This is an example"
+  lp-title="Example link"
+  lp-image="https://example.com/social.png"
+  >example</a
+>
+```
+
+Then instantiate, setting `fetch` in the options to false to prevent the component from re-fetching:
+
+```js
+document.querySelectorAll("a").forEach((elt) => {
+  linkPreview(elt, {
+    fetch: false,
+  });
+});
+```
 
 ### Custom previews
 
@@ -94,16 +153,16 @@ Add a custom template to your page (the `template` element is invisible, so this
     }
   </style>
   <div class="wrapper">
-    <slot name="title">my title</slot>
-    <div><slot name="description">my description</slot></div>
-    <div><slot name="url">my url</slot></div>
+    <slot name="lp-title">my title</slot>
+    <div><slot name="lp-description">my description</slot></div>
+    <div><slot name="lp-href">my url</slot></div>
   </div>
 </template>
 ```
 
-The styling and markup is totally up to you, though you must ensure styles are either inline or included in a `style` tag in the template. The link preview component will look for a slots `title`, `description`, `url`, and `img` to insert content. Data that doesn't have corresponding slot in the template won't be displayed.
+The styling and markup is totally up to you, though you must ensure styles are either inline or included in a `style` tag in the template. The link preview component will look for a slots `lp-title`, `lp-description`, `lp-url`, and `lp-image` to insert content. Data that doesn't have corresponding slot in the template won't be displayed, so if you don't specify an `lp-image` slot, no image will be inserted.
 
-Once you've created a template, pass it in as an option when instantiating your link previews:
+Once you've created a template, pass its id as an option when instantiating your link previews:
 
 ```js
 linkPreview("#myLink", {
