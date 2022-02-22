@@ -15,49 +15,63 @@ customElements.define("link-preview", LinkPreview);
  */
 function linkPreview(elt, opts = {}) {
   const options = {
-    title: null,
-    description: null,
-    img: null,
-    url: null,
+    content: {
+      title: null,
+      description: null,
+      img: null,
+      href: null,
+    },
     backend: null,
-    fetchLink: true,
+    fetch: true,
     position: "below",
     template: "basic",
     ...opts,
   };
 
-  if (!options.backend && options.fetchLink) {
+  if (!options.backend && options.fetch) {
     logError("missing backend url");
   }
 
   let element = getElement(elt);
+  // TODO verify the element has a valid href
 
   if (!opts.template || options.template === "basic") {
-    // if the user hasn't provided a template, add the default one
+    // if the user hasn't provided a template, add the default one to the DOM
     document.body.insertAdjacentHTML("afterbegin", basicTemplate());
     options.template = "#hyperfov-link-preview-template";
   }
-
-  // TODO verify the element has a valid href
-  // TODO watch the element for changes
-
   // add a link-preview element to the dom for this element
   const preview = document.createElement("link-preview");
 
-  preview.setAttribute("position", options.position);
+  // watch the element for attribute changes and pass through to preview component
+  const observer = new MutationObserver((mutations, observer) => {
+    for (const mutation of mutations) {
+      if (
+        mutation.attributeName === "href" ||
+        mutation.attributeName.includes("lp-") // any attribute prefixed by lp-* we use
+      ) {
+        const attr = mutation.attributeName.replace("lp-", "");
+        const attrValue = element.getAttribute(mutation.attributeName);
+        options.content[attr] = attrValue;
 
-  const setUrl = () => {
-    if (options.url) preview.setAttribute("url", options.url);
-    else preview.setAttribute("url", element.href);
-  };
-  setUrl();
+        preview.setAttribute("content", JSON.stringify(options.content));
+      }
+    }
+    // TODO: when the element is removed from the DOM, delete the preview and observer
+  });
+  observer.observe(element, { attributes: true });
 
   if (options.template) preview.setAttribute("template", options.template);
-  if (options.description)
-    preview.setAttribute("description", options.description);
-  if (options.img) preview.setAttribute("img", options.img);
-  if (options.title) preview.setAttribute("title", options.title);
   if (options.backend) preview.setAttribute("backend", options.backend);
+  if (options.position) preview.setAttribute("position", options.position);
+  if (options.fetch) preview.setAttribute("fetch", options.fetch);
+
+  // get the attributes from the element
+  for (const attribute of element.attributes) {
+    const attr = attribute.nodeName.replace("lp-", "");
+    options.content[attr] = attribute.nodeValue;
+  }
+  preview.setAttribute("content", JSON.stringify(options.content));
 
   document.body.appendChild(preview);
 
@@ -80,19 +94,8 @@ function linkPreview(elt, opts = {}) {
     });
   }
 
-  // watch the element for changes
-  const observer = new MutationObserver((mutations, observer) => {
-    for (const mutation of mutations) {
-      if (mutation.attributeName === "href") {
-        setUrl();
-      }
-    }
-    // TODO: when the element is removed from the DOM, delete the preview and observer
-  });
-  observer.observe(element, { attributes: true });
-
   // TODO: emit useful events that can be listened for
-  return { ...options };
+  return preview;
 }
 
 logMessage("running");

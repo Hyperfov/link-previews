@@ -47,13 +47,13 @@ const basicTemplate = () => {
   </style>
   <div class="link-popup-wrapper">
     <div class="link-interior-content">
-      <div class="link-image"><slot name="image"></slot></div>
-      <div class="link-title"><slot name="title"></slot></div>
+      <div class="link-image"><slot name="lp-img"></slot></div>
+      <div class="link-title"><slot name="lp-title"></slot></div>
       <div class="link-description">
-        <slot name="description"></slot>
+        <slot name="lp-description"></slot>
       </div>
     </div>
-    <div class="link-url"><slot name="url"></slot></div>
+    <div class="link-url"><slot name="lp-href"></slot></div>
   </div>
 </template>`;
 };

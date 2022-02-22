@@ -14,12 +14,9 @@ class LinkPreview extends HTMLElement {
       "open",
       "template",
       "position",
-      "url",
-      "title",
-      "description",
-      "img",
       "fetch",
       "backend",
+      "content",
     ];
   }
 
@@ -41,11 +38,14 @@ class LinkPreview extends HTMLElement {
     this.parentPos = this.getAttrOrDefault("parent", null, (v) =>
       JSON.parse(v)
     );
+    this.content = this.getAttrOrDefault("content", {}, (v) => JSON.parse(v));
     this.backend = this.getAttrOrDefault("backend", null);
     this.template = this.getAttrOrDefault("template", null);
     this.position = this.getAttrOrDefault("position", null);
 
     this.templateElt = null;
+    this.elements = {};
+    this.retrievedPage = false;
 
     this.render();
   }
@@ -62,12 +62,12 @@ class LinkPreview extends HTMLElement {
       this.open = this.getAttrOrDefault(name, false, (v) => v === "true");
     } else if (name === "fetch") {
       this.fetch = this.getAttrOrDefault(name, true, (v) => v === "true");
-    } else if (name === "title") {
-      // treating this one specially since its attribute doesn't match
-      this.t = this.getAttrOrDefault(name, null);
-    } else if (name === "url") {
-      // the url changed; remove the content and refetch the data
-      this.setContent();
+    } else if (name === "content") {
+      const newCont = this.getAttrOrDefault(name, null, (v) => JSON.parse(v));
+      if (newCont?.href !== this.content?.href) {
+        this.setContent();
+      }
+      this.content = newCont;
     } else {
       // set any of the other attributes
       this[name] = this.getAttrOrDefault(name, null);
@@ -80,22 +80,13 @@ class LinkPreview extends HTMLElement {
    * Set or reset the preview's data from its attributes
    */
   setContent() {
-    this.url = this.getAttrOrDefault("url", null);
-    this.t = this.getAttrOrDefault("title", null);
-    this.description = this.getAttrOrDefault("description", null);
-    this.img = this.getAttrOrDefault("img", null);
-    this.fetch = this.getAttrOrDefault("fetch", true, (v) => v === "true");
-    this.open = this.getAttrOrDefault("open", false, (v) => v === "true");
+    this.content = this.getAttrOrDefault("content", null, (v) => JSON.parse(v));
 
-    if (this.imgElt) this.removeChild(this.imgElt);
-    if (this.descriptionElt) this.removeChild(this.descriptionElt);
-    if (this.titleElt) this.removeChild(this.titleElt);
-    if (this.urlElt) this.removeChild(this.urlElt);
-
-    this.imgElt = null;
-    this.descriptionElt = null;
-    this.titleElt = null;
-    this.urlElt = null;
+    // remove any existing elements
+    for (const elt in this.elements) {
+      this.removeChild(this.elements[elt]);
+      delete this.elements[elt];
+    }
 
     this.retrievedPage = false;
   }
@@ -154,69 +145,44 @@ class LinkPreview extends HTMLElement {
       this.style.transition = "0.2s opacity ease-in";
       this.style.opacity = 1;
 
-      if (this.description && !this.descriptionElt) {
-        // add the description
-        this.descriptionElt = document.createElement("span");
-        this.descriptionElt.id = "description";
-        this.descriptionElt.setAttribute("slot", "description");
-        this.descriptionElt.textContent = this.description;
-        this.appendChild(this.descriptionElt);
+      for (const attr in this.content) {
+        if (this.content[attr] && !this.elements[attr]) {
+          // add the element
+          const element =
+            attr === "img"
+              ? document.createElement("img")
+              : document.createElement("span");
 
-        // indicate that there's a description
-        this._shadow.querySelector("div")?.classList.add("has-description");
-      } else if (
-        this.descriptionElt &&
-        this.description !== this.descriptionElt.textContent
-      ) {
-        this.descriptionElt.textContent = this.description;
-      }
+          element.id = `lp-${attr}`;
+          element.setAttribute("slot", `lp-${attr}`);
 
-      if (this.t && !this.titleElt) {
-        // add the title
-        this.titleElt = document.createElement("span");
-        this.titleElt.id = "title";
-        this.titleElt.setAttribute("slot", "title");
-        this.titleElt.textContent = this.t;
-        this.appendChild(this.titleElt);
-
-        // indicate that there's a title
-        this._shadow.querySelector("div")?.classList.add("has-title");
-      } else if (this.titleElt && this.t !== this.titleElt.textContent) {
-        this.titleElt.textContent = this.t;
-      }
-
-      if (this.url && !this.urlElt) {
-        // add the url
-        this.urlElt = document.createElement("span");
-        this.urlElt.id = "url";
-        this.urlElt.setAttribute("slot", "url");
-        this.urlElt.textContent = this.url;
-        this.appendChild(this.urlElt);
-        // indicate that there's a url
-        this._shadow.querySelector("div")?.classList.add("has-url");
-      } else if (this.urlElt && this.url !== this.urlElt.textContent) {
-        this.urlElt.textContent = this.url;
-      }
-
-      if (this.img && !this.imgElt) {
-        // add the image
-        this.imgElt = document.createElement("img");
-        this.imgElt.id = "img";
-        this.imgElt.setAttribute("slot", "image");
-
-        const image = new Image();
-        image.src = this.img;
-        image.onload = (e) => {
-          this.imgElt.src = image.src;
-          this.appendChild(this.imgElt);
-          // re-render to adjust position with new height if necessary
-          this.render();
-        };
-
-        // indicate that there's an image
-        this._shadow.querySelector("div")?.classList.add("has-image");
-      } else if (this.imgElt && this.img !== this.imgElt.src) {
-        this.imgElt.src = this.img;
+          // set the content and add to shadow dom
+          if (attr !== "img") {
+            element.textContent = this.content[attr];
+            this.appendChild(element);
+          } else {
+            const image = new Image();
+            image.src = this.content.img;
+            image.onload = (e) => {
+              element.src = image.src;
+              this.appendChild(element);
+              // re-render to adjust position with new height if necessary
+              this.render();
+            };
+          }
+          // TODO set up some sort of set event
+          this.elements[attr] = element;
+        } else if (
+          (this.elements[attr] &&
+            this.elements[attr]?.textContent !== this.content[attr]) ||
+          (this.elements[attr] &&
+            this.elements[attr]?.src !== this.content[attr])
+        ) {
+          if (attr !== "img")
+            this.elements[attr].textContent = this.content[attr];
+          else this.elements[attr].src = this.content[attr];
+        }
+        // TODO emit some sort of update event
       }
     } else if (this.parentPos && !this.open) {
       // hide the preview
@@ -230,14 +196,11 @@ class LinkPreview extends HTMLElement {
   retrievePage() {
     this.retrievedPage = true;
 
-    fetch(`${this.backend}/?page=${this.url}`).then((res) => {
+    fetch(`${this.backend}/?page=${this.content?.href}`).then((res) => {
       if (res.ok)
         res.json().then((data) => {
           // populate the data only if it doesn't already exist
-          if (data.title && !this.t) this.t = data.title;
-          if (data.description && !this.description)
-            this.description = data.description;
-          if (data.image && !this.img) this.img = data.image;
+          this.content = { ...this.content, ...data };
           this.render();
         });
     });
