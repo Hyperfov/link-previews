@@ -12,13 +12,7 @@ const basicTemplate = () => {
 
     .link-interior-content div:not(:first-child) {
       margin-top: 5px;
-    }
-
-    .has-image .link-url,
-    .has-title .link-url,
-    .has-description .link-url,
-    .has-title .link-url {
-      margin-top: 10px;
+      margin-bottom: 5px;
     }
 
     .link-url {
@@ -47,7 +41,7 @@ const basicTemplate = () => {
   </style>
   <div class="link-popup-wrapper">
     <div class="link-interior-content">
-      <div class="link-image"><slot name="lp-img"></slot></div>
+      <div class="link-image"><slot name="lp-image"></slot></div>
       <div class="link-title"><slot name="lp-title"></slot></div>
       <div class="link-description">
         <slot name="lp-description"></slot>
