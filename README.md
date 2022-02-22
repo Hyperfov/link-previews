@@ -85,9 +85,58 @@ Here's the full list of options:
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | --------- |
 | `backend`  | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                           | `null`    | `false`   |
 | `template` | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-previews).) The default `"basic"` uses a provided template. | `"basic"` | `false`   |
-| `fetch`    | Fetch the url's content from the worker?                                                                                                                              | `true`    | `false`   |
+| `fetch`    | Fetch the url's content from the worker? (See [prefetch data](#prefetch-data) below)                                                                                  | `true`    | `false`   |
 | `position` | Where the preview will be placed relative to the link. `"below"`, `"above"` or `"follow"` to follow the cursor                                                        | `"below"` | `false`   |
-| `content`  | The content of the preview. Can include keys such as `title`, `description`, `href`, and `image` to predefine some content before loading, or if `fetch` is `false`.  | `{}`      | `false`   |
+| `content`  | The content of the preview (see [content options](#content-options) below)                                                                                            | `{}`      | `false`   |
+
+#### Content options
+
+The `content` parameter can include keys such as `title`, `description`, `href`, and `image`. Note that any of the keys in `content` can also specified on the element itself though the same keys prefixed with `lp-`. For example:
+
+```html
+<a
+  href="https://example.com/"
+  lp-description="loading..."
+  lp-title="Example link"
+  >example</a
+>
+```
+
+is the equivalent of initializing with
+
+```js
+linkPreview(elt, {
+  content: {
+    href: "https://example.com/",
+    description: "loading...",
+    title: "Example link",
+  },
+});
+```
+
+#### Prefetch data
+
+If you wanted to prefetch all of the link previews rather than fetching them dynamically, you could manually fetch at generation time then add descriptions, titles, and images to all your page's `a` tags:
+
+```html
+<a
+  href="https://example.com/"
+  lp-description="This is an example"
+  lp-title="Example link"
+  lp-image="https://example.com/social.png"
+  >example</a
+>
+```
+
+Then instantiate, setting `fetch` in the options to false to prevent the component from re-fetching:
+
+```js
+document.querySelectorAll("a").forEach((elt) => {
+  linkPreview(elt, {
+    fetch: false,
+  });
+});
+```
 
 ### Custom previews
 
@@ -111,9 +160,9 @@ Add a custom template to your page (the `template` element is invisible, so this
 </template>
 ```
 
-The styling and markup is totally up to you, though you must ensure styles are either inline or included in a `style` tag in the template. The link preview component will look for a slots `lp-title`, `lp-description`, `lp-url`, and `lp-image` to insert content. Data that doesn't have corresponding slot in the template won't be displayed.
+The styling and markup is totally up to you, though you must ensure styles are either inline or included in a `style` tag in the template. The link preview component will look for a slots `lp-title`, `lp-description`, `lp-url`, and `lp-image` to insert content. Data that doesn't have corresponding slot in the template won't be displayed, so if you don't specify an `lp-image` slot, no image will be inserted.
 
-Once you've created a template, pass its id in as an option when instantiating your link previews:
+Once you've created a template, pass its id as an option when instantiating your link previews:
 
 ```js
 linkPreview("#myLink", {
