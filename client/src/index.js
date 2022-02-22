@@ -18,7 +18,7 @@ function linkPreview(elt, opts = {}) {
     content: {
       title: null,
       description: null,
-      img: null,
+      image: null,
       href: null,
     },
     backend: null,

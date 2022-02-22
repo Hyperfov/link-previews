@@ -149,7 +149,7 @@ class LinkPreview extends HTMLElement {
         if (this.content[attr] && !this.elements[attr]) {
           // add the element
           const element =
-            attr === "img"
+            attr === "image"
               ? document.createElement("img")
               : document.createElement("span");
 
@@ -157,12 +157,12 @@ class LinkPreview extends HTMLElement {
           element.setAttribute("slot", `lp-${attr}`);
 
           // set the content and add to shadow dom
-          if (attr !== "img") {
+          if (attr !== "image") {
             element.textContent = this.content[attr];
             this.appendChild(element);
           } else {
             const image = new Image();
-            image.src = this.content.img;
+            image.src = this.content.image;
             image.onload = (e) => {
               element.src = image.src;
               this.appendChild(element);
@@ -178,7 +178,7 @@ class LinkPreview extends HTMLElement {
           (this.elements[attr] &&
             this.elements[attr]?.src !== this.content[attr])
         ) {
-          if (attr !== "img")
+          if (attr !== "image")
             this.elements[attr].textContent = this.content[attr];
           else this.elements[attr].src = this.content[attr];
         }
