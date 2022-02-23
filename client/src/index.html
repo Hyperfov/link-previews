@@ -109,6 +109,42 @@
       eget gravida magna molestie.
     </p>
 
+    <svg
+      width="600px"
+      height="550px"
+      viewBox="0 0 600 550"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line x1="5" y1="10" x2="440" y2="550" stroke="black"></line>
+      <a xlink:href="https://en.wikipedia.org" id="svg-link">
+        <line x1="5" y1="10" x2="50" y2="10" stroke="black"></line>
+        <circle cx="5" cy="10" r="5"></circle>
+        <text x="55" y="15">
+          Thu, Sep 9, 2021
+          <tspan x="55" y="35">in Berkeley, CA</tspan>
+        </text>
+      </a>
+
+      <polygon points="440,540 440,550 430,550"></polygon>
+      <style>
+        text {
+          text-decoration: underline;
+          text-decoration-style: dotted;
+        }
+
+        a:hover {
+          fill: var(--external-link-color);
+        }
+
+        a: hover &gt;
+        line {
+          stroke: var(--external-link-color);
+        }
+        * {
+        }
+      </style>
+    </svg>
+
     <p>
       <a
         id="link-2"

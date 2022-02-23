@@ -33,7 +33,12 @@ function linkPreview(elt, opts = {}) {
   }
 
   let element = getElement(elt);
-  // TODO verify the element has a valid href
+
+  if (element.hasAttribute("href") || element.hasAttribute("xlink:href")) {
+    // ok, the element has an href
+  } else {
+    logError("element missing href");
+  }
 
   if (!opts.template || options.template === "basic") {
     // if the user hasn't provided a template, add the default one to the DOM
@@ -47,10 +52,12 @@ function linkPreview(elt, opts = {}) {
   const observer = new MutationObserver((mutations, observer) => {
     for (const mutation of mutations) {
       if (
-        mutation.attributeName === "href" ||
+        mutation.attributeName.includes("href") ||
         mutation.attributeName.includes("lp-") // any attribute prefixed by lp-* we use
       ) {
-        const attr = mutation.attributeName.replace("lp-", "");
+        const attr = mutation.attributeName
+          .replace("lp-", "")
+          .replace("xlink:", "");
         const attrValue = element.getAttribute(mutation.attributeName);
         options.content[attr] = attrValue;
 
@@ -68,7 +75,7 @@ function linkPreview(elt, opts = {}) {
 
   // get the attributes from the element
   for (const attribute of element.attributes) {
-    const attr = attribute.nodeName.replace("lp-", "");
+    const attr = attribute.nodeName.replace("lp-", "").replace("xlink:", "");
     options.content[attr] = attribute.nodeValue;
   }
   preview.setAttribute("content", JSON.stringify(options.content));
