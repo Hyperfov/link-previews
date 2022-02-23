@@ -52,15 +52,24 @@ function linkPreview(elt, opts = {}) {
   const observer = new MutationObserver((mutations, observer) => {
     for (const mutation of mutations) {
       if (
-        mutation.attributeName.includes("href") ||
-        mutation.attributeName.includes("lp-") // any attribute prefixed by lp-* we use
+        mutation.attributeName === "href" ||
+        mutation.attributeName === "xlink:href"
       ) {
-        const attr = mutation.attributeName
-          .replace("lp-", "")
-          .replace("xlink:", "");
+        const attrValue = element.getAttribute(mutation.attributeName);
+        if (!new RegExp(/http?s:\/\//).test(attrValue)) {
+          // the href is relative; prepend the site's hostname
+          const url = new URL(window.location);
+          url.pathname = attrValue;
+          options.content["href"] = url.href;
+        } else {
+          options.content["href"] = attrValue;
+        }
+        preview.setAttribute("content", JSON.stringify(options.content));
+      } else if (mutation.attributeName.includes("lp-")) {
+        // watch for any attributes lp-*
+        const attr = mutation.attributeName.replace("lp-", "");
         const attrValue = element.getAttribute(mutation.attributeName);
         options.content[attr] = attrValue;
-
         preview.setAttribute("content", JSON.stringify(options.content));
       }
     }
@@ -75,8 +84,19 @@ function linkPreview(elt, opts = {}) {
 
   // get the attributes from the element
   for (const attribute of element.attributes) {
-    const attr = attribute.nodeName.replace("lp-", "").replace("xlink:", "");
-    options.content[attr] = attribute.nodeValue;
+    if (attribute.nodeName === "href" || attribute.nodeName === "xlink:href") {
+      if (!new RegExp(/http?s:\/\//).test(attribute.nodeValue)) {
+        // the href is relative; prepend the site's hostname
+        const url = new URL(window.location);
+        url.pathname = attribute.nodeValue;
+        options.content["href"] = url.href;
+      } else {
+        options.content["href"] = attribute.nodeValue;
+      }
+    } else {
+      const attr = attribute.nodeName.replace("lp-", "").replace("xlink:", "");
+      options.content[attr] = attribute.nodeValue;
+    }
   }
   preview.setAttribute("content", JSON.stringify(options.content));
 
