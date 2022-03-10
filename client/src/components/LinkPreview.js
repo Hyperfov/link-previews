@@ -200,7 +200,11 @@ class LinkPreview extends HTMLElement {
       if (res.ok)
         res.json().then((data) => {
           // populate the data only if it doesn't already exist
-          this.content = { ...this.content, ...data };
+          for (const attr in data) {
+            if (!this.content[attr]) {
+              this.content[attr] = data[attr];
+            }
+          }
           this.render();
         });
     });
