@@ -4,14 +4,12 @@ Link previews everywhere.
 
 When added to a webpage, hovering links displays a wikipedia-style dynamic page preview.
 
-**This project is currently being rewritten, find [the previous version here](https://github.com/cbroms/link-previews/tree/v0.1.0)**.
-
 ## Usage
 
 There are two parts to this project:
 
-- A script that inserts page previews on your webpage, written as a web component.
-- A serverless worker function that fetches and serves the links' meta information.
+- A function `linkPreview` for adding and initializing a link preview web component for each link.
+- A serverless worker function that fetches and serves the links' meta information to the web components.
 
 The worker is required because CORs prevents cross-origin client requests. For example, trying to directly `fetch` a url like `https://matrix.org` from your webpage will fail since most servers are configured to reject cross-origin requests. As a result, it's necessary to make the request outside the browser.
 
@@ -23,18 +21,22 @@ Follow the instructions in [the worker's readme](worker/README.md) to deploy the
 
 ### Add the script and instantiate
 
-#### CDN
-
-```html
-<script src="https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.js"></script>
-```
-
-The latest build can also be found in [`client/dist`](/client/dist/).
+The latest build can be found in [`client/dist`](/client/dist/).
 
 Add the script to the end of your site's `body`:
 
 ```html
-<script src="hyperfov-link-previews.js"></script>
+<html>
+  <head>
+    <title>Link Previews</title>
+  </head>
+  <body>
+    <a id="myLink" href="https://hyperfov.com">A cool link</a>
+
+    <!-- Insert the link preview script at the end of the body -->
+    <script src="hyperfov-link-previews.js"></script>
+  </body>
+</html>
 ```
 
 Then, call `linkPreview` for each link you'd like to add a preview to:
@@ -48,6 +50,7 @@ Then, call `linkPreview` for each link you'd like to add a preview to:
     <a id="myLink" href="https://hyperfov.com">A cool link</a>
 
     <script src="hyperfov-link-previews.js"></script>
+    <!-- Initialize the link previews -->
     <script>
       linkPreview("#myLink", {
         backend: "https://link-to-worker.workers.dev",
@@ -160,9 +163,9 @@ Add a custom template to your page (the `template` element is invisible, so this
 </template>
 ```
 
-The styling and markup is totally up to you, though you must ensure styles are either inline or included in a `style` tag in the template. The link preview component will look for a slots `lp-title`, `lp-description`, `lp-url`, and `lp-image` to insert content. Data that doesn't have corresponding slot in the template won't be displayed, so if you don't specify an `lp-image` slot, no image will be inserted.
+The styling and markup is totally up to you, though you must ensure styles are either inline or included in a `style` tag in the template. The link preview component will look for a slots `lp-title`, `lp-description`, `lp-url`, `lp-favicon`, and `lp-image` to insert content. Data that doesn't have corresponding slot in the template won't be displayed, so for example if you don't specify an `lp-image` slot, no image will be inserted.
 
-Once you've created a template, pass its id as an option when instantiating your link previews:
+Once you've created a template, pass its `id` as an option when instantiating your link previews:
 
 ```js
 linkPreview("#myLink", {

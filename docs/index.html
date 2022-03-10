@@ -159,7 +159,7 @@
         like this one.
       </p>
 
-      <p>
+      <!-- <p>
         Style is another area of focus: link previews should feel integrated on
         any page. Every element in the preview popup can be styled with custom
         rules:
@@ -179,14 +179,14 @@
         <a href="https://github.com/cbroms/link-previews#custom-previews"
           >project's documentation</a
         >
-      </p>
+      </p> -->
     </article>
 
     <script src="https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.js"></script>
     <script defer>
       document.querySelectorAll("a").forEach((elt) => {
         linkPreview(elt, {
-          backend: "https://previews-worker.hyperfov.com",
+          backend: "https://preview-worker.hyperfov.com",
         });
       });
     </script>
