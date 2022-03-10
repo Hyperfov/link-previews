@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Page Previews Everywhere</title>
+    <title>Link Previews Everywhere</title>
 
     <link rel="stylesheet" href="styles/styles.css" />
 
-    <style id="all-popovers">
+    <!-- <style id="all-popovers">
       .hyperfov-preview-element-wrapper {
         box-shadow: 6px 10px 0px #140c0c9d, 6px 10px 10px #140c0c6c;
         line-height: 110%;
@@ -33,31 +33,31 @@
       .hyperfov-loading {
         background-color: white;
       }
-    </style>
+    </style> -->
     <meta
       property="og:description"
-      content="Global linked page previews for the web. Hyperfov page previews can be added to any page to create rich previews of links on hover."
+      content="Global linked link previews for the web. Hyperfov link previews can be added to any page to create rich previews of links on hover."
     />
     <meta
       property="og:image"
-      content="https://previews.hyperfov.com/images/preview.png"
+      content="https://previews.hyperfov.com/images/many.png"
     />
   </head>
 
   <body>
+    <p id="top">
+      <img id="icon" src="images/icon.png" /><span
+        ><b>Hyperfov:</b> <span>Link Previews</span></span
+      >
+    </p>
     <article>
-      <p id="top">
-        <img id="icon" src="images/icon.png" /><span
-          ><b>Hyperfov:</b> <span>Page Previews</span></span
-        >
-      </p>
-      <h1>Page previews everywhere</h1>
-      <img id="header-img" src="images/many.png" alt="Lots of page previews." />
+      <h1>Link previews everywhere</h1>
+      <img id="header-img" src="images/many.png" alt="Lots of link previews." />
 
-      <h2>Page previews are great!</h2>
+      <h2>Link previews are great!</h2>
       <p>
         I find
-        <a href="https://www.mediawiki.org/wiki/Page_Previews">page previews</a>
+        <a href="https://www.mediawiki.org/wiki/Page_Previews">link previews</a>
         are fantastic little piece of interactivity; they give insight into
         where a link leads before you click it. From poorly formed
         <a href="https://www.nngroup.com/articles/writing-links/">link text</a>
@@ -89,10 +89,10 @@
       </p>
 
       <p>
-        Page previews are also often displayed as little popups that appear when
+        Link previews are also often displayed as little popups that appear when
         a link is hovered, making them not particularly mobile-friendly. It's
         often considered a best practice to avoid hover events that aren't
-        purely decorative, and unfortunately page previews fall into the
+        purely decorative, and unfortunately link previews fall into the
         category of non-decorative hover interactions.
       </p>
       <p>
@@ -100,22 +100,19 @@
         <a href="https://en.wikipedia.org/wiki/Progressive_enhancement"
           >progressive enhancement</a
         >, they're certainly a very useful addition to pages when viewed on a
-        desktop. I also don't think it's impossible to have page previews on
+        desktop. I also don't think it's impossible to have link previews on
         mobile sites, but that's a design exploration for another day.
       </p>
 
-      <h2>How these page previews work</h2>
+      <h2>How these link previews work</h2>
 
       <p>
-        <a href="https://github.com/cbroms/hyperfov-page-previews"
-          >This package</a
-        >
+        <a href="https://github.com/cbroms/link-previews">This package</a>
         is composed of two components:
       </p>
       <ul>
         <li>
-          A script that inserts page previews on a webpage, written as a
-          <a href="https://svelte.dev">Svelte</a>
+          A script that inserts link previews on a webpage, written as a
           <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components"
             >web component</a
           >.
@@ -140,7 +137,7 @@
       />
 
       <p>
-        This structure brings us closer to the goal of global page previews; now
+        This structure brings us closer to the goal of global link previews; now
         any arbitrary link on a page can be turned into a rich preview when
         hovered thanks to a helpful worker off-client.
       </p>
@@ -163,7 +160,7 @@
       </p>
 
       <p>
-        Style is another area of focus: page previews should feel integrated on
+        Style is another area of focus: link previews should feel integrated on
         any page. Every element in the preview popup can be styled with custom
         rules:
       </p>
@@ -179,38 +176,17 @@
 
       <p>
         Find more information about how styling is handled in the
-        <a href="https://github.com/cbroms/hyperfov-page-previews#configuration"
+        <a href="https://github.com/cbroms/link-previews#custom-previews"
           >project's documentation</a
         >
       </p>
-
-      <p>
-        I built this project as part of my
-        <a href="https://twelvewebsites.com">Twelve Websites</a> project. I'm
-        currently integrating it into my other sites and will be making
-        adjustments as needed. Find a list of the improvements I'm planning on
-        making
-        <a href="https://onedimension.net/thought/hyperfov-page-previews-todo"
-          >here</a
-        >.
-      </p>
     </article>
 
+    <script src="https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.js"></script>
     <script defer>
-      import("./js/hyperfov-link-previews.min.js").then(() => {
-        document.fonts.ready.then(() => {
-          setPagePreviews({
-            workerUrl: "https://preview-worker.hyperfov.com",
-            assignStyles: (aElt) => {
-              if (aElt.href.indexOf("futureland.tv") !== -1)
-                return document.getElementById("futureland-popover").sheet;
-              else return document.getElementById("all-popovers").sheet;
-            },
-            assignPositions: (aElt) => {
-              if (aElt.classList.contains("blocky")) return "cursor";
-              else return "below";
-            },
-          });
+      document.querySelectorAll("a").forEach((elt) => {
+        linkPreview(elt, {
+          backend: "https://previews-worker.hyperfov.com",
         });
       });
     </script>
