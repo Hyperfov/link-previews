@@ -63,7 +63,7 @@ function linkPreview(elt, opts = {}) {
         mutation.attributeName === "xlink:href"
       ) {
         const attrValue = element.getAttribute(mutation.attributeName);
-        if (!new RegExp(/http?s:\/\//).test(attrValue)) {
+        if (!new RegExp(/https?:\/\//g).test(attrValue)) {
           // the href is relative; prepend the site's hostname
           const url = new URL(window.location);
           url.pathname = attrValue;
@@ -92,7 +92,7 @@ function linkPreview(elt, opts = {}) {
   // get the attributes from the element
   for (const attribute of element.attributes) {
     if (attribute.nodeName === "href" || attribute.nodeName === "xlink:href") {
-      if (!new RegExp(/http?s:\/\//).test(attribute.nodeValue)) {
+      if (!new RegExp(/https?:\/\//g).test(attribute.nodeValue)) {
         // the href is relative; prepend the site's hostname
         const url = new URL(window.location);
         url.pathname = attribute.nodeValue;
