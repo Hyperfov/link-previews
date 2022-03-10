@@ -28,6 +28,13 @@ function linkPreview(elt, opts = {}) {
     ...opts,
   };
 
+  if (!window.matchMedia("(any-hover: hover)").matches) {
+    logMessage(
+      "this device doesn't support hover events; will not any previews"
+    );
+    return;
+  }
+
   if (!options.backend && options.fetch) {
     logError("missing backend url");
   }
