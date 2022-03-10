@@ -56,6 +56,10 @@
     </p>
     <p>
       Hello world,
+      <a href="https://digitalocean.com/">this is a link to Digital Ocean</a>.
+    </p>
+    <p>
+      Hello world,
       <a href="https://discord.com/">this is a link to discord</a>.
     </p>
     <p>
@@ -140,10 +144,10 @@
           fill: var(--external-link-color);
         }
 
-        a: hover &gt;
         line {
           stroke: var(--external-link-color);
         }
+
         * {
         }
       </style>
@@ -168,49 +172,57 @@
         .link-popup-wrapper {
           padding: 10px;
           background-color: white;
-          box-shadow: 0px 0px 20px rgba(122, 122, 122, 0.63);
+          box-shadow: 0px 5px 15px rgba(101, 101, 110, 0.3);
           border-radius: 6px;
-          max-width: 275px;
+          max-width: 225px;
         }
-
-        .link-interior-content div:not(:first-child) {
+        .link-interior-content div:not(:last-child):not(:first-child) {
           margin-top: 5px;
           margin-bottom: 5px;
         }
-
         .link-url {
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
+          opacity: 0.5;
+          font-size: 12px;
         }
 
         .link-image {
           flex-shrink: 0;
         }
-
         .link-title {
           font-weight: bold;
         }
-
-        ::slotted(img) {
+        ::slotted(#lp-image) {
           max-width: 100%;
           border-radius: 3px;
-          width: 100%;
+          width: max-content;
           height: auto;
           object-fit: cover;
-          object-position: center center;
-          max-height: 250px;
+          object-position: top center;
+          max-height: 150px;
+        }
+
+        ::slotted(#lp-favicon) {
+          max-height: 14px;
+          max-width: 14px;
+          margin-right: 5px;
+          display: inline-block;
         }
       </style>
       <div class="link-popup-wrapper">
         <div class="link-interior-content">
           <div class="link-image"><slot name="lp-image"></slot></div>
-          <div class="link-title"><slot name="lp-title"></slot></div>
+          <div class="link-title">
+            <slot name="lp-favicon"></slot>
+            <slot name="lp-title"></slot>
+          </div>
           <div class="link-description">
             <slot name="lp-description"></slot>
           </div>
+          <div class="link-url"><slot name="lp-href"></slot></div>
         </div>
-        <div class="link-url"><slot name="lp-href"></slot></div>
       </div>
     </template>
 

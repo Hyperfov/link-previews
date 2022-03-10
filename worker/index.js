@@ -54,6 +54,8 @@ async function handleRequest(event) {
       const meta = parsed.querySelectorAll("meta");
       const title = parsed.querySelector("title");
 
+      const links = parsed.querySelectorAll("link");
+
       if (title) {
         responseContent["title"] = title.text;
       }
@@ -69,6 +71,12 @@ async function handleRequest(event) {
         }
       }
 
+      for (const tag of links) {
+        if (tag.getAttribute("rel").includes("icon")) {
+          responseContent.favicon = tag.getAttribute("href");
+        }
+      }
+
       // clean up the description
       if (
         responseContent["description"] &&
@@ -77,6 +85,22 @@ async function handleRequest(event) {
         responseContent["description"] =
           responseContent["description"].substring(0, MAX_DESCRIPTION_LENGTH) +
           "...";
+      }
+
+      // add absolute links to any relative images
+      if (
+        responseContent.favicon !== undefined &&
+        !responseContent.favicon.includes("http")
+      ) {
+        const faviUrl = new URL(page);
+        faviUrl.pathname = responseContent.favicon;
+        responseContent.favicon = faviUrl;
+      }
+
+      if (responseContent.image && !responseContent.image.includes("http")) {
+        const imgUrl = new URL(page);
+        imgUrl.pathname = responseContent.image;
+        responseContent.image = imgUrl;
       }
 
       // respond with new data
