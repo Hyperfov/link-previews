@@ -5,6 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Test</title>
+    <style>
+      body {
+        margin: 0 auto;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      img {
+        width: 100%;
+        max-width: 1000px;
+        margin: 3rem auto;
+        display: block;
+      }
+    </style>
   </head>
   <body>
     <h1>This is a test</h1>
@@ -21,7 +35,10 @@
     <p><a href="https://futureland.tv">this is a link to futureland</a>.</p>
 
     <p>
-      <a href="https://futureland.tv" lp-description="test description"
+      <a
+        href="https://futureland.tv"
+        lp-title="this is a test title"
+        lp-description="This is a custom description that should not be overwritten"
         >this is a link with predefined slots</a
       >.
     </p>
@@ -40,11 +57,7 @@
     </p>
     <p>
       Hello world,
-      <a
-        href="https://mozilla.com"
-        lp-description="This is a custom description that should not be overwritten"
-        >this is a link to mozilla</a
-      >.
+      <a href="https://mozilla.com">this is a link to mozilla</a>.
     </p>
     <p>
       Hello world,
@@ -127,11 +140,10 @@
 
     <svg
       width="600px"
-      height="550px"
-      viewBox="0 0 600 550"
+      height="200px"
+      viewBox="0 0 200 200"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <line x1="5" y1="10" x2="440" y2="550" stroke="black"></line>
       <a xlink:href="https://en.wikipedia.org" id="svg-link">
         <line x1="5" y1="10" x2="50" y2="10" stroke="black"></line>
         <circle cx="5" cy="10" r="5"></circle>
@@ -140,8 +152,6 @@
           <tspan x="55" y="35">in Berkeley, CA</tspan>
         </text>
       </a>
-
-      <polygon points="440,540 440,550 430,550"></polygon>
       <style>
         text {
           text-decoration: underline;
@@ -171,7 +181,7 @@
           background-color: lightpink;
         "
       >
-        This is antoher link
+        This is another link
       </a>
     </p>
 
@@ -184,10 +194,12 @@
           border-radius: 6px;
           max-width: 225px;
         }
+
         .link-interior-content div:not(:last-child):not(:first-child) {
           margin-top: 5px;
           margin-bottom: 5px;
         }
+
         .link-url {
           text-overflow: ellipsis;
           overflow: hidden;
@@ -199,9 +211,11 @@
         .link-image {
           flex-shrink: 0;
         }
+
         .link-title {
           font-weight: bold;
         }
+
         ::slotted(#lp-image) {
           max-width: 100%;
           border-radius: 3px;
@@ -210,13 +224,17 @@
           object-fit: cover;
           object-position: top center;
           max-height: 150px;
+          display: inline-block !important;
+          margin: 0 !important;
         }
 
         ::slotted(#lp-favicon) {
           max-height: 14px;
           max-width: 14px;
-          margin-right: 5px;
-          display: inline-block;
+          margin: 0 !important;
+          margin-right: 5px !important;
+          display: inline-block !important;
+          width: auto !important;
         }
       </style>
       <div class="link-popup-wrapper">
