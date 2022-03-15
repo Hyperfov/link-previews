@@ -9,17 +9,17 @@ When added to a webpage, hovering links displays a wikipedia-style dynamic page 
 There are two parts to this project:
 
 - A function `linkPreview` for adding and initializing a link preview web component for each link.
-- A serverless worker function that fetches and serves the links' meta information to the web components.
+- A serverless worker function that fetches and serves the links' meta information like `title`, `description`, and `image` to the web components.
 
-The worker is required because CORs prevents cross-origin client requests. For example, trying to directly `fetch` a url like `https://matrix.org` from your webpage will fail since most servers are configured to reject cross-origin requests. As a result, it's necessary to make the request outside the browser.
+For the worker function, I'm using [Cloudflare Workers](https://workers.cloudflare.com/) but you could probably rewrite it for some other service like [AWS Lambda](https://aws.amazon.com/lambda/) or [GCP Functions](https://cloud.google.com/functions/).
 
-Since the task of fetching a page and parsing out the meta information is so simple, it can be accomplished with a single serverless function. I'm using [Cloudflare Workers](https://workers.cloudflare.com/) but you could probably rewrite it for some other service like AWS Lambda.
+Using this package requires [first deploying the worker](#deploy-the-worker) to Cloudflare Workers, then [adding the script to your webpage](#add-the-script) and [instantiating](#instantiate).
 
 ### Deploy the worker
 
 Follow the instructions in [the worker's readme](worker/README.md) to deploy the worker. Once complete, you should have a url like `https://worker.[something].workers.dev`, or a custom domain if you've opted to set one up.
 
-### Add the script and instantiate
+### Add the script
 
 The latest build can be found in [`client/dist`](/client/dist/).
 
@@ -32,14 +32,15 @@ Add the script to the end of your site's `body`:
   </head>
   <body>
     <a id="myLink" href="https://hyperfov.com">A cool link</a>
-
     <!-- Insert the link preview script at the end of the body -->
     <script src="hyperfov-link-previews.js"></script>
   </body>
 </html>
 ```
 
-Then, call `linkPreview` for each link you'd like to add a preview to:
+### Instantiate
+
+Now, call `linkPreview` for each link you'd like to add a preview to using the link's selector and the url of your worker:
 
 ```html
 <html>
@@ -48,7 +49,7 @@ Then, call `linkPreview` for each link you'd like to add a preview to:
   </head>
   <body>
     <a id="myLink" href="https://hyperfov.com">A cool link</a>
-
+    <!-- Insert the link preview script at the end of the body -->
     <script src="hyperfov-link-previews.js"></script>
     <!-- Initialize the link previews -->
     <script>
@@ -60,15 +61,30 @@ Then, call `linkPreview` for each link you'd like to add a preview to:
 </html>
 ```
 
-To add previews to all links on the page:
+Which elements you add links to and when is up to you. For example, you might add previews to all links on the page:
 
-```js
-document.querySelectorAll("a").forEach((elt) => {
-  linkPreview(elt, {
-    backend: "http://localhost:8787",
+```html
+<script>
+  document.querySelectorAll("a").forEach((elt) => {
+    linkPreview(elt, {
+      backend: "https://link-to-worker.workers.dev",
+    });
   });
-});
+</script>
 ```
+
+You can also customize the previews' styling. For example:
+
+```html
+<style>
+  link-preview {
+    --lp-border: 1px dashed rebeccapurple;
+    --lp-title-color: rebeccapurple;
+  }
+</style>
+```
+
+For more on styling, see [custom previews](#custom-previews).
 
 ### Options
 
@@ -79,6 +95,9 @@ linkPreview("#myLink", {
   backend: "https://link-to-worker.workers.dev",
   template: "#my-cool-template", // a custom template for rendering the preview
   position: "below", // "below" or "above" the link, or "follow" the cursor
+  content: {
+    title: "My cool link", // override the title returned by the worker
+  },
 });
 ```
 
@@ -143,7 +162,53 @@ document.querySelectorAll("a").forEach((elt) => {
 
 ### Custom previews
 
-The link preview is totally customizable through an [html template](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template) with [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot). The template that's used by default can be found at [`client/src/templates/basic.js`](/client/src/templates/basic.js).
+#### Styling
+
+You can style the basic template with css variables. For example, to turn the titles red and the links blue, set variables with the `link-preview` selector:
+
+```html
+<style>
+  link-preview {
+    --lp-title-color: red;
+    --lp-link-color: blue;
+  }
+</style>
+```
+
+Variables are in the form `--lp-[element]-[css property]`. Here's all the variables the template accepts:
+
+| Variable                       | Default value                           |
+| ------------------------------ | --------------------------------------- |
+| `--lp-border`                  | `none`                                  |
+| `--lp-padding `                | `10px`                                  |
+| `--lp-background`              | `white`                                 |
+| `--lp-box-shadow`              | `0px 5px 15px rgba(101, 101, 110, 0.3)` |
+| `--lp-border-radius`           | `6px`                                   |
+| `--lp-max-width`               | `225px`                                 |
+| `--lp-font-family`             | `inherit`                               |
+| `--lp-font-weight`             | `normal`                                |
+| `--lp-link-color`              | `grey`                                  |
+| `--lp-link-border`             | `none`                                  |
+| `--lp-link-font-size`          | `12px`                                  |
+| `--lp-link-font-family `       | `inherit`                               |
+| `--lp-link-font-weight`        | `normal`                                |
+| `--lp-title-color`             | `inherit`                               |
+| `--lp-title-border`            | `none`                                  |
+| `--lp-title-font-size`         | `16px`                                  |
+| `--lp-title-font-family`       | `inherit`                               |
+| `--lp-title-font-weight`       | `bold`                                  |
+| `--lp-description-color`       | `inherit`                               |
+| `--lp-description-border`      | `none`                                  |
+| `--lp-description-font-size`   | `16px`                                  |
+| `--lp-description-font-family` | `inherit`                               |
+| `--lp-description-font-weight` | `normal`                                |
+| `--lp-image-border`            | `none`                                  |
+| `--lp-image-border-radius`     | `3px`                                   |
+| `--lp-image-max-height`        | `150px`                                 |
+
+#### Custom templates
+
+For instances where the css variables aren't enough, the link preview is completely customizable through an [html template](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template) with [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot). The template that's used by default can be found at [`client/src/templates/basic.js`](/client/src/templates/basic.js).
 
 Add a custom template to your page (the `template` element is invisible, so this can be anywhere in the document):
 
