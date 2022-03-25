@@ -53,21 +53,21 @@ const basicTemplate = () => {
     }
 
     ::slotted(#lp-image) {
-      max-width: 100%;
-      border-radius: var(--lp-image-border-radius, 3px);
-      border: var(--lp-image-border, none);
-      width: max-content;
-      height: auto;
+      max-width: 100% !important;
+      border-radius: var(--lp-image-border-radius, 3px) !important;
+      border: var(--lp-image-border, none) !important;
+      width: max-content !important;
+      height: auto !important;
       object-fit: cover;
       object-position: top center;
-      max-height: var(--lp-image-max-height, 150px);
+      max-height: var(--lp-image-max-height, 150px) !important;
       display: inline-block !important;
       margin: 0 !important;
     }
 
     ::slotted(#lp-favicon) {
-      max-height: 14px;
-      max-width: 14px;
+      max-height: 14px !important;
+      max-width: 14px !important;
       margin: 0 !important;
       margin-right: 5px !important;
       display: inline-block !important;
