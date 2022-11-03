@@ -7,14 +7,14 @@
   src: url("../fonts/charter_regular.woff2") format("woff2");
 }
 
-@font-face {
+/* /* @font-face {
   font-family: "Charter";
   font-style: italic;
   font-weight: normal;
   font-stretch: normal;
   font-display: swap;
   src: url("../fonts/charter_italic.woff2") format("woff2");
-}
+} */
 
 @font-face {
   font-family: "Charter";
@@ -25,23 +25,30 @@
   src: url("../fonts/charter_bold.woff2") format("woff2");
 }
 
-@font-face {
+/* @font-face {
   font-family: "Charter";
   font-style: italic;
   font-weight: bold;
   font-stretch: normal;
   font-display: swap;
   src: url("../fonts/charter_bold_italic.woff2") format("woff2");
-}
+} */ 
 
+:root {
+    --grey: #c7c7c7;
+    --black: #231f20;
+}
 body {
-  background-color: #f0eee9;
+  background-color: #f0f0f0;
+  color: var(--black);
   font-family: "Charter", serif;
+  padding: 0;
+  margin: 0;
 }
 
 p,
 ul {
-  max-width: 600px;
+  max-width: 700px;
   font-size: 18px;
   line-height: 120%;
   margin: 2rem auto;
@@ -57,30 +64,49 @@ h3,
 h4 {
   font-family: sans-serif;
   margin: 2rem auto;
-  max-width: 600px;
+  max-width: 700px;
 }
 
 #top {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  font-family: sans-serif;
+    position: fixed;
+    top: 0;
+   display: flex;
+   justify-content: center;
+   
+  width: 100%;
+  padding: 0.5rem 0rem;
+  background-color: white;
+  border-bottom: 1px solid var(--grey);
 }
 
-#top > span {
-  display: inline-block;
-  width: 80px;
-  bottom: 12px;
-  position: absolute;
-  padding-left: 5px;
+.top-interior {
+    width: 100%;
+    /* max-width: calc(1100px + 4rem); */
+    display: flex;
+    padding: 0 1rem;
+    gap: 1rem;
+    align-items: center;
+}
+
+.subtitle {
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.vertical-divider {
+    width: 1px;
+    height: 30px;
+    border-right: 1px solid var(--grey);
 }
 
 #icon {
-  width: 85px;
+  width: 170px;
   display: inline-block;
   position: relative;
   margin: 0;
 }
+
 img {
   width: 100%;
   max-width: 1000px;
@@ -89,8 +115,8 @@ img {
 }
 
 h1 {
-  font-size: 3.75rem;
-  margin-top: 8rem;
+  font-size: 3.5rem;
+  font-weight: 900;
 }
 
 .blocky {
@@ -122,5 +148,6 @@ a {
 }
 
 article {
-  margin-bottom: 8rem;
+
+  margin: 8rem 0;
 }

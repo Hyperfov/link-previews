@@ -4,36 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Link Previews Everywhere</title>
-
+    <title>Hyperfov Link Previews</title>
     <link rel="stylesheet" href="styles/styles.css" />
-
-    <!-- <style id="all-popovers">
-      .hyperfov-preview-element-wrapper {
-        box-shadow: 6px 10px 0px #140c0c9d, 6px 10px 10px #140c0c6c;
-        line-height: 110%;
-      }
-    </style>
-    <style id="futureland-popover">
-      .hyperfov-preview-element-wrapper {
-        box-shadow: 4px 4px 12px #525252a8;
-        border-radius: 10px;
-        border: 1px solid grey;
-        background-color: black;
-        color: white;
-      }
-      .hyperfov-link-content {
-        background-color: black;
-      }
-
-      .hyperfov-link-content::after {
-        background-image: linear-gradient(#00000000, #000000);
-      }
-
-      .hyperfov-loading {
-        background-color: white;
-      }
-    </style> -->
     <meta
       property="og:description"
       content="Global linked link previews for the web. Hyperfov link previews can be added to any page to create rich previews of links on hover."
@@ -45,16 +17,18 @@
   </head>
 
   <body>
-    <p id="top">
-      <img id="icon" src="images/icon.png" /><span
-        ><b>Hyperfov:</b> <span>Link Previews</span></span
-      >
-    </p>
+    <div id="top">
+      <div class="top-interior">
+        <a href="https://hyperfov.com" target="_blank">
+          <img id="icon" alt="Hyperfov" src="https://hyperfov.com/logo.svg" />
+        </a>
+        <span class="vertical-divider"></span>
+        <span class="subtitle">Package: Link Previews</span>
+      </div>
+    </div>
     <article>
-      <h1>Link previews everywhere</h1>
       <img id="header-img" src="images/many.png" alt="Lots of link previews." />
-
-      <h2>Link previews are great!</h2>
+      <h1>Link previews are great!</h1>
       <p>
         I find
         <a href="https://www.mediawiki.org/wiki/Page_Previews">link previews</a>
@@ -185,9 +159,11 @@
     <script src="https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.js"></script>
     <script defer>
       document.querySelectorAll("a").forEach((elt) => {
-        linkPreview(elt, {
-          backend: "https://preview-worker.hyperfov.com",
-        });
+        if (elt.href !== "https://hyperfov.com/") {
+          linkPreview(elt, {
+            backend: "https://preview-worker.hyperfov.com",
+          });
+        }
       });
     </script>
   </body>
