@@ -3,7 +3,7 @@ import getElement from "./utils/getElement";
 import { logMessage, logError } from "./utils/logMessage";
 
 import tippy, { followCursor } from "tippy.js";
-// import "tippy.js/animations/shift-away.css";
+import "tippy.js/animations/shift-toward.css";
 
 import basicTemplate from "./templates/basic";
 
@@ -102,7 +102,7 @@ function linkPreview(elt, opts = {}) {
     content: preview,
     placement: options.placement,
     followCursor: options.follow || options.follow === "true",
-    // animation: "shift-away",
+    animation: "shift-toward",
     plugins: [followCursor],
     onShow: () => {
       preview.setAttribute("open", true);

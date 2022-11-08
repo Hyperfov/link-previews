@@ -104,10 +104,6 @@ class LinkPreview extends HTMLElement {
       this._shadow.appendChild(this.templateElt.cloneNode(true));
     }
 
-    // small animation
-    // this.style.transition = "0.2s opacity ease-in";
-    // this.style.opacity = 1;
-
     for (const attr in this.content) {
       if (this.content[attr] && !this.elements[attr]) {
         // add the element
@@ -153,11 +149,9 @@ class LinkPreview extends HTMLElement {
    */
   retrievePage() {
     this.retrievedPage = true;
-    console.log("getting");
     fetch(`${this.backend}/?page=${this.content?.href}`).then((res) => {
       if (res.ok)
         res.json().then((data) => {
-          console.log(data);
           // populate the data only if it doesn't already exist
           for (const attr in data) {
             if (!this.content[attr]) {

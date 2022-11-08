@@ -8,6 +8,14 @@ module.exports = {
       patterns: [{ from: "src/index.html", to: "index.html" }],
     }),
   ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
   output: {
     filename: "hyperfov-link-previews.js",
     libraryTarget: "umd",
