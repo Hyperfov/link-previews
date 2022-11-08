@@ -116,29 +116,28 @@ class LinkPreview extends HTMLElement {
         element.setAttribute("slot", `lp-${attr}`);
 
         // set the content and add to shadow dom
-        if (attr !== "image" && attr !== "favicon") {
-          element.textContent = this.content[attr];
-          this.appendChild(element);
-        } else {
+        if (attr === "image" || attr === "favicon") {
           const image = new Image();
-          image.src = this.content.image;
+          image.src = this.content[attr];
           image.onload = (e) => {
             element.src = image.src;
             this.appendChild(element);
-            // re-render to adjust position with new height if necessary
-            this.render();
           };
+        } else {
+          element.textContent = this.content[attr];
+          this.appendChild(element);
         }
         // TODO set up some sort of set event
         this.elements[attr] = element;
+        // if the new content or src are different, update them
       } else if (
         (this.elements[attr] &&
           this.elements[attr]?.textContent !== this.content[attr]) ||
         (this.elements[attr] && this.elements[attr]?.src !== this.content[attr])
       ) {
-        if (attr !== "image" && attr !== "favicon")
-          this.elements[attr].textContent = this.content[attr];
-        else this.elements[attr].src = this.content[attr];
+        if (attr === "image" || attr === "favicon") {
+          this.elements[attr].src = this.content[attr];
+        } else this.elements[attr].textContent = this.content[attr];
       }
       // TODO emit some sort of update event
     }

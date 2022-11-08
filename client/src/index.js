@@ -72,11 +72,15 @@ function linkPreview(elt, opts = {}) {
         options.content["href"] = attributeValue;
       }
       optionsChanged = true;
-    } else {
+    } else if (attributeName === "lp-follow") {
+      options.follow = attributeValue === "true";
+      optionsChanged = true;
+    } else if (attributeName === "lp-placement") {
+      options.placement = attributeValue;
+      optionsChanged;
+    } else if (attributeName.includes("lp-")) {
       const attr = attributeName.replace("lp-", "").replace("xlink:", "");
       options.content[attr] = attributeValue;
-      // this is naive and stupid; we should be checking the attribute is one of backend, fetch, follow, etc
-      options[attr] = attributeName;
       optionsChanged = true;
     }
 
