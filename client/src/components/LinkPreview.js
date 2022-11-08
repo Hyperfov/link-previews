@@ -1,4 +1,5 @@
 import getElement from "../utils/getElement";
+
 import { logError } from "../utils/logMessage";
 
 /**
@@ -9,15 +10,7 @@ import { logError } from "../utils/logMessage";
  */
 class LinkPreview extends HTMLElement {
   static get observedAttributes() {
-    return [
-      "parent",
-      "open",
-      "template",
-      "position",
-      "fetch",
-      "backend",
-      "content",
-    ];
+    return ["parent", "open", "template", "fetch", "backend", "content"];
   }
 
   constructor() {
@@ -41,7 +34,6 @@ class LinkPreview extends HTMLElement {
     this.content = this.getAttrOrDefault("content", {}, (v) => JSON.parse(v));
     this.backend = this.getAttrOrDefault("backend", null);
     this.template = this.getAttrOrDefault("template", null);
-    this.position = this.getAttrOrDefault("position", null);
 
     this.templateElt = null;
     this.elements = {};
@@ -95,98 +87,64 @@ class LinkPreview extends HTMLElement {
    * Add the element to the DOM with any data we've received from the worker
    */
   render() {
-    // only open if we've received a position
-    if (this.parentPos && this.open) {
-      if (!this.retrievedPage && this.fetch && this.backend) {
-        // we haven't fetched the link yet and should
-        this.retrievePage();
-      }
+    if (
+      !this.retrievedPage &&
+      this.fetch &&
+      this.backend &&
+      this.content.href &&
+      this.open
+    ) {
+      // we haven't fetched the link yet and should
+      this.retrievePage();
+    }
 
-      // try to add the template, if it exists
-      if (this.template && !this.templateElt) {
-        this.templateElt = getElement(this.template)?.content;
-        this._shadow.appendChild(this.templateElt.cloneNode(true));
-      }
+    // try to add the template, if it exists
+    if (this.template && !this.templateElt) {
+      this.templateElt = getElement(this.template)?.content;
+      this._shadow.appendChild(this.templateElt.cloneNode(true));
+    }
 
-      // position and show the preview
-      this.style.position = "absolute";
-      this.style.pointerEvents = "none";
+    // small animation
+    // this.style.transition = "0.2s opacity ease-in";
+    // this.style.opacity = 1;
 
-      const thisPos = this.getBoundingClientRect();
+    for (const attr in this.content) {
+      if (this.content[attr] && !this.elements[attr]) {
+        // add the element
+        const element =
+          attr === "image" || attr === "favicon"
+            ? document.createElement("img")
+            : document.createElement("span");
 
-      const overlapsTop = this.parentPos.y - thisPos.height < 0;
-      const overlapsBottom =
-        this.parentPos.bottom + thisPos.height > window.innerHeight;
+        element.id = `lp-${attr}`;
+        element.setAttribute("slot", `lp-${attr}`);
 
-      if (
-        (this.position === "below" && !overlapsBottom) ||
-        (this.position === "above" && overlapsTop)
-      ) {
-        // position below text
-        this.style.left = `${this.parentPos.x}px`;
-        this.style.top = `${this.parentPos.bottom + window.scrollY}px`;
-      } else if (
-        (this.position === "above" && !overlapsTop) ||
-        (this.position === "below" && overlapsBottom)
-      ) {
-        // position above text
-        this.style.left = `${this.parentPos.x}px`;
-        this.style.top = `${
-          this.parentPos.y - thisPos.height + window.scrollY
-        }px`;
-      } else if (this.position === "follow") {
-        // follow the cursor around
-        this.style.left = `${this.parentPos.x}px`;
-        // offset by the height of the cursor (approximate)
-        this.style.top = `${this.parentPos.y + window.scrollY + 15}px`;
-      }
-
-      // small animation
-      this.style.transition = "0.2s opacity ease-in";
-      this.style.opacity = 1;
-
-      for (const attr in this.content) {
-        if (this.content[attr] && !this.elements[attr]) {
-          // add the element
-          const element =
-            attr === "image" || attr === "favicon"
-              ? document.createElement("img")
-              : document.createElement("span");
-
-          element.id = `lp-${attr}`;
-          element.setAttribute("slot", `lp-${attr}`);
-
-          // set the content and add to shadow dom
-          if (attr !== "image" && attr !== "favicon") {
-            element.textContent = this.content[attr];
+        // set the content and add to shadow dom
+        if (attr !== "image" && attr !== "favicon") {
+          element.textContent = this.content[attr];
+          this.appendChild(element);
+        } else {
+          const image = new Image();
+          image.src = this.content.image;
+          image.onload = (e) => {
+            element.src = image.src;
             this.appendChild(element);
-          } else {
-            const image = new Image();
-            image.src = this.content.image;
-            image.onload = (e) => {
-              element.src = image.src;
-              this.appendChild(element);
-              // re-render to adjust position with new height if necessary
-              this.render();
-            };
-          }
-          // TODO set up some sort of set event
-          this.elements[attr] = element;
-        } else if (
-          (this.elements[attr] &&
-            this.elements[attr]?.textContent !== this.content[attr]) ||
-          (this.elements[attr] &&
-            this.elements[attr]?.src !== this.content[attr])
-        ) {
-          if (attr !== "image" && attr !== "favicon")
-            this.elements[attr].textContent = this.content[attr];
-          else this.elements[attr].src = this.content[attr];
+            // re-render to adjust position with new height if necessary
+            this.render();
+          };
         }
-        // TODO emit some sort of update event
+        // TODO set up some sort of set event
+        this.elements[attr] = element;
+      } else if (
+        (this.elements[attr] &&
+          this.elements[attr]?.textContent !== this.content[attr]) ||
+        (this.elements[attr] && this.elements[attr]?.src !== this.content[attr])
+      ) {
+        if (attr !== "image" && attr !== "favicon")
+          this.elements[attr].textContent = this.content[attr];
+        else this.elements[attr].src = this.content[attr];
       }
-    } else if (this.parentPos && !this.open) {
-      // hide the preview
-      this.style.opacity = 0;
+      // TODO emit some sort of update event
     }
   }
 
@@ -195,10 +153,11 @@ class LinkPreview extends HTMLElement {
    */
   retrievePage() {
     this.retrievedPage = true;
-
+    console.log("getting");
     fetch(`${this.backend}/?page=${this.content?.href}`).then((res) => {
       if (res.ok)
         res.json().then((data) => {
+          console.log(data);
           // populate the data only if it doesn't already exist
           for (const attr in data) {
             if (!this.content[attr]) {

@@ -94,7 +94,7 @@ You can customize the preview element through the `options` in the constructor:
 linkPreview("#myLink", {
   backend: "https://link-to-worker.workers.dev",
   template: "#my-cool-template", // a custom template for rendering the preview
-  position: "below", // "below" or "above" the link, or "follow" the cursor
+  placement: "bottom-start", // or "top" or "follow" the cursor
   content: {
     title: "My cool link", // override the title returned by the worker
   },
@@ -103,13 +103,13 @@ linkPreview("#myLink", {
 
 Here's the full list of options:
 
-| Option     | Value                                                                                                                                                                 | Default   | Required? |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | --------- |
-| `backend`  | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                           | `null`    | `false`   |
-| `template` | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-previews).) The default `"basic"` uses a provided template. | `"basic"` | `false`   |
-| `fetch`    | Fetch the url's content from the worker? (See [prefetch data](#prefetch-data) below)                                                                                  | `true`    | `false`   |
-| `position` | Where the preview will be placed relative to the link. `"below"`, `"above"` or `"follow"` to follow the cursor                                                        | `"below"` | `false`   |
-| `content`  | The content of the preview (see [content options](#content-options) below)                                                                                            | `{}`      | `false`   |
+| Option      | Value                                                                                                                                                                 | Default          | Required? |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | --------- |
+| `backend`   | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                           | `null`           | `false`   |
+| `template`  | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-previews).) The default `"basic"` uses a provided template. | `"basic"`        | `false`   |
+| `fetch`     | Fetch the url's content from the worker? (See [prefetch data](#prefetch-data) below)                                                                                  | `true`           | `false`   |
+| `placement` | Where the preview will be placed relative to the link. See all [options in the tippy docs](https://atomiks.github.io/tippyjs/v6/all-props/#placement).                | `"bottom-start"` | `false`   |
+| `content`   | The content of the preview (see [content options](#content-options) below)                                                                                            | `{}`             | `false`   |
 
 #### Content options
 
