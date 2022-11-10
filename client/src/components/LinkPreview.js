@@ -73,10 +73,13 @@ class LinkPreview extends HTMLElement {
    */
   setContent() {
     this.content = this.getAttrOrDefault("content", null, (v) => JSON.parse(v));
-
     // remove any existing elements
     for (const elt in this.elements) {
-      this.removeChild(this.elements[elt]);
+      try {
+        this.removeChild(this.elements[elt]);
+      } catch (e) {
+        // might fail if the element wasn't added because it's missing data
+      }
       delete this.elements[elt];
     }
 
