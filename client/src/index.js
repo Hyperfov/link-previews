@@ -58,7 +58,7 @@ function linkPreview(elt, props = {}) {
     logError("element missing href");
   }
 
-  if (!opts.template || options.template === "basic") {
+  if (!props.template || options.template === "basic") {
     // if the user hasn't provided a template, add the default one to the DOM
     document.body.insertAdjacentHTML("afterbegin", basicTemplate());
     options.template = "#hyperfov-link-preview-template";
