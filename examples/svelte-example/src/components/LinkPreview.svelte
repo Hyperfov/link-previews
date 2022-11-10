@@ -11,12 +11,6 @@
   });
 </script>
 
-<a
-  bind:this={thisElt}
-  {href}
-  lp-description={"loading..."}
-  target="_blank"
-  rel="noopener noreferrer"
->
+<a bind:this={thisElt} {href} target="_blank" rel="noopener noreferrer">
   <slot />
 </a>
