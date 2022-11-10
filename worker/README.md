@@ -56,7 +56,7 @@ All other cross-origin requests would be denied. To allow all origins, use `"*"`
 Now you can run the development server:
 
 ```
-wrangler dev
+wrangler dev index.js
 ```
 
 ## Deployment
