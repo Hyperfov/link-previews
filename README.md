@@ -11,7 +11,7 @@ This package is composed of two parts:
 
 ### Deploy the worker
 
-Follow the instructions in [the worker's readme](worker/README.md) to deploy the worker to Cloudflare Workers. Once complete you should have a url like `https://worker.[something].workers.dev`, or a custom domain if you've opted to set one up.
+Follow the instructions in [the worker's docs](worker/README.md) to deploy the worker to Cloudflare Workers. Once complete you should have a url like `https://worker.[something].workers.dev`, or a custom domain if you've opted to set one up.
 
 ### Add the script to your page
 
@@ -21,23 +21,22 @@ Add the script to the end of your site's `body`:
 
 ```html
 <html>
-  <head>
-    <title>Link Previews</title>
-  </head>
   <body>
-    <!-- page markup here including some links: -->
-    <p>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      <a id="myLink" href="https://hyperfov.com">A cool link</a>
-    </p>
-
+    <!-- page markup here with some a tags: -->
+    <a id="myLink" href="https://example.com">A cool link</a>
     <!-- Insert the link preview script at the end of the body -->
     <script src="hyperfov-link-previews.js"></script>
+    <script>
+      // now we can call `linkPreview` to add a preview
+      linkPreview("#myLink", {
+        backend: "https://link-to-worker.workers.dev",
+      });
+    </script>
   </body>
 </html>
 ```
 
-Now, you can call `linkPreview` for any links that should get a link preview:
+Add link previews by passing through the selector of an `a` tag and [configuration props](#props) to the global `linkPreview` constructor:
 
 ```js
 linkPreview("#myLink", {
@@ -45,7 +44,7 @@ linkPreview("#myLink", {
 });
 ```
 
-Which elements you add links to and when is up to you. For example, you might add previews to all links on the page:
+You can also pass through elements directly. For example, to add previews to all links on the page:
 
 ```js
 document.querySelectorAll("a").forEach((elt) => {
@@ -66,39 +65,39 @@ You can also customize the previews' styling. For example:
 </style>
 ```
 
-For more on styling, see [custom previews](#custom-previews).
+For more on styling and custom templates, see [custom previews](#custom-previews).
 
-### Options
+## Props
 
-You can customize the preview element through the `options` in the constructor:
+You can configure the preview element by passing through props in the constructor:
 
 ```js
 linkPreview("#myLink", {
-  backend: "https://link-to-worker.workers.dev",
-  template: "#my-cool-template", // a custom template for rendering the preview
-  content: {
-    title: "My cool link", // override the title returned by the worker
-  },
-  tippyOptions: {
-    // pass through any options to tippy for positioning here
-    followCursor: true,
-  },
+  // props get passed through here
 });
 ```
 
-Here's the full list of options:
+- [`backend`](#backend)
+- [`template`](#template)
+- [`fetch`](#fetch)
+- [`content`](#content)
+- [`tippyProps`](#tippyprops)
 
-| Option         | Value                                                                                                                                                                            | Default                         | Required? |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | --------- |
-| `backend`      | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                                      | `null`                          | `false`   |
-| `template`     | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-previews).) The default `"basic"` uses a provided template.            | `"basic"`                       | `false`   |
-| `fetch`        | Fetch the url's content from the worker? (See [prefetch data](#prefetch-data) below)                                                                                             | `true`                          | `false`   |
-| `tippyOptions` | The options passed to tippy that control the behavior and position of the popup. See all [options in the tippy docs](https://atomiks.github.io/tippyjs/v6/all-props/#placement). | `{ placement: "bottom-start" }` | `false`   |
-| `content`      | The content of the preview (see [content options](#content-options) below)                                                                                                       | `{}`                            | `false`   |
+### `backend`
 
-#### Content options
+The URL of the deployed worker. See the worker's [docs](/worker/README.md) for deployment information.
 
-The `content` parameter can include keys such as `title`, `description`, `href`, and `image` to override what's returned by the worker:
+### `template`
+
+The selector of the template element used to render the preview. See [custom previews](#custom-previews) for more on templates. If nothing is passed, a default template is used.
+
+### `fetch`
+
+Should the worker be called to get information for this link? Defaults to `true`. You may want to set this to `false` if you're pregenerating a page and don't want to make calls to the worker at runtime.
+
+### `content`
+
+The data passed through to the template's slots. This object can include props such as `title`, `description`, `href`, and `image`:
 
 ```js
 linkPreview(elt, {
@@ -110,7 +109,9 @@ linkPreview(elt, {
 });
 ```
 
-Any of the keys in `content` can also be specified on the element with attributes:
+Note that passing through data in `content` will override any data that's returned by the worker.
+
+Any of the keys in `content` can also be specified on the element with attributes prefixed with `lp-`:
 
 ```html
 <a
@@ -121,55 +122,39 @@ Any of the keys in `content` can also be specified on the element with attribute
 >
 ```
 
-The same is true of `tippyOptions` using tippy's attributes. The following are equivalent:
+### `tippyProps`
+
+Props that are passed through to [tippy.js](https://atomiks.github.io/tippyjs/), the library used for the preview popups. These can allow you to modify the positioning of the preview and provide options such as an offset, delay, and animation:
 
 ```js
 linkPreview(elt, {
   tippyOptions: {
     placement: "bottom-start",
+    animation: "scale",
     offset: [0, 10],
     delay: 200,
   },
 });
 ```
 
+Find the full list of props on [the tippy docs](https://atomiks.github.io/tippyjs/v6/all-props/).
+
+All of the props in `tippyProps` can also be specified on the element with attributes prefixed with `tippy-data-`:
+
 ```html
 <a
   href="https://example.com/"
   data-tippy-placement="bottom-start"
+  data-tippy-animation="scale"
   data-tippy-offset="[0, 10]"
   data-tippy-delay="200"
   >example</a
 >
 ```
 
-#### Prefetch data
+## Custom previews
 
-If you wanted to prefetch all of the link previews rather than fetching them dynamically, you could manually fetch at generation time, then use attributes on the element to add descriptions, titles, and images:
-
-```html
-<a
-  href="https://example.com/"
-  lp-description="This is an example"
-  lp-title="Example link"
-  lp-image="https://example.com/social.png"
-  >example</a
->
-```
-
-Then instantiate, setting `fetch` in the options to `false` to prevent the component from re-fetching:
-
-```js
-document.querySelectorAll("a").forEach((elt) => {
-  linkPreview(elt, {
-    fetch: false,
-  });
-});
-```
-
-### Custom previews
-
-#### Styling
+### Styling
 
 You can style the basic template with CSS variables set in the `link-preview` selector:
 
@@ -211,7 +196,7 @@ Variables are in the form `--lp-[element]-[css property]`. Here's all the variab
 | `--lp-image-border-radius`     | `3px`                                   |
 | `--lp-image-max-height`        | `150px`                                 |
 
-#### Custom templates
+### Custom templates
 
 For instances where the css variables aren't enough, the link preview is completely customizable through an [html template](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template) with [slots](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot). The template that's used by default can be found at [`client/src/templates/basic.js`](/client/src/templates/basic.js).
 

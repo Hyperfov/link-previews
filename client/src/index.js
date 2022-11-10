@@ -18,9 +18,9 @@ customElements.define("link-preview", LinkPreview);
  * and watches for hover events.
  *
  * @param {string|HTMLElement} elt - the element to add the link preview to
- * @param {Object} opts - configuration for the link preview
+ * @param {Object} props - configuration for the link preview
  */
-function linkPreview(elt, opts = {}) {
+function linkPreview(elt, props = {}) {
   const options = {
     content: {
       title: null,
@@ -30,13 +30,13 @@ function linkPreview(elt, opts = {}) {
     },
     backend: null,
     fetch: true,
-    tippyOptions: {
+    tippyProps: {
       placement: "bottom-start",
       followCursor: false,
       animation: "shift-toward",
     },
     template: "basic",
-    ...opts,
+    ...props,
   };
 
   if (!window.matchMedia("(any-hover: hover)").matches) {
@@ -105,7 +105,7 @@ function linkPreview(elt, opts = {}) {
 
   const tippyElt = tippy(element, {
     content: preview,
-    ...options.tippyOptions,
+    ...options.tippyProps,
     plugins: [followCursor],
     onShow: () => {
       preview.setAttribute("open", true);
