@@ -1,27 +1,21 @@
 # Link Previews
 
-Link previews everywhere.
-
 When added to a webpage, hovering links displays a wikipedia-style dynamic page preview.
+
+This package is composed of two parts:
+
+- A javascript function `linkPreview` that can add a link preview web component to any `a` tag on your page.
+- A Cloudflare Workers function that fetches and serves the links' meta information to the web component.
 
 ## Usage
 
-There are two parts to this project:
-
-- A function `linkPreview` for adding and initializing a link preview web component for each link.
-- A serverless worker function that fetches and serves the links' meta information like `title`, `description`, and `image` to the web components.
-
-For the worker function, I'm using [Cloudflare Workers](https://workers.cloudflare.com/) but you could probably rewrite it for some other service like [AWS Lambda](https://aws.amazon.com/lambda/) or [GCP Functions](https://cloud.google.com/functions/).
-
-Using this package requires [first deploying the worker](#deploy-the-worker) to Cloudflare Workers, then [adding the script to your webpage](#add-the-script) and [instantiating](#instantiate).
-
 ### Deploy the worker
 
-Follow the instructions in [the worker's readme](worker/README.md) to deploy the worker. Once complete, you should have a url like `https://worker.[something].workers.dev`, or a custom domain if you've opted to set one up.
+Follow the instructions in [the worker's readme](worker/README.md) to deploy the worker to Cloudflare Workers. Once complete you should have a url like `https://worker.[something].workers.dev`, or a custom domain if you've opted to set one up.
 
-### Add the script
+### Add the script to your page
 
-The latest build can be found in [`client/dist`](/client/dist/).
+The latest build can be found on [the releases page](https://github.com/Hyperfov/link-previews/releases).
 
 Add the script to the end of your site's `body`:
 
@@ -31,46 +25,34 @@ Add the script to the end of your site's `body`:
     <title>Link Previews</title>
   </head>
   <body>
-    <a id="myLink" href="https://hyperfov.com">A cool link</a>
+    <!-- page markup here including some links: -->
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      <a id="myLink" href="https://hyperfov.com">A cool link</a>
+    </p>
+
     <!-- Insert the link preview script at the end of the body -->
     <script src="hyperfov-link-previews.js"></script>
   </body>
 </html>
 ```
 
-### Instantiate
+Now, you can call `linkPreview` for any links that should get a link preview:
 
-Now, call `linkPreview` for each link you'd like to add a preview to using the link's selector and the url of your worker:
-
-```html
-<html>
-  <head>
-    <title>Link Previews</title>
-  </head>
-  <body>
-    <a id="myLink" href="https://hyperfov.com">A cool link</a>
-    <!-- Insert the link preview script at the end of the body -->
-    <script src="hyperfov-link-previews.js"></script>
-    <!-- Initialize the link previews -->
-    <script>
-      linkPreview("#myLink", {
-        backend: "https://link-to-worker.workers.dev",
-      });
-    </script>
-  </body>
-</html>
+```js
+linkPreview("#myLink", {
+  backend: "https://link-to-worker.workers.dev",
+});
 ```
 
 Which elements you add links to and when is up to you. For example, you might add previews to all links on the page:
 
-```html
-<script>
-  document.querySelectorAll("a").forEach((elt) => {
-    linkPreview(elt, {
-      backend: "https://link-to-worker.workers.dev",
-    });
+```js
+document.querySelectorAll("a").forEach((elt) => {
+  linkPreview(elt, {
+    backend: "https://link-to-worker.workers.dev",
   });
-</script>
+});
 ```
 
 You can also customize the previews' styling. For example:
@@ -94,51 +76,76 @@ You can customize the preview element through the `options` in the constructor:
 linkPreview("#myLink", {
   backend: "https://link-to-worker.workers.dev",
   template: "#my-cool-template", // a custom template for rendering the preview
-  placement: "bottom-start", // or "top" or "follow" the cursor
   content: {
     title: "My cool link", // override the title returned by the worker
+  },
+  tippyOptions: {
+    // pass through any options to tippy for positioning here
+    followCursor: true,
   },
 });
 ```
 
 Here's the full list of options:
 
-| Option      | Value                                                                                                                                                                 | Default          | Required? |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | --------- |
-| `backend`   | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                           | `null`           | `false`   |
-| `template`  | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-previews).) The default `"basic"` uses a provided template. | `"basic"`        | `false`   |
-| `fetch`     | Fetch the url's content from the worker? (See [prefetch data](#prefetch-data) below)                                                                                  | `true`           | `false`   |
-| `placement` | Where the preview will be placed relative to the link. See all [options in the tippy docs](https://atomiks.github.io/tippyjs/v6/all-props/#placement).                | `"bottom-start"` | `false`   |
-| `content`   | The content of the preview (see [content options](#content-options) below)                                                                                            | `{}`             | `false`   |
+| Option         | Value                                                                                                                                                                            | Default                         | Required? |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | --------- |
+| `backend`      | A string with the URL of the deployed worker (see [Deploy the worker](#deploy-the-worker).)                                                                                      | `null`                          | `false`   |
+| `template`     | The selector of the template element to use to render the preview (see [Custom styles and markup](#custom-previews).) The default `"basic"` uses a provided template.            | `"basic"`                       | `false`   |
+| `fetch`        | Fetch the url's content from the worker? (See [prefetch data](#prefetch-data) below)                                                                                             | `true`                          | `false`   |
+| `tippyOptions` | The options passed to tippy that control the behavior and position of the popup. See all [options in the tippy docs](https://atomiks.github.io/tippyjs/v6/all-props/#placement). | `{ placement: "bottom-start" }` | `false`   |
+| `content`      | The content of the preview (see [content options](#content-options) below)                                                                                                       | `{}`                            | `false`   |
 
 #### Content options
 
-The `content` parameter can include keys such as `title`, `description`, `href`, and `image`. Note that any of the keys in `content` can also specified on the element itself though the same keys prefixed with `lp-`. For example:
-
-```html
-<a
-  href="https://example.com/"
-  lp-description="loading..."
-  lp-title="Example link"
-  >example</a
->
-```
-
-is the equivalent of initializing with
+The `content` parameter can include keys such as `title`, `description`, `href`, and `image` to override what's returned by the worker:
 
 ```js
 linkPreview(elt, {
   content: {
     href: "https://example.com/",
-    description: "loading...",
+    description: "Some interesting description",
     title: "Example link",
   },
 });
 ```
 
+Any of the keys in `content` can also be specified on the element with attributes:
+
+```html
+<a
+  href="https://example.com/"
+  lp-description="Some interesting description"
+  lp-title="Example link"
+  >example</a
+>
+```
+
+The same is true of `tippyOptions` using tippy's attributes. The following are equivalent:
+
+```js
+linkPreview(elt, {
+  tippyOptions: {
+    placement: "bottom-start",
+    offset: [0, 10],
+    delay: 200,
+  },
+});
+```
+
+```html
+<a
+  href="https://example.com/"
+  data-tippy-placement="bottom-start"
+  data-tippy-offset="[0, 10]"
+  data-tippy-delay="200"
+  >example</a
+>
+```
+
 #### Prefetch data
 
-If you wanted to prefetch all of the link previews rather than fetching them dynamically, you could manually fetch at generation time then add descriptions, titles, and images to all your page's `a` tags:
+If you wanted to prefetch all of the link previews rather than fetching them dynamically, you could manually fetch at generation time, then use attributes on the element to add descriptions, titles, and images:
 
 ```html
 <a
@@ -150,7 +157,7 @@ If you wanted to prefetch all of the link previews rather than fetching them dyn
 >
 ```
 
-Then instantiate, setting `fetch` in the options to false to prevent the component from re-fetching:
+Then instantiate, setting `fetch` in the options to `false` to prevent the component from re-fetching:
 
 ```js
 document.querySelectorAll("a").forEach((elt) => {
@@ -164,15 +171,13 @@ document.querySelectorAll("a").forEach((elt) => {
 
 #### Styling
 
-You can style the basic template with css variables. For example, to turn the titles red and the links blue, set variables with the `link-preview` selector:
+You can style the basic template with CSS variables set in the `link-preview` selector:
 
-```html
-<style>
-  link-preview {
-    --lp-title-color: red;
-    --lp-link-color: blue;
-  }
-</style>
+```css
+link-preview {
+  --lp-title-color: red;
+  --lp-link-color: blue;
+}
 ```
 
 Variables are in the form `--lp-[element]-[css property]`. Here's all the variables the template accepts:

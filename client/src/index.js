@@ -3,7 +3,11 @@ import getElement from "./utils/getElement";
 import { logMessage, logError } from "./utils/logMessage";
 
 import tippy, { followCursor } from "tippy.js";
+
 import "tippy.js/animations/shift-toward.css";
+import "tippy.js/animations/shift-away.css";
+import "tippy.js/animations/scale.css";
+import "tippy.js/animations/perspective.css";
 
 import basicTemplate from "./templates/basic";
 
@@ -26,8 +30,11 @@ function linkPreview(elt, opts = {}) {
     },
     backend: null,
     fetch: true,
-    placement: "bottom-start",
-    follow: false,
+    tippyOptions: {
+      placement: "bottom-start",
+      followCursor: false,
+      animation: "shift-toward",
+    },
     template: "basic",
     ...opts,
   };
@@ -72,12 +79,6 @@ function linkPreview(elt, opts = {}) {
         options.content["href"] = attributeValue;
       }
       optionsChanged = true;
-    } else if (attributeName === "lp-follow") {
-      options.follow = attributeValue === "true";
-      optionsChanged = true;
-    } else if (attributeName === "lp-placement") {
-      options.placement = attributeValue;
-      optionsChanged;
     } else if (attributeName.includes("lp-")) {
       const attr = attributeName.replace("lp-", "").replace("xlink:", "");
       options.content[attr] = attributeValue;
@@ -104,9 +105,7 @@ function linkPreview(elt, opts = {}) {
 
   const tippyElt = tippy(element, {
     content: preview,
-    placement: options.placement,
-    followCursor: options.follow || options.follow === "true",
-    animation: "shift-toward",
+    ...options.tippyOptions,
     plugins: [followCursor],
     onShow: () => {
       preview.setAttribute("open", true);
