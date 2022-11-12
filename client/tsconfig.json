@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "target": "ES2015",
+      "module": "UMD",
+      "sourceMap": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "noEmit": true,
+      "strict": true,
+      "noUnusedLocals": true,
+      "types": ["node"],
+      "allowJs": true
+    },
+    "include": ["src/**/*", "tests/**/*"]
+  }

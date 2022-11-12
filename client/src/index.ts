@@ -20,7 +20,7 @@ customElements.define("link-preview", LinkPreview);
  * @param {string|HTMLElement} elt - the element to add the link preview to
  * @param {Object} props - configuration for the link preview
  */
-function linkPreview(elt, props = {}) {
+function linkPreview(elt: String|HTMLElement, props = {}) {
   const options = {
     content: {
       title: null,
@@ -47,15 +47,21 @@ function linkPreview(elt, props = {}) {
   }
 
   if (!options.backend && options.fetch) {
-    logError("missing backend url");
+    logError("missing required backend url");
   }
 
   let element = getElement(elt);
+
+  if (!element) {
+    logError("element does not exist")
+    return
+  }
 
   // need at least an href to continue
   if (element.hasAttribute("href") || element.hasAttribute("xlink:href")) {
   } else {
     logError("element missing href");
+    return 
   }
 
   if (!props.template || options.template === "basic") {
@@ -114,7 +120,7 @@ function linkPreview(elt, props = {}) {
   });
 
   // watch the element for attribute changes and pass through to preview component
-  const observer = new MutationObserver((mutations, observer) => {
+  const observer = new MutationObserver((mutations) => {
     let optionsChanged = false;
     for (const mutation of mutations) {
       let optionsChangedThisMutation = parseAttribute(mutation.attributeName);
@@ -124,11 +130,6 @@ function linkPreview(elt, props = {}) {
     // if any options changed, we need to update the preview and tippy instance
     if (optionsChanged) {
       preview.setAttribute("content", JSON.stringify(options.content));
-      // update the tippy props that may have changed
-      tippyElt.setProps({
-        placement: options.placement,
-        followCursor: options.follow || options.follow === "true",
-      });
     }
     // TODO: when the element is removed from the DOM, delete the preview and observer
   });
