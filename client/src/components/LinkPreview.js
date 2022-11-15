@@ -94,6 +94,7 @@ class LinkPreview extends HTMLElement {
       !this.retrievedPage &&
       this.fetch &&
       this.backend &&
+      this.content &&
       this.content.href &&
       this.open
     ) {

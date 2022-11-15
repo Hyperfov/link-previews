@@ -4,6 +4,7 @@ import { logMessage, logError } from "./utils/logMessage";
 import { Props, PreviewContent, Instance, LinkPreviewWindow } from "./types";
 
 import tippy, { followCursor } from "tippy.js";
+import * as _ from "lodash";
 
 import "tippy.js/animations/shift-toward.css";
 import "tippy.js/animations/shift-away.css";
@@ -26,10 +27,7 @@ function linkPreview(
   elt: String | HTMLElement | SVGElement,
   props: Props
 ): Instance | null {
-  const composedProps = {
-    ...defaultProps,
-    ...props,
-  };
+  props = _.merge({}, defaultProps, props);
 
   if (!window.matchMedia("(any-hover: hover)").matches) {
     logMessage(
@@ -38,7 +36,7 @@ function linkPreview(
     return null;
   }
 
-  if (!composedProps.backend && composedProps.fetch) {
+  if (!props.backend && props.fetch) {
     logError("missing required backend url");
   }
 
@@ -56,28 +54,28 @@ function linkPreview(
     return null;
   }
 
-  if (!props.template || composedProps.template === "basic") {
+  if (!props.template || props.template === "basic") {
     // if the user hasn't provided a template, add the default one to the DOM
     document.body.insertAdjacentHTML("afterbegin", basicTemplate());
-    composedProps.template = "#hyperfov-link-preview-template";
+    props.template = "#hyperfov-link-preview-template";
   }
 
-  // get the attributes from the element and init composedProps
+  // get the attributes from the element and init props
   for (const attribute of element.attributes) {
     const attributeValue = element.getAttribute(attribute.nodeName);
     if (attribute.nodeName === "href" || attribute.nodeName === "xlink:href") {
       try {
         const url = new URL(attributeValue!);
-        composedProps.content
-          ? (composedProps.content.href = url.toString())
-          : (composedProps.content = { href: url.toString() });
+        props.content
+          ? (props.content.href = url.toString())
+          : (props.content = { href: url.toString() });
       } catch {
         logMessage(`unable to parse url ${attributeValue}, skipping`);
       }
     } else if (attribute.nodeName.includes("lp-")) {
       const attr = attribute.nodeName.replace("lp-", "").replace("xlink:", "");
-      if (!composedProps.content) composedProps.content = {};
-      composedProps.content[attr as keyof PreviewContent] = attributeValue;
+      if (!props.content) props.content = {};
+      props.content[attr as keyof PreviewContent] = attributeValue;
     }
   }
 
@@ -85,20 +83,18 @@ function linkPreview(
   const preview = document.createElement("link-preview");
 
   // set attributes on the link-preview element
-  preview.setAttribute("content", JSON.stringify(composedProps.content));
-  if (composedProps.template)
-    preview.setAttribute("template", composedProps.template.toString());
-  if (composedProps.backend)
-    preview.setAttribute("backend", composedProps.backend.toString());
-  if (composedProps.fetch)
-    preview.setAttribute("fetch", composedProps.fetch.toString());
+  preview.setAttribute("content", JSON.stringify(props.content));
+  if (props.template)
+    preview.setAttribute("template", props.template.toString());
+  if (props.backend) preview.setAttribute("backend", props.backend.toString());
+  if (props.fetch) preview.setAttribute("fetch", props.fetch.toString());
 
   document.body.appendChild(preview);
 
   // init the tippy element
   const tippyInstance = tippy(element, {
     content: preview,
-    ...composedProps.tippy,
+    ...props.tippy,
     plugins: [followCursor],
     onShow: () => {
       preview.setAttribute("open", "true");
