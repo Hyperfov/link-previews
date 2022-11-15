@@ -1,8 +1,8 @@
-const logMessage = (msg) => {
+const logMessage = (msg: String) => {
   console.log(`HYPERFOV LINK PREVIEWS >> ${msg}`);
 };
 
-const logError = (msg) => {
+const logError = (msg: String) => {
   console.error(`HYPERFOV LINK PREVIEWS >> ${msg}`);
 };
 

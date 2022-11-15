@@ -1,6 +1,7 @@
 import LinkPreview from "./components/LinkPreview";
 import getElement from "./utils/getElement";
 import { logMessage, logError } from "./utils/logMessage";
+import { Props, PreviewContent, Instance, LinkPreviewWindow } from "./types";
 
 import tippy, { followCursor } from "tippy.js";
 
@@ -10,6 +11,7 @@ import "tippy.js/animations/scale.css";
 import "tippy.js/animations/perspective.css";
 
 import basicTemplate from "./templates/basic";
+import { defaultProps } from "./props";
 
 customElements.define("link-preview", LinkPreview);
 
@@ -17,25 +19,15 @@ customElements.define("link-preview", LinkPreview);
  * Add a link preview to an <a> tag. Adds the custom <link-preview> element
  * and watches for hover events.
  *
- * @param {string|HTMLElement} elt - the element to add the link preview to
- * @param {Object} props - configuration for the link preview
+ * @param elt - the element to add the link preview to
+ * @param props - configuration for the link preview
  */
-function linkPreview(elt: String|HTMLElement, props = {}) {
-  const options = {
-    content: {
-      title: null,
-      description: null,
-      image: null,
-      href: null,
-    },
-    backend: null,
-    fetch: true,
-    tippyProps: {
-      placement: "bottom-start",
-      followCursor: false,
-      animation: "shift-toward",
-    },
-    template: "basic",
+function linkPreview(
+  elt: String | HTMLElement | SVGElement,
+  props: Props
+): Instance | null {
+  const composedProps = {
+    ...defaultProps,
     ...props,
   };
 
@@ -43,104 +35,91 @@ function linkPreview(elt: String|HTMLElement, props = {}) {
     logMessage(
       "this device doesn't support hover events; will not add any previews"
     );
-    return;
+    return null;
   }
 
-  if (!options.backend && options.fetch) {
+  if (!composedProps.backend && composedProps.fetch) {
     logError("missing required backend url");
   }
 
   let element = getElement(elt);
 
   if (!element) {
-    logError("element does not exist")
-    return
+    logError("element doesn't exist");
+    return null;
   }
 
   // need at least an href to continue
   if (element.hasAttribute("href") || element.hasAttribute("xlink:href")) {
   } else {
     logError("element missing href");
-    return 
+    return null;
   }
 
-  if (!props.template || options.template === "basic") {
+  if (!props.template || composedProps.template === "basic") {
     // if the user hasn't provided a template, add the default one to the DOM
     document.body.insertAdjacentHTML("afterbegin", basicTemplate());
-    options.template = "#hyperfov-link-preview-template";
+    composedProps.template = "#hyperfov-link-preview-template";
   }
 
-  // helper function to parse attributes and apply their values to the options object
-  const parseAttribute = (attributeName) => {
-    let optionsChanged = false;
-
-    const attributeValue = element.getAttribute(attributeName);
-    if (attributeName === "href" || attributeName === "xlink:href") {
-      if (!new RegExp(/https?:\/\//g).test(attributeValue)) {
-        // the href is relative; prepend the site's hostname
-        const url = new URL(window.location);
-        url.pathname = attributeValue;
-        options.content["href"] = url.href;
-      } else {
-        options.content["href"] = attributeValue;
-      }
-      optionsChanged = true;
-    } else if (attributeName.includes("lp-")) {
-      const attr = attributeName.replace("lp-", "").replace("xlink:", "");
-      options.content[attr] = attributeValue;
-      optionsChanged = true;
-    }
-
-    return optionsChanged;
-  };
-
-  // get the attributes from the element and init options
+  // get the attributes from the element and init composedProps
   for (const attribute of element.attributes) {
-    parseAttribute(attribute.nodeName);
+    const attributeValue = element.getAttribute(attribute.nodeName);
+    if (attribute.nodeName === "href" || attribute.nodeName === "xlink:href") {
+      try {
+        const url = new URL(attributeValue!);
+        composedProps.content
+          ? (composedProps.content.href = url.toString())
+          : (composedProps.content = { href: url.toString() });
+      } catch {
+        logMessage(`unable to parse url ${attributeValue}, skipping`);
+      }
+    } else if (attribute.nodeName.includes("lp-")) {
+      const attr = attribute.nodeName.replace("lp-", "").replace("xlink:", "");
+      if (!composedProps.content) composedProps.content = {};
+      composedProps.content[attr as keyof PreviewContent] = attributeValue;
+    }
   }
 
   // add a link-preview element to the dom for this element
   const preview = document.createElement("link-preview");
 
-  preview.setAttribute("content", JSON.stringify(options.content));
-  if (options.template) preview.setAttribute("template", options.template);
-  if (options.backend) preview.setAttribute("backend", options.backend);
-  if (options.fetch) preview.setAttribute("fetch", options.fetch);
+  // set attributes on the link-preview element
+  preview.setAttribute("content", JSON.stringify(composedProps.content));
+  if (composedProps.template)
+    preview.setAttribute("template", composedProps.template.toString());
+  if (composedProps.backend)
+    preview.setAttribute("backend", composedProps.backend.toString());
+  if (composedProps.fetch)
+    preview.setAttribute("fetch", composedProps.fetch.toString());
 
   document.body.appendChild(preview);
 
-  const tippyElt = tippy(element, {
+  // init the tippy element
+  const tippyInstance = tippy(element, {
     content: preview,
-    ...options.tippyProps,
+    ...composedProps.tippy,
     plugins: [followCursor],
     onShow: () => {
-      preview.setAttribute("open", true);
+      preview.setAttribute("open", "true");
     },
     allowHTML: true,
   });
 
-  // watch the element for attribute changes and pass through to preview component
-  const observer = new MutationObserver((mutations) => {
-    let optionsChanged = false;
-    for (const mutation of mutations) {
-      let optionsChangedThisMutation = parseAttribute(mutation.attributeName);
-      if (!optionsChanged && optionsChangedThisMutation) optionsChanged = true;
-    }
-
-    // if any options changed, we need to update the preview and tippy instance
-    if (optionsChanged) {
-      preview.setAttribute("content", JSON.stringify(options.content));
-    }
-    // TODO: when the element is removed from the DOM, delete the preview and observer
-  });
-  observer.observe(element, { attributes: true });
+  const setProps = (props: Props) => {
+    // todo
+  };
 
   // TODO: emit useful events that can be listened for
-  return preview;
+  return {
+    setProps,
+    tippy: tippyInstance,
+  };
 }
 
 logMessage("running");
 
-export { linkPreview, LinkPreview };
-
+declare let window: LinkPreviewWindow;
 window.linkPreview = linkPreview;
+
+export { linkPreview, LinkPreview };

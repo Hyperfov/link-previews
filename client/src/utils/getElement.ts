@@ -1,6 +1,8 @@
 import { logError } from "./logMessage";
 
-const getElement = (elt) => {
+const getElement = (
+  elt: String | HTMLElement | SVGElement
+): HTMLElement | SVGElement | null => {
   let element = null;
 
   // try to get the element
@@ -16,7 +18,9 @@ const getElement = (elt) => {
   } else if (elt instanceof SVGElement) {
     element = elt;
   } else {
-    logError("unknown element type; must be a string or HTMLElement");
+    logError(
+      "unknown element type; must be one of String, HTMLElement, SVGElement"
+    );
   }
 
   return element;
