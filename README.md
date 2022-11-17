@@ -29,28 +29,18 @@ Add the script to the end of your site's `body`:
     <script>
       // now we can call `linkPreview` to add a preview
       linkPreview("#myLink", {
-        backend: "https://link-to-worker.workers.dev",
+        worker: "https://link-to-worker.workers.dev",
       });
     </script>
   </body>
 </html>
 ```
 
-Add link previews by passing through the selector of an `a` tag and [configuration props](#props) to the global `linkPreview` constructor:
+Add link previews by passing through a selector, element, or list of elements and [configuration props](#props) to the global `linkPreview` constructor:
 
 ```js
 linkPreview("#myLink", {
-  backend: "https://link-to-worker.workers.dev",
-});
-```
-
-You can also pass through elements directly. For example, to add previews to all links on the page:
-
-```js
-document.querySelectorAll("a").forEach((elt) => {
-  linkPreview(elt, {
-    backend: "https://link-to-worker.workers.dev",
-  });
+  worker: "https://link-to-worker.workers.dev",
 });
 ```
 
@@ -77,13 +67,15 @@ linkPreview("#myLink", {
 });
 ```
 
-- [`backend`](#backend)
+Valid props:
+
+- [`worker`](#worker)
 - [`template`](#template)
 - [`fetch`](#fetch)
 - [`content`](#content)
 - [`tippyProps`](#tippyprops)
 
-### `backend`
+### `worker`
 
 The URL of the deployed worker. See the worker's [docs](/worker/README.md) for deployment information.
 
@@ -224,7 +216,7 @@ Once you've created a template, pass its `id` as an option when instantiating yo
 
 ```js
 linkPreview("#myLink", {
-  backend: "https://link-to-worker.workers.dev",
+  worker: "https://link-to-worker.workers.dev",
   template: "#link-preview-template",
 });
 ```
