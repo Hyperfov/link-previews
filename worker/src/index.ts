@@ -1,6 +1,7 @@
 import { parse } from "node-html-parser";
+import { PreviewContent } from "./types";
 
-addEventListener("fetch", (event) => {
+addEventListener("fetch", (event: FetchEvent) => {
   event.respondWith(
     handleRequest(event).catch((err) => {
       return new Response(err.stack, { status: 500 });
@@ -8,7 +9,7 @@ addEventListener("fetch", (event) => {
   );
 });
 
-async function handleRequest(event) {
+async function handleRequest(event: FetchEvent) {
   const allowedOrigins = CORS || "*";
   const originAllowed =
     allowedOrigins === "*" ||
@@ -49,7 +50,7 @@ async function handleRequest(event) {
     if (res.ok) {
       const bodyContent = await res.text();
       const parsed = parse(bodyContent);
-      const responseContent = {};
+      const responseContent: PreviewContent = {};
 
       const meta = parsed.querySelectorAll("meta");
       const title = parsed.querySelector("title");
@@ -64,7 +65,7 @@ async function handleRequest(event) {
       for (const tag of meta) {
         const property =
           tag.getAttribute("property") || tag.getAttribute("name");
-        if (targetProperties.includes(property)) {
+        if (property && targetProperties.includes(property)) {
           responseContent[
             property.replace("og:", "").replace("twitter:", "")
           ] = tag.getAttribute("content");
@@ -72,7 +73,7 @@ async function handleRequest(event) {
       }
 
       for (const tag of links) {
-        if (tag.getAttribute("rel").includes("icon")) {
+        if (tag.getAttribute("rel")?.includes("icon")) {
           responseContent.favicon = tag.getAttribute("href");
         }
       }
@@ -80,27 +81,34 @@ async function handleRequest(event) {
       // clean up the description
       if (
         responseContent["description"] &&
-        responseContent["description"].length > MAX_DESCRIPTION_LENGTH
+        responseContent["description"].length > parseInt(MAX_DESCRIPTION_LENGTH)
       ) {
         responseContent["description"] =
-          responseContent["description"].substring(0, MAX_DESCRIPTION_LENGTH) +
-          "...";
+          responseContent["description"].substring(
+            0,
+            parseInt(MAX_DESCRIPTION_LENGTH)
+          ) + "...";
       }
 
       // add absolute links to any relative images
       if (
-        responseContent.favicon !== undefined &&
+        page &&
+        responseContent.favicon &&
         !responseContent.favicon.includes("http")
       ) {
         const faviUrl = new URL(page);
-        faviUrl.pathname = responseContent.favicon;
-        responseContent.favicon = faviUrl;
+        faviUrl.pathname = responseContent.favicon.toString();
+        responseContent.favicon = faviUrl.toString();
       }
 
-      if (responseContent.image && !responseContent.image.includes("http")) {
+      if (
+        page &&
+        responseContent.image &&
+        !responseContent.image.includes("http")
+      ) {
         const imgUrl = new URL(page);
-        imgUrl.pathname = responseContent.image;
-        responseContent.image = imgUrl;
+        imgUrl.pathname = responseContent.image.toString();
+        responseContent.image = imgUrl.toString();
       }
 
       // respond with new data
@@ -108,7 +116,7 @@ async function handleRequest(event) {
         headers: responseHeaders,
       });
 
-      // save the response in the cache if the response was sucessful
+      // save the response in the cache if the response was successful
       event.waitUntil(cache.put(cacheKey, response.clone()));
     } else {
       // respond with empty data

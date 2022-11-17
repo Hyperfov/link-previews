@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="dev/index.css" />
     <title>Test</title>
     <style>
       body {
@@ -273,14 +274,12 @@
       </div>
     </template>
 
-    <script src="hyperfov-link-previews.js"></script>
-    <script>
-      document.querySelectorAll("a").forEach((elt) => {
-        linkPreview(elt, {
-          template: "#hyperfov-link-preview-template",
-          backend: "http://localhost:8787",
-          position: "below",
-        });
+    <script src="dev/index.js" type="module"></script>
+    <script type="module">
+      window.linkPreview("a", {
+        template: "#hyperfov-link-preview-template",
+        worker: "http://localhost:8787",
+        position: "below",
       });
     </script>
   </body>
