@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-      "target": "ES2015",
-      "module": "CommonJS",
-      "sourceMap": true,
-      "moduleResolution": "node",
-      "esModuleInterop": true,
-      "noEmit": false,
-      "strict": true,
-      "noUnusedLocals": true,
-      "types": ["node"],
-      "allowJs": true
-    },
-    "include": ["src/**/*", "tests/**/*"]
-  }
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ESNext",
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "noEmit": false,
+    "strict": true,
+    "noUnusedLocals": true,
+    "types": ["node"],
+    "allowJs": true
+  },
+  "include": ["src/**/*", "tests/**/*"]
+}

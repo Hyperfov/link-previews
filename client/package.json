@@ -1,25 +1,25 @@
 {
   "name": "link-previews",
-  "main": "src/index.js",
+  "main": "dist/hyperfov-link-previews.js",
   "scripts": {
-    "dev": "webpack serve --config webpack.dev.config.js",
-    "build": "webpack build",
+    "dev": "esbuild src/index.ts --servedir=tests --outdir=tests/dev --bundle",
+    "build": "node esbuild.config.js && bundlesize",
     "deploy": "node utils/publish.js"
   },
+  "bundlesize": [
+    {
+      "path": "./dist/hyperfov-link-previews.js",
+      "maxSize": "25 kB"
+    }
+  ],
   "devDependencies": {
-    "@types/lodash": "^4.14.189",
-    "copy-webpack-plugin": "^10.2.4",
-    "css-loader": "^6.7.1",
-    "node-fetch": "^2.6.7",
-    "style-loader": "^3.3.1",
-    "ts-loader": "^9.4.1",
+    "@types/lodash-es": "^4.17.6",
+    "bundlesize": "^0.18.1",
     "typescript": "^4.8.4",
-    "webpack": "^5.68.0",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.4"
+    "esbuild": "^0.15.14"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "tippy.js": "^6.3.7"
   }
 }
