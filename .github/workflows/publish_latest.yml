@@ -34,3 +34,4 @@ jobs:
           body: |
             Deployed to the Hyperfov CDN at:
             - [https://cdn.hyperfov.com/link-previews/dev_latest/hyperfov-link-previews.js](https://cdn.hyperfov.com/link-previews/dev_latest/hyperfov-link-previews.js)
+            - [https://cdn.hyperfov.com/link-previews/dev_latest/hyperfov-link-previews.css](https://cdn.hyperfov.com/link-previews/dev_latest/hyperfov-link-previews.css)

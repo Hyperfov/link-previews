@@ -57,4 +57,6 @@ jobs:
           body: |
             Deployed to the Hyperfov CDN at:
             - [https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.js](https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.js)
+            - [https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.css](https://cdn.hyperfov.com/link-previews/latest/hyperfov-link-previews.css)
             - [https://cdn.hyperfov.com/link-previews/${{ github.event.release.tag_name }}/hyperfov-link-previews.js](https://cdn.hyperfov.com/link-previews/${{ github.event.release.tag_name }}/hyperfov-link-previews.js)
+            - [https://cdn.hyperfov.com/link-previews/${{ github.event.release.tag_name }}/hyperfov-link-previews.css](https://cdn.hyperfov.com/link-previews/${{ github.event.release.tag_name }}/hyperfov-link-previews.css)
