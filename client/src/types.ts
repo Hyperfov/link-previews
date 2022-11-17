@@ -11,8 +11,9 @@ export interface PreviewContent {
 export type TemplateVariant = "basic";
 
 export interface Props {
+  href?: String | null;
   content?: PreviewContent | null;
-  backend?: String | null;
+  worker?: String | null;
   fetch?: Boolean;
   template?: TemplateVariant | String | HTMLElement;
   tippy?: Partial<Tippy.Props>;
@@ -23,9 +24,8 @@ export interface Instance {
   tippy: Tippy.Instance;
 }
 
+export type Target = String | Element | Element[];
+
 export interface LinkPreviewWindow extends Window {
-  linkPreview(
-    elt: String | HTMLElement | SVGElement,
-    props: Props
-  ): Instance | null;
+  linkPreview(elt: Target, props: Props): Instance[] | null;
 }

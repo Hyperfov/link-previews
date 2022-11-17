@@ -275,12 +275,10 @@
 
     <script src="hyperfov-link-previews.js"></script>
     <script>
-      document.querySelectorAll("a").forEach((elt) => {
-        linkPreview(elt, {
-          template: "#hyperfov-link-preview-template",
-          backend: "http://localhost:8787",
-          position: "below",
-        });
+      linkPreview("a", {
+        template: "#hyperfov-link-preview-template",
+        worker: "http://localhost:8787",
+        position: "below",
       });
     </script>
   </body>

@@ -1,4 +1,4 @@
-import getElement from "../utils/getElement";
+import getElements from "../utils/getElements";
 
 import { logError } from "../utils/logMessage";
 
@@ -10,7 +10,7 @@ import { logError } from "../utils/logMessage";
  */
 class LinkPreview extends HTMLElement {
   static get observedAttributes() {
-    return ["parent", "open", "template", "fetch", "backend", "content"];
+    return ["parent", "open", "template", "fetch", "worker", "content"];
   }
 
   constructor() {
@@ -32,7 +32,7 @@ class LinkPreview extends HTMLElement {
       JSON.parse(v)
     );
     this.content = this.getAttrOrDefault("content", {}, (v) => JSON.parse(v));
-    this.backend = this.getAttrOrDefault("backend", null);
+    this.worker = this.getAttrOrDefault("worker", null);
     this.template = this.getAttrOrDefault("template", null);
 
     this.templateElt = null;
@@ -93,7 +93,7 @@ class LinkPreview extends HTMLElement {
     if (
       !this.retrievedPage &&
       this.fetch &&
-      this.backend &&
+      this.worker &&
       this.content &&
       this.content.href &&
       this.open
@@ -104,8 +104,12 @@ class LinkPreview extends HTMLElement {
 
     // try to add the template, if it exists
     if (this.template && !this.templateElt) {
-      this.templateElt = getElement(this.template)?.content;
-      this._shadow.appendChild(this.templateElt.cloneNode(true));
+      const templateElt = getElements(this.template);
+      if (templateElt) {
+        this.templateElt = templateElt[0].content;
+        this._shadow.appendChild(this.templateElt.cloneNode(true));
+      }
+      // todo: do something if the template is missing
     }
 
     for (const attr in this.content) {
@@ -152,7 +156,7 @@ class LinkPreview extends HTMLElement {
    */
   retrievePage() {
     this.retrievedPage = true;
-    fetch(`${this.backend}/?page=${this.content?.href}`).then((res) => {
+    fetch(`${this.worker}/?page=${this.content?.href}`).then((res) => {
       if (res.ok)
         res.json().then((data) => {
           // populate the data only if it doesn't already exist

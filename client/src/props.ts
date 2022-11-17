@@ -2,7 +2,7 @@ import { Props } from "./types";
 
 export const defaultProps: Props = {
   content: null,
-  backend: null,
+  worker: null,
   fetch: true,
   template: "basic",
   tippy: {
