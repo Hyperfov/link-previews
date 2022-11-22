@@ -72,6 +72,7 @@ Valid props:
 - [`worker`](#worker)
 - [`template`](#template)
 - [`fetch`](#fetch)
+- [`fetchOnHover`](#fetchonhover)
 - [`content`](#content)
 - [`tippyProps`](#tippyprops)
 
@@ -86,6 +87,10 @@ The selector of the template element used to render the preview. See [custom pre
 ### `fetch`
 
 Should the worker be called to get information for this link? Defaults to `true`. You may want to set this to `false` if you're pregenerating a page and don't want to make calls to the worker at runtime.
+
+### `fetchOnHover`
+
+Should the link preview content be fetched when the user hovers on the link? Defaults to `true`. When set to `false`, the preview content is fetched immediately when the preview component is initialized.
 
 ### `content`
 
@@ -162,30 +167,35 @@ Variables are in the form `--lp-[element]-[css property]`. Here's all the variab
 | Variable                       | Default value                           |
 | ------------------------------ | --------------------------------------- |
 | `--lp-border`                  | `none`                                  |
-| `--lp-padding `                | `10px`                                  |
+| `--lp-padding `                | `0`                                     |
 | `--lp-background`              | `white`                                 |
 | `--lp-box-shadow`              | `0px 5px 15px rgba(101, 101, 110, 0.3)` |
 | `--lp-border-radius`           | `6px`                                   |
 | `--lp-max-width`               | `225px`                                 |
 | `--lp-font-family`             | `inherit`                               |
 | `--lp-font-weight`             | `normal`                                |
+| `--lp-link-padding`            | `0 10px`                                |
 | `--lp-link-color`              | `grey`                                  |
 | `--lp-link-border`             | `none`                                  |
 | `--lp-link-font-size`          | `12px`                                  |
 | `--lp-link-font-family `       | `inherit`                               |
 | `--lp-link-font-weight`        | `normal`                                |
+| `--lp-title-padding`           | `0 10px 3px 10px`                       |
 | `--lp-title-color`             | `inherit`                               |
 | `--lp-title-border`            | `none`                                  |
 | `--lp-title-font-size`         | `16px`                                  |
 | `--lp-title-font-family`       | `inherit`                               |
 | `--lp-title-font-weight`       | `bold`                                  |
+| `--lp-description-padding`     | `0 10px 3px 10px`                       |
 | `--lp-description-color`       | `inherit`                               |
 | `--lp-description-border`      | `none`                                  |
 | `--lp-description-font-size`   | `16px`                                  |
 | `--lp-description-font-family` | `inherit`                               |
 | `--lp-description-font-weight` | `normal`                                |
 | `--lp-image-border`            | `none`                                  |
-| `--lp-image-border-radius`     | `3px`                                   |
+| `--lp-image-border-radius`     | `3px 3px 0 0`                           |
+| `--lp-image-object-fit`        | `cover`                                 |
+| `--lp-image-object-position`   | `center center`                         |
 | `--lp-image-max-height`        | `150px`                                 |
 
 ### Custom templates

@@ -15,6 +15,7 @@ export interface Props {
   content?: PreviewContent | null;
   worker?: String | null;
   fetch?: Boolean;
+  fetchOnHover?: Boolean | null;
   template?: TemplateVariant | String | HTMLElement;
   tippy?: Partial<Tippy.Props>;
 }

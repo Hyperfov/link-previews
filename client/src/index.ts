@@ -115,6 +115,8 @@ function applyPropsToPreview(preview: Element, props: Props) {
     preview.setAttribute("template", props.template.toString());
   if (props.worker) preview.setAttribute("worker", props.worker.toString());
   if (props.fetch) preview.setAttribute("fetch", props.fetch.toString());
+  if (props.fetchOnHover)
+    preview.setAttribute("fetch-on-hover", props.fetchOnHover.toString());
 }
 
 /**

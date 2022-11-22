@@ -4,6 +4,7 @@ export const defaultProps: Props = {
   content: null,
   worker: null,
   fetch: true,
+  fetchOnHover: true,
   template: "basic",
   tippy: {
     placement: "bottom-start",

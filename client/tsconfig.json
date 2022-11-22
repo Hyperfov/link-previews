@@ -7,7 +7,8 @@
     "esModuleInterop": true,
     "noEmit": false,
     "strict": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "allowJs": true
   },
   "include": ["src/**/*", "tests/**/*"]
 }

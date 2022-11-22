@@ -1,6 +1,6 @@
 import getElements from "../utils/getElements";
 
-import { logError } from "../utils/logMessage";
+import { logError, logMessage } from "../utils/logMessage";
 
 /**
  * Custom component for link previews
@@ -10,7 +10,7 @@ import { logError } from "../utils/logMessage";
  */
 class LinkPreview extends HTMLElement {
   static get observedAttributes() {
-    return ["parent", "open", "template", "fetch", "worker", "content"];
+    return ["open", "template", "fetch", "fetch-on-open", "worker", "content"];
   }
 
   constructor() {
@@ -20,26 +20,51 @@ class LinkPreview extends HTMLElement {
     this._shadow = this.attachShadow({ mode: "open" });
 
     // setup methods
-    this.render = this.render.bind(this);
     this.retrievePage = this.retrievePage.bind(this);
     this.getAttrOrDefault = this.getAttrOrDefault.bind(this);
-    this.setContent = this.setContent.bind(this);
+    this.renderContent = this.renderContent.bind(this);
+    this.clearContent = this.clearContent.bind(this);
 
-    // instantiate element with any passed attributes
-    this.setContent();
+    this.renderTemplate = this.renderTemplate.bind(this);
+    this.renderTextElement = this.renderTextElement.bind(this);
+    this.renderImageElement = this.renderImageElement.bind(this);
 
-    this.parentPos = this.getAttrOrDefault("parent", null, (v) =>
-      JSON.parse(v)
+    this.fetchOnHover = this.getAttrOrDefault(
+      "fetch-on-hover",
+      true,
+      (v) => v === "true"
     );
-    this.content = this.getAttrOrDefault("content", {}, (v) => JSON.parse(v));
+    this.fetch = this.getAttrOrDefault("fetch", true, (v) => v === "true");
+    this.open = this.getAttrOrDefault("open", false, (v) => v === "true");
     this.worker = this.getAttrOrDefault("worker", null);
     this.template = this.getAttrOrDefault("template", null);
 
     this.templateElt = null;
     this.elements = {};
+
     this.retrievedPage = false;
 
-    this.render();
+    // instantiate element with any passed attributes
+    this.content = this.getAttrOrDefault("content", null, (v) => JSON.parse(v));
+    this.renderContent();
+
+    this.contentRenderers = {
+      title: {
+        render: (title) => this.renderTextElement("title", title),
+      },
+      description: {
+        render: (desc) => this.renderTextElement("description", desc),
+      },
+      href: {
+        render: (href) => this.renderTextElement("href", href),
+      },
+      image: {
+        render: (src) => this.renderImageElement("image", src),
+      },
+      favicon: {
+        render: (src) => this.renderImageElement("favicon", src),
+      },
+    };
   }
 
   /**
@@ -48,32 +73,35 @@ class LinkPreview extends HTMLElement {
    * @param {string} name - changed attribute name
    */
   attributeChangedCallback(name) {
-    if (name === "parent") {
-      this.parentPos = this.getAttrOrDefault(name, null, (v) => JSON.parse(v));
-    } else if (name === "open") {
+    if (name === "open") {
       this.open = this.getAttrOrDefault(name, false, (v) => v === "true");
+    } else if (name === "fetch-on-hover") {
+      this.fetchOnHover = this.getAttrOrDefault(
+        name,
+        true,
+        (v) => v === "true"
+      );
     } else if (name === "fetch") {
       this.fetch = this.getAttrOrDefault(name, true, (v) => v === "true");
     } else if (name === "content") {
       const newCont = this.getAttrOrDefault(name, null, (v) => JSON.parse(v));
-      if (newCont?.href !== this.content?.href) {
-        this.setContent();
-      }
       this.content = newCont;
+      if (newCont?.href !== this.content?.href) {
+        // if the href has changed, wipe out the content and refetch
+        this.clearContent();
+      }
     } else {
       // set any of the other attributes
       this[name] = this.getAttrOrDefault(name, null);
     }
 
-    this.render();
+    this.renderContent();
   }
 
   /**
-   * Set or reset the preview's data from its attributes
+   * Remove all elements from the preview
    */
-  setContent() {
-    this.content = this.getAttrOrDefault("content", null, (v) => JSON.parse(v));
-    // remove any existing elements
+  clearContent() {
     for (const elt in this.elements) {
       try {
         this.removeChild(this.elements[elt]);
@@ -82,26 +110,90 @@ class LinkPreview extends HTMLElement {
       }
       delete this.elements[elt];
     }
-
-    this.retrievedPage = false;
   }
 
   /**
-   * Add the element to the DOM with any data we've received from the worker
+   * Render the template, content and fetch from the worker if needed
    */
-  render() {
-    if (
-      !this.retrievedPage &&
-      this.fetch &&
-      this.worker &&
-      this.content &&
-      this.content.href &&
-      this.open
-    ) {
-      // we haven't fetched the link yet and should
-      this.retrievePage();
+  renderContent() {
+    if (!this.templateElt) {
+      this.renderTemplate();
     }
 
+    if (
+      this.fetch &&
+      this.worker &&
+      !this.retrievedPage &&
+      this.content?.href &&
+      (!this.fetchOnHover || this.open)
+    ) {
+      // we should fetch now
+      this.retrievePage();
+      // TODO: render some placeholder here for anything that's not already
+      // in the content object
+    }
+
+    for (const attr in this.content) {
+      this.contentRenderers[attr]?.render(this.content[attr]);
+    }
+  }
+
+  /**
+   * Add a text element if it hasn't been added already, and populate it's textContent
+   * @param {string} name - the attribute name
+   * @param {string} text - the textContent of the element
+   */
+  renderTextElement(name, text) {
+    let elt = this.elements[name];
+
+    if (!elt) {
+      // we don't have the element added yet, add it now
+      elt = document.createElement("span");
+      elt.id = `lp-${name}`;
+      elt.setAttribute("slot", `lp-${name}`);
+      this.appendChild(elt);
+      this.elements[name] = elt;
+    }
+
+    // set the new text
+    elt.textContent = text;
+  }
+
+  /**
+   * Add an image element if it hasn't been added already, and populate its src
+   * @param {string} name - the attribute name (image or favicon)
+   * @param {string} src - the src of the image
+   */
+  renderImageElement(name, src) {
+    let elt = this.elements[name];
+
+    if (!elt) {
+      // we don't have the element added yet, add it now
+      elt = document.createElement("img");
+      elt.id = `lp-${name}`;
+      elt.setAttribute("slot", `lp-${name}`);
+
+      const image = new Image();
+      image.src = src;
+      image.onload = () => {
+        elt.src = image.src;
+        this.appendChild(elt);
+      };
+      this.elements[name] = elt;
+    }
+
+    // set the new src
+    const image = new Image();
+    image.src = src;
+    image.onload = () => {
+      elt.src = image.src;
+    };
+  }
+
+  /**
+   * Add the template to the shadow DOM
+   */
+  renderTemplate() {
     // try to add the template, if it exists
     if (this.template && !this.templateElt) {
       const templateElt = getElements(this.template);
@@ -109,45 +201,7 @@ class LinkPreview extends HTMLElement {
         this.templateElt = templateElt[0].content;
         this._shadow.appendChild(this.templateElt.cloneNode(true));
       }
-      // todo: do something if the template is missing
-    }
-
-    for (const attr in this.content) {
-      if (this.content[attr] && !this.elements[attr]) {
-        // add the element
-        const element =
-          attr === "image" || attr === "favicon"
-            ? document.createElement("img")
-            : document.createElement("span");
-
-        element.id = `lp-${attr}`;
-        element.setAttribute("slot", `lp-${attr}`);
-
-        // set the content and add to shadow dom
-        if (attr === "image" || attr === "favicon") {
-          const image = new Image();
-          image.src = this.content[attr];
-          image.onload = (e) => {
-            element.src = image.src;
-            this.appendChild(element);
-          };
-        } else {
-          element.textContent = this.content[attr];
-          this.appendChild(element);
-        }
-        // TODO set up some sort of set event
-        this.elements[attr] = element;
-        // if the new content or src are different, update them
-      } else if (
-        (this.elements[attr] &&
-          this.elements[attr]?.textContent !== this.content[attr]) ||
-        (this.elements[attr] && this.elements[attr]?.src !== this.content[attr])
-      ) {
-        if (attr === "image" || attr === "favicon") {
-          this.elements[attr].src = this.content[attr];
-        } else this.elements[attr].textContent = this.content[attr];
-      }
-      // TODO emit some sort of update event
+      // TODO: do something if the template is missing
     }
   }
 
@@ -156,6 +210,7 @@ class LinkPreview extends HTMLElement {
    */
   retrievePage() {
     this.retrievedPage = true;
+    logMessage(`Getting: ${this.content?.href}`);
     fetch(`${this.worker}/?page=${this.content?.href}`).then((res) => {
       if (res.ok)
         res.json().then((data) => {
@@ -165,7 +220,7 @@ class LinkPreview extends HTMLElement {
               this.content[attr] = data[attr];
             }
           }
-          this.render();
+          this.renderContent();
         });
     });
   }
