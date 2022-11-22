@@ -5,7 +5,7 @@
   "description": "A worker that retrieves and serves a page's meta information",
   "main": "index.ts",
   "scripts": {
-    "dev": "npx wrangler dev",
+    "dev": "npx wrangler dev src/index.ts",
     "publish": "npx wrangler publish",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write '**/*.{js,css,json,md}'"
