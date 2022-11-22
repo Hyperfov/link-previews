@@ -18,7 +18,7 @@ import "tippy.js/animations/shift-away.css";
 import "tippy.js/animations/scale.css";
 import "tippy.js/animations/perspective.css";
 
-import basicTemplate from "./templates/basic";
+import { basicTemplate } from "./templates/basic";
 import { defaultProps } from "./props";
 
 customElements.define("link-preview", LinkPreview);

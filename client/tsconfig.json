@@ -10,5 +10,6 @@
     "noUnusedLocals": true,
     "allowJs": true
   },
-  "include": ["src/**/*", "tests/**/*"]
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["src/components/*"]
 }

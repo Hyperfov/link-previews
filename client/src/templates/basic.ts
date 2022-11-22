@@ -1,24 +1,27 @@
-const basicTemplate = () => {
+const basicTemplate = (): string => {
   return `
   <template id="hyperfov-link-preview-template">
   <style>
     .link-popup-wrapper {
       border: var(--lp-border, none);
-      padding: var(--lp-padding, 10px);
+      padding: var(--lp-padding, 0px);
       background: var(--lp-background, white);
       box-shadow: var(
         --lp-box-shadow,
         0px 5px 15px rgba(101, 101, 110, 0.3)
       );
       border-radius: var(--lp-border-radius, 6px);
-      max-width: var(--lp-max-width, 225px);
+      max-width: var(--lp-max-width, 300px);
       font-family: var(--lp-font-family, inherit);
       font-weight: var(--lp-font-weight, normal);
     }
 
-    .link-interior-content div:not(:last-child):not(:first-child) {
-      margin-top: 5px;
-      margin-bottom: 5px;
+    .link-interior-content div:first-child {
+      padding-top: 5px;
+    }
+
+    .link-interior-content div:last-child {
+      padding-bottom: 5px;
     }
 
     .link-image {
@@ -29,6 +32,7 @@ const basicTemplate = () => {
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
+      padding: var(--lp-link-padding, 0 10px);
       font-weight: var(--lp-link-font-weight, normal);
       color: var(--lp-link-color, grey);
       font-size: var(--lp-link-font-size, 12px);
@@ -37,6 +41,7 @@ const basicTemplate = () => {
     }
 
     .link-title {
+      padding: var(--lp-title-padding, 0 10px 3px 10px);
       font-weight: var(--lp-title-font-weight, bold);
       color: var(--lp-title-color, inherit);
       font-size: var(--lp-title-font-size, 16px);
@@ -45,6 +50,7 @@ const basicTemplate = () => {
     }
 
     .link-description {
+      padding: var(--lp-description-padding, 0 10px 3px 10px);
       font-weight: var(--lp-description-font-weight, normal);
       color: var(--lp-description-color, inherit);
       font-size: var(--lp-description-font-size, 16px);
@@ -53,21 +59,21 @@ const basicTemplate = () => {
     }
 
     ::slotted(#lp-image) {
-      max-width: 100% !important;
-      border-radius: var(--lp-image-border-radius, 3px) !important;
-      border: var(--lp-image-border, none) !important;
-      width: max-content !important;
-      height: auto !important;
-      object-fit: cover;
-      object-position: top center;
-      max-height: var(--lp-image-max-height, 150px) !important;
+      max-width: 100%;
+      border-radius: var(--lp-image-border-radius, 3px 3px 0 0);
+      border: var(--lp-image-border, none);
+      width: max-content;
+      height: auto;
+      object-fit: var(--lp-image-object-fit, cover);
+      object-position: var(--lp-image-object-position, center center);
+      max-height: var(--lp-image-max-height, 150px);
       display: inline-block !important;
       margin: 0 !important;
     }
 
     ::slotted(#lp-favicon) {
-      max-height: 14px !important;
-      max-width: 14px !important;
+      max-height: 14px;
+      max-width: 14px;
       margin: 0 !important;
       margin-right: 5px !important;
       display: inline-block !important;
@@ -75,8 +81,8 @@ const basicTemplate = () => {
     }
   </style>
   <div class="link-popup-wrapper">
+    <div class="link-image"><slot name="lp-image"></slot></div>
     <div class="link-interior-content">
-      <div class="link-image"><slot name="lp-image"></slot></div>
       <div class="link-title">
         <slot name="lp-favicon"></slot>
         <slot name="lp-title"></slot>
@@ -90,4 +96,4 @@ const basicTemplate = () => {
 </template>`;
 };
 
-export default basicTemplate;
+export { basicTemplate };
