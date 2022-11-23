@@ -3,10 +3,11 @@ const pkg = require("./package.json");
 require("esbuild")
   .build({
     entryPoints: ["src/index.ts"],
+    format: "iife",
     bundle: true,
     minify: true,
     outfile: "dist/hyperfov-link-previews.js",
-    globalName: "linkPreviews",
+    globalName: "linkPreview",
     banner: {
       js: `/** \n * hyperfov-link-previews.js v${
         pkg.version

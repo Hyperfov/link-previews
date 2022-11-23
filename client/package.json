@@ -1,15 +1,24 @@
 {
   "name": "link-previews",
-  "main": "dist/hyperfov-link-previews.js",
+  "main": "./dist/hyperfov-link-previews.mjs",
+  "browser": "./dist/hyperfov-link-previews.js",
   "scripts": {
     "dev": "esbuild src/index.ts --servedir=tests --outdir=tests/dev --bundle",
-    "build": "node esbuild.config.js && bundlesize",
+    "build": "node esbuild.config-iife.js && node esbuild.config-esm.js && bundlesize",
     "deploy": "node utils/publish.js"
   },
   "bundlesize": [
     {
       "path": "./dist/hyperfov-link-previews.js",
       "maxSize": "25 kB"
+    },
+    {
+      "path": "./dist/hyperfov-link-previews.mjs",
+      "maxSize": "25 kB"
+    },
+    {
+      "path": "./dist/hyperfov-link-previews.css",
+      "maxSize": "2 kB"
     }
   ],
   "devDependencies": {
