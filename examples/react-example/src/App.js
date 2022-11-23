@@ -32,51 +32,6 @@ function App() {
       <p>
         <LinkPreview href={url}>This is a link to {url}</LinkPreview>
       </p>
-
-      <div>
-        <details>
-          <summary>
-            <b>
-              The <code>LinkPreview</code> component
-            </b>
-          </summary>
-          <p>
-            The react component in this example that wraps the{" "}
-            <code>linkPreview</code> interface is quite simple; just pass the
-            element's <code>ref</code> to the constructor. Any changes to the
-            element's attributes are updated internally, no need to manually
-            remove the preview element when the component's props change.
-          </p>
-          <pre>
-            {`
-function LinkPreview(props) {
-    const linkRef = useRef(null);
-    const [preview, setPreview] = useState(null);
-    
-    useEffect(() => {
-        if (linkRef && !preview) {
-            const preview = linkPreview(linkRef.current, {
-                backend: "http://localhost:8787",
-            });
-            setPreview(preview);
-        }
-    });
-    
-    return (
-        <a
-        ref={linkRef}
-        href={props.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        >
-            {props.children}
-        </a>
-    );
-}
-      `}
-          </pre>
-        </details>
-      </div>
     </div>
   );
 }

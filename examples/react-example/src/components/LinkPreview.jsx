@@ -9,11 +9,18 @@ function LinkPreview(props) {
   useEffect(() => {
     if (linkRef && !preview) {
       const preview = linkPreview(linkRef.current, {
-        backend: "http://localhost:8787",
-      });
+        worker: "http://localhost:8787",
+      })[0];
       setPreview(preview);
     }
-  });
+  }, [preview, linkRef]);
+
+  // we have to manually update props when the href changes
+  useEffect(() => {
+    if (linkRef && preview) {
+      preview.setProps({ href: props.href });
+    }
+  }, [props.href]);
 
   return (
     <a

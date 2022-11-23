@@ -1,5 +1,6 @@
 import LinkPreview from "./components/LinkPreview";
 import getElements from "./utils/getElements";
+import { mergeDeep } from "./utils/mergeDeep";
 import { logMessage, logWarning } from "./utils/logMessage";
 import {
   Props,
@@ -10,8 +11,7 @@ import {
 } from "./types";
 
 import tippy, { followCursor } from "tippy.js";
-import * as Tippy from "tippy.js";
-import { merge } from "lodash-es";
+import * as Tippy from "tippy.js/index";
 
 import "tippy.js/animations/shift-toward.css";
 import "tippy.js/animations/shift-away.css";
@@ -31,7 +31,7 @@ customElements.define("link-preview", LinkPreview);
  * @param props - configuration object for the link previews
  */
 function linkPreview(target: Target, props: Props): Instance[] | null {
-  props = merge({}, defaultProps, props);
+  props = mergeDeep({}, defaultProps, props);
 
   if (!window.matchMedia("(any-hover: hover)").matches) {
     logMessage(
@@ -81,7 +81,7 @@ function linkPreview(target: Target, props: Props): Instance[] | null {
       const setProps = (newProps: Props) => {
         applyPropsToPreview(
           preview,
-          merge({}, defaultProps, props, newProps) as Props
+          mergeDeep({}, defaultProps, props, newProps) as Props
         );
         // update the tippy instance props
         if (newProps.tippy) tippyInstance.setProps({ ...newProps.tippy });
