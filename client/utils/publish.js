@@ -7,7 +7,7 @@ const path = require("path");
 // this is run from the github action
 const publish = async () => {
   const jsFile = fs
-    .readFileSync(path.join(__dirname, "../dist/hyperfov-link-previews.js"))
+    .readFileSync(path.join(__dirname, "../dist/index.js"))
     .toString();
 
   const loc1 = encodeURIComponent(
@@ -27,7 +27,7 @@ const publish = async () => {
   );
 
   const cssFile = fs
-    .readFileSync(path.join(__dirname, "../dist/hyperfov-link-previews.css"))
+    .readFileSync(path.join(__dirname, "../dist/index.css"))
     .toString();
 
   const loc2 = encodeURIComponent(
