@@ -1,5 +1,5 @@
 /** 
- * hyperfov-link-previews.js vundefined
+ * hyperfov-link-previews.js v1.0.0-beta
  * (c) 2021-2022 Christian Broms
  * MIT License
  */

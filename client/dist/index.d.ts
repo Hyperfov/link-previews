@@ -1,4 +1,4 @@
-declare module 'link-previews/components/LinkPreview' {
+declare module '@hyperfov/link-previews/components/LinkPreview' {
   export default LinkPreview;
   /**
    * Custom component for link previews
@@ -81,9 +81,9 @@ declare module 'link-previews/components/LinkPreview' {
   }
 
 }
-declare module 'link-previews/index' {
-  import LinkPreview from "link-previews/components/LinkPreview";
-  import { Props, Target, Instance } from "link-previews/types";
+declare module '@hyperfov/link-previews/index' {
+  import LinkPreview from "@hyperfov/link-previews/components/LinkPreview";
+  import { Props, Target, Instance } from "@hyperfov/link-previews/types";
   import "tippy.js/animations/shift-toward.css";
   import "tippy.js/animations/shift-away.css";
   import "tippy.js/animations/scale.css";
@@ -99,17 +99,17 @@ declare module 'link-previews/index' {
   export { linkPreview, LinkPreview };
 
 }
-declare module 'link-previews/props' {
-  import { Props } from "link-previews/types";
+declare module '@hyperfov/link-previews/props' {
+  import { Props } from "@hyperfov/link-previews/types";
   export const defaultProps: Props;
 
 }
-declare module 'link-previews/templates/basic' {
+declare module '@hyperfov/link-previews/templates/basic' {
   const basicTemplate: () => string;
   export { basicTemplate };
 
 }
-declare module 'link-previews/types' {
+declare module '@hyperfov/link-previews/types' {
   import * as Tippy from "tippy.js";
   export interface PreviewContent {
       href?: String | null;
@@ -138,20 +138,20 @@ declare module 'link-previews/types' {
   }
 
 }
-declare module 'link-previews/utils/getElements' {
-  import { Target } from "link-previews/types";
+declare module '@hyperfov/link-previews/utils/getElements' {
+  import { Target } from "@hyperfov/link-previews/types";
   const getElements: (elt: Target) => Element[];
   export default getElements;
 
 }
-declare module 'link-previews/utils/logMessage' {
+declare module '@hyperfov/link-previews/utils/logMessage' {
   const logMessage: (msg: String) => void;
   const logWarning: (msg: String) => void;
   const logError: (msg: String) => void;
   export { logMessage, logWarning, logError };
 
 }
-declare module 'link-previews/utils/mergeDeep' {
+declare module '@hyperfov/link-previews/utils/mergeDeep' {
   /**
    * Deep merge two objects.
    * @param target
@@ -161,7 +161,7 @@ declare module 'link-previews/utils/mergeDeep' {
   export { mergeDeep };
 
 }
-declare module 'link-previews' {
-  import main = require('link-previews/src/index');
+declare module '@hyperfov/link-previews' {
+  import main = require('@hyperfov/link-previews/src/index');
   export = main;
 }

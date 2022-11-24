@@ -1,5 +1,16 @@
 {
-  "name": "link-previews",
+  "name": "@hyperfov/link-previews",
+  "title": "Link Previews",
+  "description": "Add a link preview to any hyperlink.",
+  "keywords": [
+    "link",
+    "preview",
+    "hovercard",
+    "hyperlink",
+    "popover"
+  ],
+  "license": "MIT",
+  "version": "1.0.0-beta",
   "module": "./dist/index.mjs",
   "main": "./dist/index.js",
   "scripts": {
@@ -10,6 +21,14 @@
   "files": [
     "dist/"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hyperfov/link-previews.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Hyperfov/link-previews/issues"
+  },
+  "homepage": "https://previews.hyperfov.com",
   "bundlesize": [
     {
       "path": "./dist/index.js",
@@ -25,7 +44,6 @@
     }
   ],
   "devDependencies": {
-    "@types/lodash-es": "^4.17.6",
     "bundlesize": "^0.18.1",
     "esbuild": "^0.15.14",
     "node-fetch": "^3.3.0",
