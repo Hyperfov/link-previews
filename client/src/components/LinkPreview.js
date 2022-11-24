@@ -85,11 +85,11 @@ class LinkPreview extends HTMLElement {
       this.fetch = this.getAttrOrDefault(name, true, (v) => v === "true");
     } else if (name === "content") {
       const newCont = this.getAttrOrDefault(name, null, (v) => JSON.parse(v));
-      this.content = newCont;
       if (newCont?.href !== this.content?.href) {
         // if the href has changed, wipe out the content and refetch
         this.clearContent();
       }
+      this.content = newCont;
     } else {
       // set any of the other attributes
       this[name] = this.getAttrOrDefault(name, null);
@@ -110,6 +110,7 @@ class LinkPreview extends HTMLElement {
       }
       delete this.elements[elt];
     }
+    this.retrievedPage = false;
   }
 
   /**

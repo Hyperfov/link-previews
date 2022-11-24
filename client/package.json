@@ -3,7 +3,7 @@
   "module": "./dist/index.mjs",
   "main": "./dist/index.js",
   "scripts": {
-    "dev": "esbuild src/index.ts --servedir=tests --outdir=tests/dev --bundle",
+    "dev": "esbuild src/index.ts --servedir=tests --outdir=tests/dev --bundle --format=iife",
     "build": "node utils/build.js && bundlesize",
     "deploy": "node utils/publish.js"
   },

@@ -172,6 +172,9 @@ function addWrappedPreviewToElt(
     onShow: () => {
       preview.setAttribute("open", "true");
     },
+    onHide: () => {
+      preview.setAttribute("open", "false");
+    },
     allowHTML: true,
   });
 

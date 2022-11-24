@@ -81,31 +81,33 @@
       viewBox="0 0 600 50"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <a xlink:href="https://en.wikipedia.org" id="svg-link">
+      <a xlink:href="https://en.wikipedia.org" class="svg-link">
         <text x="0" y="40">this is a link in svg</text>
       </a>
       <style>
-        #svg-link {
+        .svg-link {
           fill: blue;
           text-decoration: underline;
         }
       </style>
     </svg>
 
-    <p>
-      <a
-        id="link-2"
-        href="https://hyperfov.com"
-        data-tippy-followcursor="true"
-        style="
-          padding: 50px;
-          display: inline-block;
-          background-color: lightpink;
-        "
-      >
-        This is a preview that should follow the cursor
-      </a>
-    </p>
+    <a
+      href="https://hyperfov.com"
+      data-tippy-followcursor="true"
+      style="padding: 50px; display: inline-block; background-color: lightpink"
+    >
+      This is a preview that should follow the cursor
+    </a>
+
+    <div>
+      <ul>
+        <li>
+          <a id="dynamic" href="https://matrix.org">this is a dynamic link</a>
+        </li>
+      </ul>
+      <button onclick="changeUrl()">Change url</button>
+    </div>
 
     <template id="hyperfov-link-preview-template">
       <style>
@@ -202,13 +204,35 @@
       </div>
     </template>
 
-    <script src="dev/index.js" type="module"></script>
-    <script type="module">
-      window.linkPreview("a", {
-        template: "#hyperfov-link-preview-template",
-        worker: "http://localhost:8787",
-        position: "below",
+    <script src="dev/index.js"></script>
+    <script>
+      document.querySelectorAll("a").forEach((elt) => {
+        if (!elt.id) {
+          window.linkPreview(elt, {
+            template: "#hyperfov-link-preview-template",
+            worker: "http://localhost:8787",
+          });
+        }
       });
+    </script>
+    <script>
+      const preview = window.linkPreview("#dynamic", {
+        worker: "http://localhost:8787",
+      })[0];
+
+      const urls = [
+        "https://matrix.org",
+        "https://cloudflare.com",
+        "https://en.wikipedia.org",
+      ];
+
+      let idx = 1;
+
+      function changeUrl() {
+        preview.setProps({ content: { href: urls[idx] } });
+        if (idx < urls.length - 1) idx += 1;
+        else idx = 0;
+      }
     </script>
   </body>
 </html>
