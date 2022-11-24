@@ -10,22 +10,23 @@ function LinkPreview(props) {
     if (linkRef && !preview) {
       const preview = linkPreview(linkRef.current, {
         worker: "http://localhost:8787",
+        ...props.config,
       })[0];
       setPreview(preview);
     }
-  }, [preview, linkRef]);
+  }, [linkRef]);
 
-  // we have to manually update props when the href changes
+  // we have to manually update props when they change
   useEffect(() => {
     if (linkRef && preview) {
-      preview.setProps({ href: props.href });
+      preview.setProps(props.config);
     }
-  }, [props.href]);
+  }, [props.config]);
 
   return (
     <a
       ref={linkRef}
-      href={props.href}
+      href={props.config.content.href}
       target="_blank"
       rel="noopener noreferrer"
     >

@@ -30,7 +30,11 @@ function App() {
         out the components's <code>href</code> and update the preview:{" "}
       </p>
       <p>
-        <LinkPreview href={url}>This is a link to {url}</LinkPreview>
+        <LinkPreview
+          config={{ content: { href: url }, tippy: { followCursor: true } }} // pass link preview props here
+        >
+          This is a link to {url}
+        </LinkPreview>
       </p>
     </div>
   );

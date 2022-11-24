@@ -28,7 +28,10 @@
     components's <code>href</code> and update the preview:
   </p>
   <p>
-    <LinkPreview href={url}>This is a link to {url}</LinkPreview>
+    <LinkPreview
+      config={{ content: { href: url }, tippy: { followCursor: true } }}
+      >This is a link to {url}</LinkPreview
+    >
   </p>
 </main>
 
